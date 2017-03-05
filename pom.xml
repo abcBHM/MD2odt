@@ -21,6 +21,13 @@
             <version>2.4.4</version>
         </dependency>
 
+        <!-- FLEXMARK -->
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark</artifactId>
+            <version>0.16.0</version>
+        </dependency>
+
         <!-- TESTING -->
         <dependency>
             <groupId>junit</groupId>

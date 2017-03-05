@@ -28,6 +28,13 @@
             <version>0.16.0</version>
         </dependency>
 
+        <!-- ODFDOM - ODF API -->
+        <dependency>
+            <groupId>org.apache.odftoolkit</groupId>
+            <artifactId>simple-odf</artifactId>
+            <version>0.8.1-incubating</version>
+        </dependency>
+
         <!-- TESTING -->
         <dependency>
             <groupId>junit</groupId>

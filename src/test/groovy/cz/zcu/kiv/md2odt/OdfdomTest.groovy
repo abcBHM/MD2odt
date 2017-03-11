@@ -49,6 +49,9 @@ class OdfdomTest {
         Paragraph par = odt.getParagraphByIndex(0,false)  //in an empty document is 1 empty paragraph
         par.applyHeading()  //is working?
         par.setTextContent(text)
+       // println(odt.getContentDom().getElementsByTagName("text:h").item(0).toString())
+        odt.getContentDom().getElementsByTagName("text:h").item(0).getAttributes().getNamedItem("text:style-name").setNodeValue("Heading_20_1")
+      //  println(odt.getContentDom().getElementsByTagName("text:h").item(0).toString())
         //odt.save(path)
         assert odt.getParagraphByIndex(0,false).isHeading()
     }

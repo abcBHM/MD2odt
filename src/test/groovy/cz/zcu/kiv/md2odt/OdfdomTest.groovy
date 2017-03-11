@@ -1,11 +1,16 @@
 package cz.zcu.kiv.md2odt
 
+import org.junit.Before
 import org.junit.Test
 import org.odftoolkit.odfdom.type.Color
 import org.odftoolkit.simple.TextDocument
+import org.odftoolkit.simple.common.navigation.TextNavigation
+import org.odftoolkit.simple.common.navigation.TextSelection
+import org.odftoolkit.simple.style.DefaultStyleHandler
 import org.odftoolkit.simple.style.Font
 import org.odftoolkit.simple.style.StyleTypeDefinitions
 import org.odftoolkit.simple.text.Paragraph
+import org.odftoolkit.simple.text.Span
 
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -20,38 +25,54 @@ import java.nio.file.Paths
  */
 class OdfdomTest {
     def path = "test.odt"
+    def text = "This is ODF test"
+    TextDocument odt
+
+    @Before
+    void setUp() throws Exception {
+        odt = TextDocument.newTextDocument()
+
+    }
 
     @Test
     void createFile() {
-        def text = "This is ODF creation test"
-        TextDocument odt = TextDocument.newTextDocument()
         odt.addParagraph(text)
         odt.save(path)
-
         TextDocument load = TextDocument.loadDocument(path)
         Paragraph par = load.getParagraphByIndex(0,true)
-
         assert text.equals(par.getTextContent())
         Files.deleteIfExists(Paths.get(path))
     }
 
     @Test
     void addHeading() {
-        def text = "This is HEADING test"
-        TextDocument odt = TextDocument.newTextDocument()
         Paragraph par = odt.getParagraphByIndex(0,false)  //in an empty document is 1 empty paragraph
-
         par.applyHeading()  //is working?
         par.setTextContent(text)
-
-        par = odt.addParagraph(text + " 2")
-
-        par.setFont(new Font("Arial", StyleTypeDefinitions.FontStyle.ITALIC, 22, Color.RED))
-
-        odt.save(path)
-
-       // println(par.getStyleName())
+        //odt.save(path)
         assert odt.getParagraphByIndex(0,false).isHeading()
-        Files.deleteIfExists(Paths.get(path))
+    }
+
+    @Test
+    void addNonHeading() {
+        Paragraph par = odt.addParagraph(text)
+        par.setFont(new Font("Arial", StyleTypeDefinitions.FontStyle.ITALIC, 22, Color.RED))
+        //odt.save(path)
+        assert !odt.getParagraphByIndex(0,true).isHeading()
+    }
+
+    @Test
+    void setSpanStyle() {
+        Paragraph par = odt.addParagraph("blah neco zvyraznit *neco*")
+        TextNavigation nav = new TextNavigation("neco", odt)
+
+        if(nav.hasNext()) {
+            TextSelection sel = (TextSelection) nav.nextSelection()
+            Span sp = Span.newSpan(sel)
+            DefaultStyleHandler dsh = sp.getStyleHandler()
+            dsh.getTextPropertiesForWrite().setFont(new Font("Arial", StyleTypeDefinitions.FontStyle.ITALIC, 22, Color.RED))
+        }
+        //odt.save(path)
+        assert nav.hasNext()
     }
 }

@@ -54,12 +54,13 @@ class OdfSimpleWrapper {
     }
 
     void emphasiseAll() {
-        TextNavigation nav = new TextNavigation(OdfSimpleConstan.ITALIC_MARK+"[^<]*</em>", odt)
+        String mark = OdfSimpleConstants.ITALIC.getMark()
+        TextNavigation nav = new TextNavigation(mark+"[^"+mark+"]*"+mark, odt)
         TextSelection sel = null
 
         while(nav.hasNext()) {
             sel = nav.nextSelection()
-            sel.replaceWith(sel.getText().substring(4,sel.getText().length()-5))
+            sel.replaceWith(sel.getText().substring(mark.length(),sel.getText().length()-mark.length()))
             Span sp = Span.newSpan(sel)
             DefaultStyleHandler dsh = sp.getStyleHandler()
             dsh.getTextPropertiesForWrite().setFontStyle(StyleTypeDefinitions.FontStyle.ITALIC)
@@ -67,18 +68,27 @@ class OdfSimpleWrapper {
     }
 
     void reEscapeAll() {
-
-        reEscape("&amp;","&")
+        for (OdfSimpleConstants osc : OdfSimpleConstants.values()) {
+            reEscape(osc.getEscape(), osc.getMark())
+        }
+        reEscape(OdfSimpleConstants.AMP_ESCAPE, OdfSimpleConstants.AMP_MARK)
     }
 
     void reEscape(String what, String with) {
         TextNavigation nav = new TextNavigation(what, odt)
         TextSelection sel = null
-
         while(nav.hasNext()) {
             sel = nav.nextSelection()
             sel.replaceWith(with)
         }
+    }
+
+    static String escape(String toEscape) {
+        String rtn = toEscape.replaceAll(OdfSimpleConstants.AMP_MARK,OdfSimpleConstants.AMP_ESCAPE)   //& has to be replaced first
+        for (OdfSimpleConstants osc : OdfSimpleConstants.values()) {
+            rtn = rtn.replaceAll(osc.getMark(), osc.getEscape())
+        }
+        return rtn
     }
 
     private void addList(String listHeading, java.util.List<String> listItems, ListDecorator decorator) {

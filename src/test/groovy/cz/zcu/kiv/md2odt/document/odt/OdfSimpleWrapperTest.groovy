@@ -80,4 +80,26 @@ class OdfSimpleWrapperTest {
     void addHeadingIllegalArgument2() throws Exception {
         odt.addHeading("Nadpis",11)
     }
+
+    @Ignore
+    @Test
+    void bulletListTest() {
+        ArrayList<String> list = new ArrayList<>()
+        for (int i = 1; i < 4; i++) {
+            list.add("Polozka " + i)
+        }
+
+        odt.addBulletList("Bullet list", list)
+    }
+
+    @Ignore
+    @Test
+    void numberedListTest() {
+        ArrayList<String> list = new ArrayList<>()
+        for (int i = 1; i < 4; i++) {
+            list.add("Polozka " + i)
+        }
+
+        odt.addNumberList("Numbered list", list)
+    }
 }

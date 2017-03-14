@@ -7,6 +7,7 @@ import org.odftoolkit.simple.style.DefaultStyleHandler
 import org.odftoolkit.simple.style.StyleTypeDefinitions
 import org.odftoolkit.simple.text.Span
 import org.odftoolkit.simple.text.list.BulletDecorator
+import org.odftoolkit.simple.text.list.List
 import org.odftoolkit.simple.text.list.ListDecorator
 import org.odftoolkit.simple.text.list.NumberDecorator
 import org.w3c.dom.Node

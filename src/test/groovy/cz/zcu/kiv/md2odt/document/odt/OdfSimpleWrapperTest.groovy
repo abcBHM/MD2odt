@@ -20,16 +20,12 @@ class OdfSimpleWrapperTest {
     @Ignore
     @Test
     void example() throws Exception {
-        odt.addHeading("Nadpis 1",1)
-        odt.addHeading("Nadpis 10",10)
-
-        odt.addParagraph("\"   &quot;\n" +
-                "'   &apos;\n" +
-                "<   &lt;\n" +
-                ">   &gt;\n" +
-                "&   &amp;")
-
-        odt.save("test.odt")
+        String inp = OdfSimpleWrapper.escape("<&>&&<> &bold; text &bold; other") + "<italic<" + OdfSimpleWrapper.escape("<non-Italic<")
+        String exp = "<&>&&<> &bold; text &bold; other" + "italic" + "<non-Italic<"
+        odt.addParagraph(inp)
+        odt.emphasiseAll()
+        odt.reEscapeAll()
+        assert odt.getLastNode().getTextContent().equals(exp)
     }
 
     @Ignore
@@ -43,7 +39,7 @@ class OdfSimpleWrapperTest {
 
     @Test
     void emphasiseAllTest() throws Exception {
-        odt.addParagraph("This <em>is</em> not <em>Sparta</em>!")
+        odt.addParagraph("This <is< not <Sparta<!")
         Node parNode = odt.getLastNode()
         //println(parNode.getTextContent())
         odt.emphasiseAll()
@@ -53,14 +49,13 @@ class OdfSimpleWrapperTest {
     }
 
     @Test
-    void escapeTest() throws Exception {
-        odt.addParagraph("This <em>is</em> not <em>Sparta</em>!")
-        Node parNode = odt.getLastNode()
-        //println(parNode.getTextContent())
+    void reEscapeAllTest() throws Exception {
+        String inp = OdfSimpleWrapper.escape("<&>&&<> &bold; text &bold; other") + "<italic<" + OdfSimpleWrapper.escape("<non-Italic<")
+        String exp = "<&>&&<> &bold; text &bold; other" + "italic" + "<non-Italic<"
+        odt.addParagraph(inp)
         odt.emphasiseAll()
-        //println(parNode.getTextContent())
-        assert parNode.getTextContent().equals("This is not Sparta!")
-        //odt.save("test.odt")
+        odt.reEscapeAll()
+        assert odt.getLastNode().getTextContent().equals(exp)
     }
 
     @Test(expected = FileNotFoundException.class)

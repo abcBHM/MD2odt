@@ -6,6 +6,9 @@ import org.odftoolkit.simple.common.navigation.TextSelection
 import org.odftoolkit.simple.style.DefaultStyleHandler
 import org.odftoolkit.simple.style.StyleTypeDefinitions
 import org.odftoolkit.simple.text.Span
+import org.odftoolkit.simple.text.list.BulletDecorator
+import org.odftoolkit.simple.text.list.ListDecorator
+import org.odftoolkit.simple.text.list.NumberDecorator
 import org.w3c.dom.Node
 
 /**
@@ -75,6 +78,23 @@ class OdfSimpleWrapper {
             sel = nav.nextSelection()
             sel.replaceWith(with)
         }
+    }
+
+    private void addList(String listHeading, java.util.List<String> listItems, ListDecorator decorator) {
+        List newList = odt.addList(decorator)
+        newList.setHeader(listHeading)
+
+        for(String item : listItems) {
+            newList.addItem(item)
+        }
+    }
+
+    void addBulletList(String listHeading, java.util.List<String> listItems) {
+        addList(listHeading, listItems, new BulletDecorator(odt))
+    }
+
+    void addNumberList(String listHeading, java.util.List<String> listItems) {
+        addList(listHeading, listItems, new NumberDecorator(odt))
     }
 
     /** Returns the last operated Node. Used for testing.

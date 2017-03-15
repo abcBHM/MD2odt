@@ -2,6 +2,7 @@ package cz.zcu.kiv.md2odt.filler.md
 
 import com.vladsch.flexmark.ast.Emphasis as AstEmphasis
 import com.vladsch.flexmark.ast.Link as AstLink
+import com.vladsch.flexmark.ast.SoftLineBreak as AstSoftLineBreak
 import com.vladsch.flexmark.ast.StrongEmphasis as AstStrongEmphasis
 import com.vladsch.flexmark.ast.Node as AstNode
 import com.vladsch.flexmark.ast.Paragraph as AstParagraph
@@ -22,7 +23,8 @@ class ParagraphCollector {
         paragraphNode.children.each { node ->
             switch (node) {
                 case AstText:
-                    builder.addRegular(node.chars.toString())
+                case AstSoftLineBreak:
+                    builder.addRegular(flatten(node))
                     break
 
                 case AstEmphasis:
@@ -50,6 +52,8 @@ class ParagraphCollector {
     private String flatten(AstNode node) {
         if (node instanceof AstText)
             return node.chars.toString()
+        else if (node instanceof AstSoftLineBreak)
+            return '\n'
 
         node.children.collect { flatten(it) }.join("")
     }

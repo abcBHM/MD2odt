@@ -41,6 +41,28 @@ class ParagraphCollectorTest {
     }
 
     @Test
+    void lineBreak() {
+        def paragraph = paragraph("a\nb")
+
+        // AST:
+        // class com.vladsch.flexmark.ast.Paragraph
+        //  class com.vladsch.flexmark.ast.Text
+        //  class com.vladsch.flexmark.ast.SoftLineBreak
+        //  class com.vladsch.flexmark.ast.Text
+
+        assert paragraph.list*.text == ["a\nb"]
+        assert paragraph.list*.type == [REGULAR]
+    }
+
+    @Test
+    void lineBreakNested() {
+        def paragraph = paragraph("*a\nb*")
+
+        assert paragraph.list*.text == ["a\nb"]
+        assert paragraph.list*.type == [ITALIC]
+    }
+
+    @Test
     void nestedFormatting() {
         def paragraph = paragraph("*a**b***")
 

@@ -31,19 +31,29 @@ class ParagraphContentBuilder {
 
     ParagraphContentBuilder add(SpanContent span) {
         buffer.add(span)
-        this
+        return this
+    }
+
+    ParagraphContentBuilder addText(String text, SpanType type) {
+        // try append text after the last span
+        if (buffer && buffer[-1].type == type)
+            buffer[-1] = new SpanContentText(buffer[-1].text + text, type)
+        else
+            add(new SpanContentText(text, type))
+
+        return this
     }
 
     ParagraphContentBuilder addRegular(String text) {
-        add(new SpanContentText(text, SpanType.REGULAR))
+        addText(text, SpanType.REGULAR)
     }
 
     ParagraphContentBuilder addItalic(String text) {
-        add(new SpanContentText(text, SpanType.ITALIC))
+        addText(text, SpanType.ITALIC)
     }
 
     ParagraphContentBuilder addBold(String text) {
-        add(new SpanContentText(text, SpanType.BOLD))
+        addText(text, SpanType.BOLD)
     }
 
     ParagraphContentBuilder addLink(String text, String url) {

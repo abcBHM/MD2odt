@@ -21,22 +21,22 @@ class OdfSimpleDocument implements Document{
         for(SpanContent sc : content.list) {
             switch (sc.getType()) {
                 case SpanType.REGULAR:
-                    rtn += OdfSimpleWrapper.escape(sc.getText())
+                    rtn += OdfSimpleConstants.escape(sc.getText())
                     break
                 case SpanType.BOLD:
-                    rtn += OdfSimpleConstants.BOLD.getMark() + OdfSimpleWrapper.escape(sc.getText()) + OdfSimpleConstants.BOLD.getMark()
+                    rtn += OdfSimpleConstants.BOLD.getMark() + OdfSimpleConstants.escape(sc.getText()) + OdfSimpleConstants.BOLD.getMark()
                     break
                 case SpanType.ITALIC:
-                    rtn += OdfSimpleConstants.ITALIC.getMark() + OdfSimpleWrapper.escape(sc.getText()) + OdfSimpleConstants.ITALIC.getMark()
+                    rtn += OdfSimpleConstants.ITALIC.getMark() + OdfSimpleConstants.escape(sc.getText()) + OdfSimpleConstants.ITALIC.getMark()
                     break
                 case SpanType.LINK:
                     if(sc instanceof SpanContentLink) {
-                        String href = OdfSimpleConstants.LINK_HREF.getMark() + (SpanContentLink)sc.url + OdfSimpleConstants.LINK_HREF.getMark()
-                        rtn += OdfSimpleConstants.LINK.getMark() + href + OdfSimpleWrapper.escape(sc.getText()) + OdfSimpleConstants.LINK.getMark()
+                        String href = OdfSimpleConstants.LINK_HREF.getMark() + OdfSimpleConstants.escape(sc.url) + OdfSimpleConstants.LINK_HREF.getMark()
+                        rtn += OdfSimpleConstants.LINK.getMark() + href + OdfSimpleConstants.escape(sc.getText()) + OdfSimpleConstants.LINK.getMark()
                     } else {
-                        rtn += OdfSimpleWrapper.escape(sc.getText())
+                        rtn += OdfSimpleConstants.escape(sc.getText())
                     }
-                    break                    
+                    break
                 default:
                     throw new UnsupportedOperationException("Not implemented in OdfSimpleDocument yet")
             }

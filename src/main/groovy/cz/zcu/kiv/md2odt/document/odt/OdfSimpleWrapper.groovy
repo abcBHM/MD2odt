@@ -72,6 +72,28 @@ class OdfSimpleWrapper {
         }
     }
 
+    void linkAll() {
+        String mark = OdfSimpleConstants.LINK.getMark()
+        TextNavigation nav = new TextNavigation(mark+"[^"+mark+"]*"+mark, odt)
+        TextSelection sel = null
+        String hrMark = OdfSimpleConstants.LINK_HREF.getMark()
+
+        while(nav.hasNext()) {
+            sel = nav.nextSelection()
+            String link = sel.getText();
+            link = link.substring(mark.length()+hrMark.length(), link.lastIndexOf(hrMark))
+            sel.replaceWith(sel.getText().substring(mark.length() + 2*hrMark.length() + link.length(),sel.getText().length()-mark.length()))
+
+            Span sp = Span.newSpan(sel)
+            try {
+                sp.applyHyperlink(new URI(OdfSimpleConstants.reEscape(link)))
+            } catch (Exception e) {
+                sel.replaceWith(sel.getText() + OdfSimpleConstants.escape(" (") + link + OdfSimpleConstants.escape(") "))
+            }
+
+        }
+    }
+
     void reEscapeAll() {
         for (OdfSimpleConstants osc : OdfSimpleConstants.values()) {
             reEscape(osc.getEscape(), osc.getMark())
@@ -86,14 +108,6 @@ class OdfSimpleWrapper {
             sel = nav.nextSelection()
             sel.replaceWith(with)
         }
-    }
-
-    static String escape(String toEscape) {
-        String rtn = toEscape.replaceAll(OdfSimpleConstants.AMP_MARK,OdfSimpleConstants.AMP_ESCAPE)   //& has to be replaced first
-        for (OdfSimpleConstants osc : OdfSimpleConstants.values()) {
-            rtn = rtn.replaceAll(osc.getMark(), osc.getEscape())
-        }
-        return rtn
     }
 
     private void addList(String listHeading, java.util.List<String> listItems, ListDecorator decorator) {
@@ -123,6 +137,7 @@ class OdfSimpleWrapper {
     }
 
     void save(String documentPath) {
+        linkAll()
         italicAll()
         boldAll()
         reEscapeAll()

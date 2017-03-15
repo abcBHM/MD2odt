@@ -7,7 +7,7 @@ enum OdfSimpleConstants {
     ITALIC("<", "&italic;"),
     BOLD(">", "&bold;"),
     LINK("#", "&link;"),
-    LINK_HREF("^", "&lhref;")
+    LINK_HREF("@", "&lhref;")
 
 
     static String AMP_MARK = "&"
@@ -27,5 +27,22 @@ enum OdfSimpleConstants {
 
     String getEscape() {
         return escape
+    }
+
+    static String escape(String toEscape) {
+        String rtn = toEscape.replaceAll(AMP_MARK, AMP_ESCAPE)   //& has to be replaced first
+        for (OdfSimpleConstants osc : values()) {
+            rtn = rtn.replaceAll(osc.getMark(), osc.getEscape())
+        }
+        return rtn
+    }
+
+    static String reEscape(String toReEscape) {
+        String rtn = toReEscape
+        for (OdfSimpleConstants osc : values()) {
+            rtn = rtn.replaceAll(osc.getEscape(), osc.getMark())
+        }
+        rtn = rtn.replaceAll(AMP_ESCAPE, AMP_MARK)   //& has to be replaced last
+        return rtn
     }
 }

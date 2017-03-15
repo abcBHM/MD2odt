@@ -63,8 +63,23 @@ class OdfSimpleWrapperTest {
     }
 
     @Test
+    void linkAllTest() throws Exception {
+        odt.addParagraph("#@"+ OdfSimpleConstants.escape("https://www.seznam.cz/") +"@pokus#")
+        odt.linkAll()
+        assert odt.getLastNode().getTextContent().equals("pokus")
+        odt.save("test.odt")
+    }
+
+    @Test
+    void linkAllExceptionTest() throws Exception {
+        odt.addParagraph("#@"+ OdfSimpleConstants.escape("wwwsezn^amcz") +"@pokus#")
+        odt.linkAll()
+        assert odt.getLastNode().getTextContent().equals("pokus (wwwsezn^amcz) ")
+    }
+
+    @Test
     void reEscapeAllTest() throws Exception {
-        String inp = OdfSimpleWrapper.escape("<&>&&<> &bold; text &bold; other") + "<italic<" + OdfSimpleWrapper.escape("<non-Italic<")
+        String inp = OdfSimpleConstants.escape("<&>&&<> &bold; text &bold; other") + "<italic<" + OdfSimpleConstants.escape("<non-Italic<")
         String exp = "<&>&&<> &bold; text &bold; other" + "italic" + "<non-Italic<"
         odt.addParagraph(inp)
         odt.italicAll()

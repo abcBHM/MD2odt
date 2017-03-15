@@ -22,10 +22,13 @@ class OdfSimpleWrapperTest {
     void example() throws Exception {
         String inp = OdfSimpleWrapper.escape("<&>&&<> &bold; text &bold; other") + "<italic<" + OdfSimpleWrapper.escape("<non-Italic<")
         String exp = "<&>&&<> &bold; text &bold; other" + "italic" + "<non-Italic<"
+        odt.addHeading("Heading -10",-10)
+        odt.addHeading("Heading 100",100)
         odt.addParagraph(inp)
-        odt.emphasiseAll()
+        odt.italicAll()
         odt.reEscapeAll()
         assert odt.getLastNode().getTextContent().equals(exp)
+     //   odt.save("test.odt")
     }
 
     @Ignore
@@ -38,13 +41,24 @@ class OdfSimpleWrapperTest {
     }
 
     @Test
-    void emphasiseAllTest() throws Exception {
+    void italicAllTest() throws Exception {
         odt.addParagraph("This <is< not <Sparta<!")
         Node parNode = odt.getLastNode()
         //println(parNode.getTextContent())
-        odt.emphasiseAll()
+        odt.italicAll()
         //println(parNode.getTextContent())
         assert parNode.getTextContent().equals("This is not Sparta!")
+        //odt.save("test.odt")
+    }
+
+    @Test
+    void boldAllTest() throws Exception {
+        odt.addParagraph("This >is> not <Sp>art>a<!")
+        Node parNode = odt.getLastNode()
+        //println(parNode.getTextContent())
+        odt.boldAll()
+        //println(parNode.getTextContent())
+        assert parNode.getTextContent().equals("This is not <Sparta<!")
         //odt.save("test.odt")
     }
 
@@ -53,7 +67,7 @@ class OdfSimpleWrapperTest {
         String inp = OdfSimpleWrapper.escape("<&>&&<> &bold; text &bold; other") + "<italic<" + OdfSimpleWrapper.escape("<non-Italic<")
         String exp = "<&>&&<> &bold; text &bold; other" + "italic" + "<non-Italic<"
         odt.addParagraph(inp)
-        odt.emphasiseAll()
+        odt.italicAll()
         odt.reEscapeAll()
         assert odt.getLastNode().getTextContent().equals(exp)
     }
@@ -65,15 +79,6 @@ class OdfSimpleWrapperTest {
     @Test(expected = FileNotFoundException.class)
     void templateNotFound2() throws Exception {
         odt = new OdfSimpleWrapper(new File("wrongtemplate.odt"))
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    void addHeadingIllegalArgument1() throws Exception {
-        odt.addHeading("Nadpis",0)
-    }
-    @Test(expected = IllegalArgumentException.class)
-    void addHeadingIllegalArgument2() throws Exception {
-        odt.addHeading("Nadpis",11)
     }
 
     @Ignore

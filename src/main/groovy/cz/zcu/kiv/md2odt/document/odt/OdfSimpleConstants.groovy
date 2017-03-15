@@ -5,7 +5,10 @@ package cz.zcu.kiv.md2odt.document.odt
  */
 enum OdfSimpleConstants {
     ITALIC("<", "&italic;"),
-    BOLD(">", "&bold;")
+    BOLD(">", "&bold;"),
+    LINK("#", "&link;"),
+    LINK_HREF("^", "&lhref;")
+
 
     static String AMP_MARK = "&"
     static String AMP_ESCAPE = "&amp;"

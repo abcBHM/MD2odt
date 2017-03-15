@@ -5,6 +5,7 @@ import org.odftoolkit.simple.common.navigation.TextNavigation
 import org.odftoolkit.simple.common.navigation.TextSelection
 import org.odftoolkit.simple.style.DefaultStyleHandler
 import org.odftoolkit.simple.style.StyleTypeDefinitions
+import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle
 import org.odftoolkit.simple.text.Span
 import org.odftoolkit.simple.text.list.BulletDecorator
 import org.odftoolkit.simple.text.list.List
@@ -18,8 +19,8 @@ import org.w3c.dom.Node
  * http://incubator.apache.org/odftoolkit/simple/document/cookbook/index.html
  */
 class OdfSimpleWrapper {
-    TextDocument odt
-    Node lastNode
+    private TextDocument odt
+    private Node lastNode
 
     OdfSimpleWrapper() {
         odt = TextDocument.newTextDocument()
@@ -36,9 +37,6 @@ class OdfSimpleWrapper {
     }
 
     void addHeading(String text, int level) {
-        if (level < 1 || level > 10)
-            throw new IllegalArgumentException("Heading level '"+level+"' is not supported.")
-
         def paragraph = odt.addParagraph(text)
         paragraph.applyHeading(true, level)
 
@@ -53,8 +51,15 @@ class OdfSimpleWrapper {
         lastNode.getAttributes().getNamedItem("text:style-name").setNodeValue("Text_20_body")
     }
 
-    void emphasiseAll() {
-        String mark = OdfSimpleConstants.ITALIC.getMark()
+    void italicAll() {
+        style(OdfSimpleConstants.ITALIC.getMark(), StyleTypeDefinitions.FontStyle.ITALIC)
+    }
+
+    void boldAll() {
+        style(OdfSimpleConstants.BOLD.getMark(), StyleTypeDefinitions.FontStyle.BOLD)
+    }
+
+    private void style(String mark, FontStyle style) {
         TextNavigation nav = new TextNavigation(mark+"[^"+mark+"]*"+mark, odt)
         TextSelection sel = null
 
@@ -63,7 +68,7 @@ class OdfSimpleWrapper {
             sel.replaceWith(sel.getText().substring(mark.length(),sel.getText().length()-mark.length()))
             Span sp = Span.newSpan(sel)
             DefaultStyleHandler dsh = sp.getStyleHandler()
-            dsh.getTextPropertiesForWrite().setFontStyle(StyleTypeDefinitions.FontStyle.ITALIC)
+            dsh.getTextPropertiesForWrite().setFontStyle(style)
         }
     }
 
@@ -74,7 +79,7 @@ class OdfSimpleWrapper {
         reEscape(OdfSimpleConstants.AMP_ESCAPE, OdfSimpleConstants.AMP_MARK)
     }
 
-    void reEscape(String what, String with) {
+    private void reEscape(String what, String with) {
         TextNavigation nav = new TextNavigation(what, odt)
         TextSelection sel = null
         while(nav.hasNext()) {
@@ -118,9 +123,9 @@ class OdfSimpleWrapper {
     }
 
     void save(String documentPath) {
+        italicAll()
+        boldAll()
+        reEscapeAll()
         odt.save(documentPath)
-    }
-    void save(File file) {
-        odt.save(file)
     }
 }

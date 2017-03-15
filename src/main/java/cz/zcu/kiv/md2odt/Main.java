@@ -8,7 +8,7 @@ package cz.zcu.kiv.md2odt;
 public class Main {
 
     public static void main(String... args) {
-        GroovyClass.method();
+
     }
 
 }

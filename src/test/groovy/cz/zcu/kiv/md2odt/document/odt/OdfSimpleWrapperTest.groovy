@@ -20,15 +20,9 @@ class OdfSimpleWrapperTest {
     @Ignore
     @Test
     void example() throws Exception {
-        String inp = OdfSimpleWrapper.escape("<&>&&<> &bold; text &bold; other") + "<italic<" + OdfSimpleWrapper.escape("<non-Italic<")
-        String exp = "<&>&&<> &bold; text &bold; other" + "italic" + "<non-Italic<"
-        odt.addHeading("Heading -10",-10)
-        odt.addHeading("Heading 100",100)
-        odt.addParagraph(inp)
-        odt.italicAll()
-        odt.reEscapeAll()
-        assert odt.getLastNode().getTextContent().equals(exp)
-     //   odt.save("test.odt")
+        odt.addParagraph("par")
+        println(odt.lastNode.toString())
+        odt.save("test.odt")
     }
 
     @Ignore
@@ -43,23 +37,15 @@ class OdfSimpleWrapperTest {
     @Test
     void italicAllTest() throws Exception {
         odt.addParagraph("This <is< not <Sparta<!")
-        Node parNode = odt.getLastNode()
-        //println(parNode.getTextContent())
         odt.italicAll()
-        //println(parNode.getTextContent())
-        assert parNode.getTextContent().equals("This is not Sparta!")
-        //odt.save("test.odt")
+        assert odt.getLastNode().getTextContent().equals("This is not Sparta!")
     }
 
     @Test
     void boldAllTest() throws Exception {
         odt.addParagraph("This >is> not <Sp>art>a<!")
-        Node parNode = odt.getLastNode()
-        //println(parNode.getTextContent())
         odt.boldAll()
-        //println(parNode.getTextContent())
-        assert parNode.getTextContent().equals("This is not <Sparta<!")
-        //odt.save("test.odt")
+        assert odt.getLastNode().getTextContent().equals("This is not <Sparta<!")
     }
 
     @Test
@@ -67,7 +53,6 @@ class OdfSimpleWrapperTest {
         odt.addParagraph("#@"+ OdfSimpleConstants.escape("https://www.seznam.cz/") +"@pokus#")
         odt.linkAll()
         assert odt.getLastNode().getTextContent().equals("pokus")
-        odt.save("test.odt")
     }
 
     @Test

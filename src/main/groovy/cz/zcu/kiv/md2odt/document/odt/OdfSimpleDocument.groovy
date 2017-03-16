@@ -31,11 +31,14 @@ class OdfSimpleDocument implements Document{
                     break
                 case SpanType.LINK:
                     if(sc instanceof SpanContentLink) {
-                        String href = OdfSimpleConstants.LINK_HREF.getMark() + OdfSimpleConstants.escape(sc.url) + OdfSimpleConstants.LINK_HREF.getMark()
+                        String href = OdfSimpleConstants.LINK_HREF.getMark() + OdfSimpleConstants.escape(sc.getUrl()) + OdfSimpleConstants.LINK_HREF.getMark()
                         rtn += OdfSimpleConstants.LINK.getMark() + href + OdfSimpleConstants.escape(sc.getText()) + OdfSimpleConstants.LINK.getMark()
                     } else {
                         rtn += OdfSimpleConstants.escape(sc.getText())
                     }
+                    break
+                case SpanType.CODE:
+                    rtn += OdfSimpleConstants.INLINE_CODE.getMark() + OdfSimpleConstants.escape(sc.getText()) + OdfSimpleConstants.INLINE_CODE.getMark()
                     break
                 default:
                     throw new UnsupportedOperationException("Not implemented in OdfSimpleDocument yet")

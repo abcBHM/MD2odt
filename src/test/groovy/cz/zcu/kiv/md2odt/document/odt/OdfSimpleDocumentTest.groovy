@@ -42,4 +42,12 @@ class OdfSimpleDocumentTest {
         assert doc.getOdfSimpleWrapper().getLastNode().getTextContent().equals("#@www.sez&link;nam.cz@pokus#")
         //doc.save("test.odt")
     }
+
+    @Test
+    void addParagraphInlineCodeTest() throws Exception {
+        def pc = ParagraphContentBuilder.builder().addCode("new OdfSimpleDocument();").build()
+        doc.addParagraph(pc)
+        assert doc.getOdfSimpleWrapper().getLastNode().getTextContent().equals("'new OdfSimpleDocument();'")
+        //doc.save("test.odt")
+    }
 }

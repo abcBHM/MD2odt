@@ -1,9 +1,13 @@
 package cz.zcu.kiv.md2odt.document.odt
 
+import org.odftoolkit.odfdom.type.Color
+import org.odftoolkit.simple.Document
 import org.odftoolkit.simple.TextDocument
 import org.odftoolkit.simple.common.navigation.TextNavigation
 import org.odftoolkit.simple.common.navigation.TextSelection
+import org.odftoolkit.simple.style.Border
 import org.odftoolkit.simple.style.DefaultStyleHandler
+import org.odftoolkit.simple.style.Font
 import org.odftoolkit.simple.style.StyleTypeDefinitions
 import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle
 import org.odftoolkit.simple.text.Span
@@ -94,6 +98,25 @@ class OdfSimpleWrapper {
         }
     }
 
+    void inlineCodeAll() {
+        String mark = OdfSimpleConstants.INLINE_CODE.getMark()
+        TextNavigation nav = new TextNavigation(mark+"[^"+mark+"]*"+mark, odt)
+        TextSelection sel = null
+
+        while(nav.hasNext()) {
+            sel = nav.nextSelection()
+            sel.replaceWith(sel.getText().substring(mark.length(),sel.getText().length()-mark.length()))
+            Span sp = Span.newSpan(sel)
+            //println(sp.getTextContent())
+            DefaultStyleHandler dsh = sp.getStyleHandler()
+           // println(dsh.getStyleElementForWrite().toString())
+            //dsh.getStyleElementForWrite().setStyleParentStyleNameAttribute("Text_20_body")
+           // println(dsh.getStyleElementForWrite().toString())
+            dsh.getTextPropertiesForWrite().setFont(new Font("Courier New", FontStyle.REGULAR, 12))
+            //dsh.getTextPropertiesForWrite().setFontName("Courier New")
+        }
+    }
+
     void reEscapeAll() {
         for (OdfSimpleConstants osc : OdfSimpleConstants.values()) {
             reEscape(osc.getEscape(), osc.getMark())
@@ -138,6 +161,7 @@ class OdfSimpleWrapper {
 
     void save(String documentPath) {
         linkAll()
+        inlineCodeAll()
         italicAll()
         boldAll()
         reEscapeAll()

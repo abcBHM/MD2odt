@@ -78,6 +78,13 @@ class OdfSimpleWrapperTest {
     }
 
     @Test
+    void inlineCodeAllTest() throws Exception {
+        odt.addParagraph("'"+ OdfSimpleConstants.escape("this.add(something)") +"'")
+        odt.inlineCodeAll()
+        assert odt.getLastNode().getTextContent().equals("this.add(something)") && odt.getLastNode().getChildNodes().item(1).getAttributes().item(0).toString().startsWith("style-name=")
+    }
+
+    @Test
     void reEscapeAllTest() throws Exception {
         String inp = OdfSimpleConstants.escape("<&>&&<> &bold; text &bold; other") + "<italic<" + OdfSimpleConstants.escape("<non-Italic<")
         String exp = "<&>&&<> &bold; text &bold; other" + "italic" + "<non-Italic<"

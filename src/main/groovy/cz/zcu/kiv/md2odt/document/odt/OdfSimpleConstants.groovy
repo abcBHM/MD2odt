@@ -7,7 +7,9 @@ enum OdfSimpleConstants {
     ITALIC("<", "&italic;"),
     BOLD(">", "&bold;"),
     LINK("#", "&link;"),
-    LINK_HREF("@", "&lhref;")
+    LINK_HREF("@", "&lhref;"),
+    INLINE_CODE("'", "&icode;")
+
 
 
     static String AMP_MARK = "&"

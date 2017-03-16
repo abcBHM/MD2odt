@@ -68,9 +68,7 @@
                     </descriptorRefs>
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
-                        <manifest>
-                            <mainClass>cz.zcu.kiv.md2odt.Main</mainClass>
-                        </manifest>
+                        <manifest></manifest>
                     </archive>
                 </configuration>
                 <executions>
@@ -100,6 +98,27 @@
                             <goal>testCompile</goal>
                             <goal>removeStubs</goal>
                             <goal>removeTestStubs</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Codecov -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.9</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>

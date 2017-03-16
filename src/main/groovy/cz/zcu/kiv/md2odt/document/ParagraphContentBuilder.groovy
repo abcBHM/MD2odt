@@ -3,7 +3,7 @@ package cz.zcu.kiv.md2odt.document
 /**
  * Builder for {@link ParagraphContent}.
  *
- * @version 2017-03-15
+ * @version 2017-03-16
  * @author Patrik Harag
  */
 class ParagraphContentBuilder {
@@ -54,6 +54,10 @@ class ParagraphContentBuilder {
 
     ParagraphContentBuilder addBold(String text) {
         addText(text, SpanType.BOLD)
+    }
+
+    ParagraphContentBuilder addCode(String text) {
+        addText(text, SpanType.CODE)
     }
 
     ParagraphContentBuilder addLink(String text, String url) {

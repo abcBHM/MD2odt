@@ -10,7 +10,7 @@ import static cz.zcu.kiv.md2odt.document.SpanType.*
 
 /**
  *
- * @version 2017-03-15
+ * @version 2017-03-16
  * @author Patrik Harag
  */
 class ParagraphCollectorTest {
@@ -72,6 +72,14 @@ class ParagraphCollectorTest {
         // TODO: nested formatting is ignored
         // assert paragraph.list*.text == ["a", "b"]
         // assert paragraph.list*.type == [ITALIC, BOLD]
+    }
+
+    @Test
+    void inlineCode() {
+        def paragraph = paragraph("text`code`text")
+
+        assert paragraph.list*.text == ["text", "code", "text"]
+        assert paragraph.list*.type == [REGULAR, CODE, REGULAR]
     }
 
     @Test

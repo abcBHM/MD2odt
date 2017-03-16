@@ -1,5 +1,6 @@
 package cz.zcu.kiv.md2odt.filler.md
 
+import com.vladsch.flexmark.ast.Code as AstCode
 import com.vladsch.flexmark.ast.Emphasis as AstEmphasis
 import com.vladsch.flexmark.ast.Link as AstLink
 import com.vladsch.flexmark.ast.SoftLineBreak as AstSoftLineBreak
@@ -12,7 +13,7 @@ import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
 
 /**
  *
- * @version 2017-03-15
+ * @version 2017-03-16
  * @author Patrik Harag
  */
 class ParagraphCollector {
@@ -33,6 +34,11 @@ class ParagraphCollector {
 
                 case AstStrongEmphasis:
                     builder.addBold(flatten(node))
+                    break
+
+                case AstCode:
+                    String code = (node as AstCode).chars.toString()
+                    builder.addCode(code[1..-2])  // without `
                     break
 
                 case AstLink:

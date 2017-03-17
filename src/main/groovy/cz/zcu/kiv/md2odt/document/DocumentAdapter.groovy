@@ -24,4 +24,9 @@ trait DocumentAdapter implements Document {
     void addQuoteBlock(List<ParagraphContent> paragraphs) {
         throw new UnsupportedOperationException()
     }
+
+    @Override
+    void addHorizontalRule() {
+        throw new UnsupportedOperationException()
+    }
 }

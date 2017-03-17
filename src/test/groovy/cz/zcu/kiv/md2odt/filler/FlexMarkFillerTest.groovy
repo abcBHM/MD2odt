@@ -105,4 +105,14 @@ class FlexMarkFillerTest {
         assert out[0].list*.text == [["quote 1"], ["quote", " 2.1\nquote 2.2"]]
     }
 
+    @Test
+    void horizontalRule() {
+        int i = 0
+        def documentMock = [addHorizontalRule: { i++ }] as Document
+
+        filler.fill("___\n---\n***\n", documentMock)
+
+        assert i == 3
+    }
+
 }

@@ -13,11 +13,12 @@ import cz.zcu.kiv.md2odt.filler.Filler
  */
 class FlexMarkFiller implements Filler {
 
-    private static final List<AstNodeHandler<? extends AstNode>> converters = [
+    private static final List<AstNodeHandler> converters = [
             new ParagraphHandler(),
             new FencedCodeBlockHandler(),
             new IntendedCodeBlockHandler(),
             new BlockQuoteHandler(),
+            new HorizontalRuleHandler(),
     ]
 
 

@@ -15,4 +15,6 @@ interface Document {
 
     void addQuoteBlock(List<ParagraphContent> paragraphs)
 
+    void addHorizontalRule()
+
 }

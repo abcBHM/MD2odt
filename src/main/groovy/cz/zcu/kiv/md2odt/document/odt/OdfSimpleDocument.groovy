@@ -1,6 +1,6 @@
 package cz.zcu.kiv.md2odt.document.odt
 
-import cz.zcu.kiv.md2odt.document.Document
+import cz.zcu.kiv.md2odt.document.DocumentAdapter
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.SpanContent
 import cz.zcu.kiv.md2odt.document.SpanContentLink
@@ -9,7 +9,7 @@ import cz.zcu.kiv.md2odt.document.SpanType
 /**
  * Created by pepe on 15. 3. 2017.
  */
-class OdfSimpleDocument implements Document{
+class OdfSimpleDocument implements DocumentAdapter {
     private OdfSimpleWrapper doc
 
     OdfSimpleDocument() {

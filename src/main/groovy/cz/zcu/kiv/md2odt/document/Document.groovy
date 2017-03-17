@@ -13,4 +13,6 @@ interface Document {
 
     void addCodeBlock(String code, String lang)
 
+    void addQuoteBlock(List<ParagraphContent> paragraphs)
+
 }

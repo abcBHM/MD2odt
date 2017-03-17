@@ -17,6 +17,7 @@ class FlexMarkFiller implements Filler {
             new ParagraphHandler(),
             new FencedCodeBlockHandler(),
             new IntendedCodeBlockHandler(),
+            new BlockQuoteHandler(),
     ]
 
 

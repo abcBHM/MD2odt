@@ -89,4 +89,20 @@ class FlexMarkFillerTest {
         assert out[0] == "if (true) {\n  pass;\n}"
     }
 
+    @Test
+    void quoteBlock() {
+        List<ParagraphContent> out = []
+        def documentMock = [addQuoteBlock: out.&push] as Document
+
+        filler.fill("""
+            > quote 1
+            >
+            > *quote* 2.1
+            > quote 2.2
+        """.stripIndent(), documentMock)
+
+        assert out.size() == 1
+        assert out[0].list*.text == [["quote 1"], ["quote", " 2.1\nquote 2.2"]]
+    }
+
 }

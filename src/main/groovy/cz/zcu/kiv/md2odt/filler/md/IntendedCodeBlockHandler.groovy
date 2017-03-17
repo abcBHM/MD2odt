@@ -10,13 +10,13 @@ import cz.zcu.kiv.md2odt.document.Document
  * @version 2017-03-17
  * @author Patrik Harag
  */
-class IntendedCodeBlockHandler implements AstNodeHandler<AstIndentedCodeBlock> {
+class IntendedCodeBlockHandler implements AstNodeHandler {
 
     private static final int INDENT = 4
     private static final String INDENT_STR = " " * INDENT
 
     @Override
-    Class<AstIndentedCodeBlock> getTarget() {
+    Class<?> getTarget() {
         return AstIndentedCodeBlock
     }
 

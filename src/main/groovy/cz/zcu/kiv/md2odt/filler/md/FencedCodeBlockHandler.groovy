@@ -10,10 +10,10 @@ import cz.zcu.kiv.md2odt.document.Document
  * @version 2017-03-17
  * @author Patrik Harag
  */
-class FencedCodeBlockHandler implements AstNodeHandler<AstFencedCodeBlock> {
+class FencedCodeBlockHandler implements AstNodeHandler {
 
     @Override
-    Class<AstFencedCodeBlock> getTarget() {
+    Class<?> getTarget() {
         return AstFencedCodeBlock
     }
 

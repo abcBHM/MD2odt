@@ -20,4 +20,8 @@ trait DocumentAdapter implements Document {
         throw new UnsupportedOperationException()
     }
 
+    @Override
+    void addQuoteBlock(List<ParagraphContent> paragraphs) {
+        throw new UnsupportedOperationException()
+    }
 }

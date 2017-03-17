@@ -9,9 +9,9 @@ import cz.zcu.kiv.md2odt.document.Document
  * @version 2017-03-17
  * @author Patrik Harag
  */
-interface AstNodeHandler<T extends AstNode> {
+interface AstNodeHandler {
 
-    Class<T> getTarget()
+    Class<?> getTarget()
 
     void handle(AstNode node, Document document)
 

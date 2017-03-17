@@ -10,10 +10,10 @@ import cz.zcu.kiv.md2odt.document.Document
  * @version 2017-03-17
  * @author Patrik Harag
  */
-class ParagraphHandler implements AstNodeHandler<AstParagraph> {
+class ParagraphHandler implements AstNodeHandler {
 
     @Override
-    Class<AstParagraph> getTarget() {
+    Class<?> getTarget() {
         return AstParagraph
     }
 

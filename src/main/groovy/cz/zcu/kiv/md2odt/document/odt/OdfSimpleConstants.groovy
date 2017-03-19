@@ -11,7 +11,6 @@ enum OdfSimpleConstants {
     INLINE_CODE("'", "&icode;")
 
 
-
     static String AMP_MARK = "&"
     static String AMP_ESCAPE = "&amp;"
 

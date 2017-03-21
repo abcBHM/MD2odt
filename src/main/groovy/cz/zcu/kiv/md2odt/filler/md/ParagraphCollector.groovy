@@ -2,6 +2,7 @@ package cz.zcu.kiv.md2odt.filler.md
 
 import com.vladsch.flexmark.ast.Code as AstCode
 import com.vladsch.flexmark.ast.Emphasis as AstEmphasis
+import com.vladsch.flexmark.ast.HtmlEntity as AstHtmlEntity
 import com.vladsch.flexmark.ast.Link as AstLink
 import com.vladsch.flexmark.ast.SoftLineBreak as AstSoftLineBreak
 import com.vladsch.flexmark.ast.StrongEmphasis as AstStrongEmphasis
@@ -10,10 +11,11 @@ import com.vladsch.flexmark.ast.Paragraph as AstParagraph
 import com.vladsch.flexmark.ast.Text as AstText
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
+import org.jsoup.Jsoup
 
 /**
  *
- * @version 2017-03-16
+ * @version 2017-03-21
  * @author Patrik Harag
  */
 class ParagraphCollector {
@@ -25,6 +27,7 @@ class ParagraphCollector {
             switch (node) {
                 case AstText:
                 case AstSoftLineBreak:
+                case AstHtmlEntity:
                     builder.addRegular(flatten(node))
                     break
 
@@ -56,10 +59,14 @@ class ParagraphCollector {
     }
 
     static String flatten(AstNode node) {
-        if (node instanceof AstText)
-            return node.chars.toString()
-        else if (node instanceof AstSoftLineBreak)
-            return '\n'
+        switch (node) {
+            case AstText:
+                return node.chars.toString()
+            case AstSoftLineBreak:
+                return '\n'
+            case AstHtmlEntity:
+                return Jsoup.parse(node.chars.toString()).text()
+        }
 
         node.children.collect { flatten(it) }.join("")
     }

@@ -35,6 +35,13 @@
             <version>0.8.1-incubating</version>
         </dependency>
 
+        <!-- JSOUP -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.10.2</version>
+        </dependency>
+
         <!-- TESTING -->
         <dependency>
             <groupId>junit</groupId>

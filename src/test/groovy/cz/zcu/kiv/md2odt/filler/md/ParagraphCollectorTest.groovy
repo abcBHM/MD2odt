@@ -9,7 +9,7 @@ import static cz.zcu.kiv.md2odt.document.SpanType.*
 
 /**
  *
- * @version 2017-03-16
+ * @version 2017-03-21
  * @author Patrik Harag
  */
 class ParagraphCollectorTest {
@@ -98,6 +98,14 @@ class ParagraphCollectorTest {
         assert paragraph.list*.text == ["link"]
         assert paragraph.list*.type == [LINK]
         assert paragraph.list*.url  == ["www.example.com"]
+    }
+
+    @Test
+    void htmlEntity() {
+        def paragraph = paragraph("&amp;")
+
+        assert paragraph.list*.text == ["&"]
+        assert paragraph.list*.type == [REGULAR]
     }
 
 }

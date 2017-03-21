@@ -1,9 +1,8 @@
-package cz.zcu.kiv.md2odt.filler
+package cz.zcu.kiv.md2odt.filler.md
 
 import com.vladsch.flexmark.ast.Paragraph
 import com.vladsch.flexmark.parser.Parser
 import cz.zcu.kiv.md2odt.document.ParagraphContent
-import cz.zcu.kiv.md2odt.filler.md.ParagraphCollector
 import org.junit.Test
 
 import static cz.zcu.kiv.md2odt.document.SpanType.*

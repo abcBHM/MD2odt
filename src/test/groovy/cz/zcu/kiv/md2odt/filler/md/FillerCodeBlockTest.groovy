@@ -1,32 +1,16 @@
-package cz.zcu.kiv.md2odt.filler
+package cz.zcu.kiv.md2odt.filler.md
 
 import cz.zcu.kiv.md2odt.document.Document
-import cz.zcu.kiv.md2odt.document.ParagraphContent
-import cz.zcu.kiv.md2odt.filler.md.FlexMarkFiller
 import org.junit.Test
 
 /**
  *
- * @version 2017-03-17
+ * @version 2017-03-21
  * @author Patrik Harag
  */
-class FlexMarkFillerTest {
+class FillerCodeBlockTest {
 
     def filler = new FlexMarkFiller()
-
-    @Test
-    void paragraph() {
-        // more detailed tests contains ParagraphCollectorTest
-
-        def out = []
-        def documentMock = [addParagraph: out.&push] as Document
-
-        filler.fill("hello *world*!", documentMock)
-
-        assert out.size() == 1
-        assert out[0] instanceof ParagraphContent
-        assert out[0].list*.text == ["hello ", "world", "!"]
-    }
 
     @Test
     void codeBlock() {
@@ -87,32 +71,6 @@ class FlexMarkFillerTest {
 
         assert out.size() == 1
         assert out[0] == "if (true) {\n  pass;\n}"
-    }
-
-    @Test
-    void quoteBlock() {
-        List<ParagraphContent> out = []
-        def documentMock = [addQuoteBlock: out.&push] as Document
-
-        filler.fill("""
-            > quote 1
-            >
-            > *quote* 2.1
-            > quote 2.2
-        """.stripIndent(), documentMock)
-
-        assert out.size() == 1
-        assert out[0].list*.text == [["quote 1"], ["quote", " 2.1\nquote 2.2"]]
-    }
-
-    @Test
-    void horizontalRule() {
-        int i = 0
-        def documentMock = [addHorizontalRule: { i++ }] as Document
-
-        filler.fill("___\n---\n***\n", documentMock)
-
-        assert i == 3
     }
 
 }

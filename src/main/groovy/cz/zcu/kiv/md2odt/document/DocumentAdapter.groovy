@@ -29,4 +29,9 @@ trait DocumentAdapter implements Document {
     void addHorizontalRule() {
         throw new UnsupportedOperationException()
     }
+
+    @Override
+    void addHeading(String text, int level) {
+        throw new UnsupportedOperationException()
+    }
 }

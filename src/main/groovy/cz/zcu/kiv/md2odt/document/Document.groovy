@@ -9,6 +9,8 @@ interface Document {
 
     void addParagraph(ParagraphContent content)
 
+    void addHeading(String text, int level)
+
     void addCodeBlock(String code)
 
     void addCodeBlock(String code, String lang)

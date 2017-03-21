@@ -55,7 +55,7 @@ class ParagraphCollector {
         builder.build()
     }
 
-    private String flatten(AstNode node) {
+    static String flatten(AstNode node) {
         if (node instanceof AstText)
             return node.chars.toString()
         else if (node instanceof AstSoftLineBreak)

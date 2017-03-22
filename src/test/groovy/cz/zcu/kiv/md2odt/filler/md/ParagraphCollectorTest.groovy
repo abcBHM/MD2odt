@@ -9,7 +9,7 @@ import static cz.zcu.kiv.md2odt.document.SpanType.*
 
 /**
  *
- * @version 2017-03-21
+ * @version 2017-03-22
  * @author Patrik Harag
  */
 class ParagraphCollectorTest {
@@ -106,6 +106,26 @@ class ParagraphCollectorTest {
 
         assert paragraph.list*.text == ["&"]
         assert paragraph.list*.type == [REGULAR]
+    }
+
+    @Test
+    void image() {
+        def paragraph = paragraph('![alt text](img.png "title")')
+
+        assert paragraph.list*.text == ["title"]
+        assert paragraph.list*.url == ["img.png"]
+        assert paragraph.list*.alt == ["alt text"]
+        assert paragraph.list*.type == [IMAGE]
+    }
+
+    @Test
+    void imageNoTitle() {
+        def paragraph = paragraph('![alt text](img.png)')
+
+        assert paragraph.list*.text == [""]
+        assert paragraph.list*.url == ["img.png"]
+        assert paragraph.list*.alt == ["alt text"]
+        assert paragraph.list*.type == [IMAGE]
     }
 
 }

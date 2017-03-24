@@ -25,6 +25,7 @@ class ParagraphContentBuilder {
         new ParagraphContentBuilder()
     }
 
+
     private final List<SpanContent> buffer = []
 
     private ParagraphContentBuilder() { }

@@ -2,14 +2,16 @@ package cz.zcu.kiv.md2odt.document
 
 /**
  *
- * @version 2017-03-17
+ * @version 2017-03-24
  * @author Patrik Harag
  */
 interface Document {
 
+    void addHeading(String text, int level)
+
     void addParagraph(ParagraphContent content)
 
-    void addHeading(String text, int level)
+    void addList(ListContent content)
 
     void addCodeBlock(String code)
 

@@ -8,7 +8,7 @@ import cz.zcu.kiv.md2odt.filler.Filler
 
 /**
  *
- * @version 2017-03-17
+ * @version 2017-03-24
  * @author Patrik Harag
  */
 class FlexMarkFiller implements Filler {
@@ -20,6 +20,7 @@ class FlexMarkFiller implements Filler {
             new BlockQuoteHandler(),
             new HorizontalRuleHandler(),
             new HeadingHandler(),
+            new ListHandler(),
     ]
 
 
@@ -45,7 +46,7 @@ class FlexMarkFiller implements Filler {
             node.children.each { walk(it, document) }
 
         } else {
-            def converter = converters.find { it.target == node.class }
+            def converter = converters.find { it.target.isInstance(node) }
 
             if (converter)
                 converter.handle(node, document)

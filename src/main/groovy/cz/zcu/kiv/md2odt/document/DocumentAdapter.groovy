@@ -3,7 +3,7 @@ package cz.zcu.kiv.md2odt.document
 /**
  * Adapter for {@link Document}.
  *
- * @version 2017-03-17
+ * @version 2017-03-24
  * @author Patrik Harag
  */
 trait DocumentAdapter implements Document {
@@ -32,6 +32,11 @@ trait DocumentAdapter implements Document {
 
     @Override
     void addHeading(String text, int level) {
+        throw new UnsupportedOperationException()
+    }
+
+    @Override
+    void addList(ListContent content) {
         throw new UnsupportedOperationException()
     }
 }

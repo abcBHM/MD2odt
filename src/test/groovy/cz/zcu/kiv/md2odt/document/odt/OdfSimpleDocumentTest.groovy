@@ -72,6 +72,12 @@ class OdfSimpleDocumentTest {
     }
 
     @Test
+    void addCodeBlockTest() throws Exception {
+        doc.addCodeBlock("List<> x = new ArrayList<>()", "java")
+        assert doc.getOdfSimpleWrapper().getLastNode().getTextContent().equals(OdfSimpleConstants.escape("List<> x = new ArrayList<>()"))
+    }
+
+    @Test
     void addHeadingTest() throws Exception {
         doc.addHeading("heading 1", 1)
         assert doc.getOdfSimpleWrapper().getLastNode().toString().equals("<text:h text:outline-level=\"1\" text:style-name=\"Heading_20_1\">heading 1</text:h>")

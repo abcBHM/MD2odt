@@ -80,13 +80,15 @@ class OdfSimpleDocument implements DocumentAdapter {
         doc.addParagraph(parToString(content))
     }
 
-  /*  void addCodeBlock(String code) {
+    @Override
+    void addCodeBlock(String code) {
         addCodeBlock(code, null)
     }
 
+    @Override
     void addCodeBlock(String code, String lang) {
-        throw new UnsupportedOperationException()
-    }*/
+        doc.addCodeBlock(OdfSimpleConstants.escape(code), lang);
+    }
 
     @Override
     void addQuoteBlock(List<ParagraphContent> paragraphs) {
@@ -102,7 +104,7 @@ class OdfSimpleDocument implements DocumentAdapter {
 
     @Override
     void addHeading(String text, int level) {
-        doc.addHeading(text, level)
+        doc.addHeading(OdfSimpleConstants.escape(text), level)
     }
 /*
     @Override

@@ -65,6 +65,17 @@ class OdfSimpleWrapper {
         lastNode = odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
     }
 
+    void addCodeBlock(String code, String lang) {
+        def paragraph = odt.addParagraph(code)
+        paragraph.getStyleHandler().textPropertiesForWrite.setFont(new Font("Courier New", FontStyle.REGULAR, 12))
+        paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginLeft(10)
+        paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginBottom(10)
+        paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginRight(10)
+        paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginTop(10)
+        //paragraph.getStyleHandler().getGraphicPropertiesForWrite().setFill(StyleTypeDefinitions.OdfDrawFill.SOLID, new Color(160,160,160))
+        lastNode = odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
+    }
+
     void italicAll() {
         style(OdfSimpleConstants.ITALIC.getMark(), StyleTypeDefinitions.FontStyle.ITALIC)
     }

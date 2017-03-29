@@ -1,6 +1,7 @@
 package cz.zcu.kiv.md2odt.document.odt
 
 import cz.zcu.kiv.md2odt.document.DocumentAdapter
+import cz.zcu.kiv.md2odt.document.ListContent
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.SpanContent
 import cz.zcu.kiv.md2odt.document.SpanContentLink
@@ -65,4 +66,34 @@ class OdfSimpleDocument implements DocumentAdapter {
     void addParagraph(ParagraphContent content) {
         doc.addParagraph(parToString(content))
     }
+
+  /*  void addCodeBlock(String code) {
+        addCodeBlock(code, null)
+    }
+
+    void addCodeBlock(String code, String lang) {
+        throw new UnsupportedOperationException()
+    }*/
+
+    @Override
+    void addQuoteBlock(List<ParagraphContent> paragraphs) {
+        for (ParagraphContent pc : paragraphs) {
+            doc.addQuoteParagraph(parToString(pc))
+        }
+    }
+
+ /*   @Override
+    void addHorizontalRule() {
+        throw new UnsupportedOperationException()
+    }*/
+
+    @Override
+    void addHeading(String text, int level) {
+        doc.addHeading(text, level)
+    }
+/*
+    @Override
+    void addList(ListContent content) {
+        throw new UnsupportedOperationException()
+    }*/
 }

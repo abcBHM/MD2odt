@@ -56,6 +56,12 @@ class OdfSimpleWrapper {
         lastNode.getAttributes().getNamedItem("text:style-name").setNodeValue("Text_20_body")
     }
 
+    void addQuoteParagraph(String text) {
+        def paragraph = odt.addParagraph(text)
+        paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginLeft(20)
+        lastNode = odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
+    }
+
     void italicAll() {
         style(OdfSimpleConstants.ITALIC.getMark(), StyleTypeDefinitions.FontStyle.ITALIC)
     }

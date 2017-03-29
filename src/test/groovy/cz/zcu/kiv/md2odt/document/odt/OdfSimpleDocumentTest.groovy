@@ -1,5 +1,6 @@
 package cz.zcu.kiv.md2odt.document.odt
 
+import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
 import org.junit.Before
 import org.junit.Ignore
@@ -58,5 +59,21 @@ class OdfSimpleDocumentTest {
         def pc = ParagraphContentBuilder.builder().addCode("new OdfSimpleDocument();").build()
         doc.addParagraph(pc)
         assert doc.getOdfSimpleWrapper().getLastNode().getTextContent().equals("'new OdfSimpleDocument();'")
+    }
+
+    @Test
+    void addQuoteBlockTest() throws Exception {
+        def pc = ParagraphContentBuilder.builder().addRegular("regular ").addBold("bold ").addItalic("italic ").build()
+        ArrayList<ParagraphContent> list = new ArrayList<>(2)
+        list.add(pc)
+        list.add(pc)
+        doc.addQuoteBlock(list)
+        assert doc.getOdfSimpleWrapper().getLastNode().getTextContent().equals("regular >bold ><italic <")
+    }
+
+    @Test
+    void addHeadingTest() throws Exception {
+        doc.addHeading("heading 1", 1)
+        assert doc.getOdfSimpleWrapper().getLastNode().toString().equals("<text:h text:outline-level=\"1\" text:style-name=\"Heading_20_1\">heading 1</text:h>")
     }
 }

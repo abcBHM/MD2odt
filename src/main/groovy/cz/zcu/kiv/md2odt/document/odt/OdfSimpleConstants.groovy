@@ -7,7 +7,7 @@ enum OdfSimpleConstants {
     ITALIC("<", "&italic;"),
     BOLD(">", "&bold;"),
     LINK("#", "&link;"),
-    LINK_HREF("@", "&lhref;"),
+    PARAM("@", "&param;"),
     INLINE_CODE("'", "&icode;")
 
 

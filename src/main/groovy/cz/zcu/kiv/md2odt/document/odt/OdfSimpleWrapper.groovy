@@ -87,19 +87,21 @@ class OdfSimpleWrapper {
         String mark = OdfSimpleConstants.LINK.getMark()
         TextNavigation nav = new TextNavigation(mark+"[^"+mark+"]*"+mark, odt)
         TextSelection sel = null
-        String hrMark = OdfSimpleConstants.LINK_HREF.getMark()
 
         while(nav.hasNext()) {
             sel = nav.nextSelection()
-            String link = sel.getText();
-            link = link.substring(mark.length()+hrMark.length(), link.lastIndexOf(hrMark))
-            sel.replaceWith(sel.getText().substring(mark.length() + 2*hrMark.length() + link.length(),sel.getText().length()-mark.length()))
+            String linkData = sel.getText();
+            linkData = linkData.substring(mark.length(), linkData.length()-mark.length())
+
+            String[] atr = linkData.split(OdfSimpleConstants.PARAM.getMark())   //url 0, text 1
+
+            sel.replaceWith(atr[1])
 
             Span sp = Span.newSpan(sel)
             try {
-                sp.applyHyperlink(new URI(OdfSimpleConstants.reEscape(link)))
+                sp.applyHyperlink(new URI(OdfSimpleConstants.reEscape(atr[0])))
             } catch (Exception e) {
-                sel.replaceWith(sel.getText() + OdfSimpleConstants.escape(" (") + link + OdfSimpleConstants.escape(") "))
+                sel.replaceWith(atr[1] + OdfSimpleConstants.escape(" (") + atr[0] + OdfSimpleConstants.escape(") "))
             }
 
         }

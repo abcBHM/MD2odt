@@ -32,8 +32,7 @@ class OdfSimpleDocument implements DocumentAdapter {
                     break
                 case SpanType.LINK:
                     if(sc instanceof SpanContentLink) {
-                        String href = OdfSimpleConstants.LINK_HREF.getMark() + OdfSimpleConstants.escape(sc.getUrl()) + OdfSimpleConstants.LINK_HREF.getMark()
-                        rtn += OdfSimpleConstants.LINK.getMark() + href + OdfSimpleConstants.escape(sc.getText()) + OdfSimpleConstants.LINK.getMark()
+                        rtn += OdfSimpleConstants.LINK.getMark() + OdfSimpleConstants.escape(sc.getUrl()) + OdfSimpleConstants.PARAM.getMark() + OdfSimpleConstants.escape(sc.getText()) + OdfSimpleConstants.LINK.getMark()
                     } else {
                         rtn += OdfSimpleConstants.escape(sc.getText())
                     }

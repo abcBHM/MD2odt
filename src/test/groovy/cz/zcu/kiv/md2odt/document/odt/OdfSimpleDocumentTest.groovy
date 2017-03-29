@@ -21,7 +21,7 @@ class OdfSimpleDocumentTest {
     @Test
     void example() throws Exception {
         def pc1 = ParagraphContentBuilder.builder().addRegular("regular ").addBold("bold ").addItalic("italic ").addRegular("regular").build()
-        def pc2 = ParagraphContentBuilder.builder().addRegular("regular ").addLink("seznam","www.seznam.cz").addRegular("   ").addLink("badlink","gafsgs^sfds").addCode(" inline code ").build()
+        def pc2 = ParagraphContentBuilder.builder().addRegular("regular ").addLink("seznam","http://www.seznam.cz").addRegular("   ").addLink("badlink","gafsgs^sfds").addCode(" inline code ").build()
 
         doc.addParagraph(pc1)
         doc.addParagraph(pc2)
@@ -37,7 +37,7 @@ class OdfSimpleDocumentTest {
     @Test
     void parToStringLinkTest() throws Exception {
         def pc = ParagraphContentBuilder.builder().addLink("pokus", "www.seznam.cz").build()
-        assert doc.parToString(pc).equals("#@www.seznam.cz@pokus#")
+        assert doc.parToString(pc).equals("#www.seznam.cz@pokus#")
     }
 
     @Test
@@ -51,7 +51,7 @@ class OdfSimpleDocumentTest {
     void addParagraphLinkTest() throws Exception {
         def pc = ParagraphContentBuilder.builder().addLink("pokus", "www.sez#nam.cz").build()
         doc.addParagraph(pc)
-        assert doc.getOdfSimpleWrapper().getLastNode().getTextContent().equals("#@www.sez&link;nam.cz@pokus#")
+        assert doc.getOdfSimpleWrapper().getLastNode().getTextContent().equals("#www.sez&link;nam.cz@pokus#")
     }
 
     @Test

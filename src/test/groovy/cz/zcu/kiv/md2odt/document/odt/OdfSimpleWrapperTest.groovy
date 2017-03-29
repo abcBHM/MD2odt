@@ -51,14 +51,14 @@ class OdfSimpleWrapperTest {
 
     @Test
     void linkAllTest() throws Exception {
-        odt.addParagraph("#@"+ OdfSimpleConstants.escape("https://www.seznam.cz/") +"@pokus#")
+        odt.addParagraph("#"+ OdfSimpleConstants.escape("https://www.seznam.cz/") +"@pokus#")
         odt.linkAll()
         assert odt.getLastNode().getTextContent().equals("pokus")
     }
 
     @Test
     void linkAllExceptionTest() throws Exception {
-        odt.addParagraph("#@"+ OdfSimpleConstants.escape("wwwsezn^amcz") +"@pokus#")
+        odt.addParagraph("#"+ OdfSimpleConstants.escape("wwwsezn^amcz") +"@pokus#")
         odt.linkAll()
         assert odt.getLastNode().getTextContent().equals("pokus (wwwsezn^amcz) ")
     }

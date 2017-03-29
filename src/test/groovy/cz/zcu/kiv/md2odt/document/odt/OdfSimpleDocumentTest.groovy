@@ -20,11 +20,20 @@ class OdfSimpleDocumentTest {
     @Ignore
     @Test
     void example() throws Exception {
-        def pc1 = ParagraphContentBuilder.builder().addRegular("regular ").addBold("bold ").addItalic("italic ").addRegular("regular").build()
+        def pc1 = ParagraphContentBuilder.builder().addRegular("regular ").addBold("bold ").addItalic("italic ").addRegular("regular ").addImage("text", "https://www.seznam.cz/media/img/logo_v2.png", "alt").addRegular(" regular ").build()
         def pc2 = ParagraphContentBuilder.builder().addRegular("regular ").addLink("seznam","http://www.seznam.cz").addRegular("   ").addLink("badlink","gafsgs^sfds").addCode(" inline code ").build()
 
         doc.addParagraph(pc1)
         doc.addParagraph(pc2)
+        doc.addHeading("Code block", 1)
+        doc.addCodeBlock("List<> x = new ArrayList<>();\n"+"List<> x = new ArrayList<>();\n"+"List<> x = new ArrayList<>();\n")
+
+        doc.addHeading("Quote block", 3)
+        def pc = ParagraphContentBuilder.builder().addRegular("regular ").addBold("bold ").addItalic("italic ").build()
+        ArrayList<ParagraphContent> list = new ArrayList<>(2)
+        list.add(pc)
+        list.add(pc)
+        doc.addQuoteBlock(list)
         doc.save("test.odt")
     }
 

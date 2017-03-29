@@ -4,6 +4,7 @@ import cz.zcu.kiv.md2odt.document.DocumentAdapter
 import cz.zcu.kiv.md2odt.document.ListContent
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.SpanContent
+import cz.zcu.kiv.md2odt.document.SpanContentImage
 import cz.zcu.kiv.md2odt.document.SpanContentLink
 import cz.zcu.kiv.md2odt.document.SpanType
 
@@ -39,6 +40,19 @@ class OdfSimpleDocument implements DocumentAdapter {
                     break
                 case SpanType.CODE:
                     rtn += OdfSimpleConstants.INLINE_CODE.getMark() + OdfSimpleConstants.escape(sc.getText()) + OdfSimpleConstants.INLINE_CODE.getMark()
+                    break
+                case SpanType.IMAGE:
+                    if(sc instanceof SpanContentImage) {
+                        rtn +=  OdfSimpleConstants.IMAGE.getMark() +
+                                        OdfSimpleConstants.escape(sc.getUrl()) +
+                                    OdfSimpleConstants.PARAM.getMark() +
+                                        OdfSimpleConstants.escape(sc.getAlt()) +
+                                    OdfSimpleConstants.PARAM.getMark() +
+                                        OdfSimpleConstants.escape(sc.getText()) +
+                                OdfSimpleConstants.IMAGE.getMark()
+                    } else {
+                        rtn += OdfSimpleConstants.escape(sc.getText())
+                    }
                     break
                 default:
                     throw new UnsupportedOperationException("Not implemented in OdfSimpleDocument yet")

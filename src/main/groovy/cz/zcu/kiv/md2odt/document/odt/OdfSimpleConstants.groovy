@@ -8,7 +8,8 @@ enum OdfSimpleConstants {
     BOLD(">", "&bold;"),
     LINK("#", "&link;"),
     PARAM("@", "&param;"),
-    INLINE_CODE("'", "&icode;")
+    INLINE_CODE("'", "&icode;"),
+    IMAGE("/", "&image;")
 
 
 

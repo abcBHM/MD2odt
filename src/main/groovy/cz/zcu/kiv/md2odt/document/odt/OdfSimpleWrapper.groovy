@@ -3,8 +3,11 @@ package cz.zcu.kiv.md2odt.document.odt
 import org.odftoolkit.odfdom.type.Color
 import org.odftoolkit.simple.Document
 import org.odftoolkit.simple.TextDocument
+import org.odftoolkit.simple.common.navigation.ImageSelection
 import org.odftoolkit.simple.common.navigation.TextNavigation
 import org.odftoolkit.simple.common.navigation.TextSelection
+import org.odftoolkit.simple.draw.Frame
+import org.odftoolkit.simple.draw.Image
 import org.odftoolkit.simple.style.Border
 import org.odftoolkit.simple.style.DefaultStyleHandler
 import org.odftoolkit.simple.style.Font
@@ -126,6 +129,37 @@ class OdfSimpleWrapper {
         }
     }
 
+    void imageAll() {
+        String mark = OdfSimpleConstants.IMAGE.getMark()
+        TextNavigation nav = new TextNavigation(mark+"[^"+mark+"]*"+mark, odt)
+        TextSelection sel = null
+
+        while(nav.hasNext()) {
+            sel = nav.nextSelection()
+            String imageData = sel.getText();
+            imageData = imageData.substring(mark.length(), imageData.length()-mark.length())
+
+            String[] atr = imageData.split(OdfSimpleConstants.PARAM.getMark())  //url, alt, text
+
+            sel.pasteAtEndOf(sel)
+
+            def im = sel.replaceWith(new URI(OdfSimpleConstants.reEscape(atr[0])))
+
+            sel = nav.nextSelection()
+
+            if(im == null) {
+                println("NULL")
+                sel.replaceWith(OdfSimpleConstants.escape(" Image (") + atr[0] + OdfSimpleConstants.escape(") "))
+            }
+            else {
+                sel.cut()
+                  /*  im.setDescription("desc")
+                    im.setName("name")
+                    im.setTitle("title")*/
+            }
+        }
+    }
+
     void reEscapeAll() {
         for (OdfSimpleConstants osc : OdfSimpleConstants.values()) {
             reEscape(osc.getEscape(), osc.getMark())
@@ -194,6 +228,7 @@ class OdfSimpleWrapper {
         inlineCodeAll()
         italicAll()
         boldAll()
+        imageAll()
         reEscapeAll()
         odt.save(documentPath)
     }

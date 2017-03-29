@@ -70,6 +70,28 @@ class OdfSimpleWrapperTest {
         assert odt.getLastNode().getTextContent().equals("this.add(something)") && odt.getLastNode().getChildNodes().item(1).getAttributes().item(0).toString().startsWith("style-name=")
     }
 
+    @Ignore
+    @Test
+    void imageAllTest() throws Exception {
+        odt.addParagraph(OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("obrazek.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark())
+        odt.save("test.odt")
+        assert odt.getLastNode().getTextContent().equals("")
+    }
+
+    @Test
+    void imageAllOkTest() throws Exception {
+        odt.addParagraph(OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("https://www.seznam.cz/media/img/logo_v2.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark())
+        odt.imageAll()
+        assert odt.getLastNode().getTextContent().equals("")
+    }
+
+    @Test
+    void imageAllExceptionTest() throws Exception {
+        odt.addParagraph(OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("https://image.ibb.co/inwVYv/uml.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark())
+        odt.imageAll()
+        assert odt.getLastNode().getTextContent().equals(OdfSimpleConstants.escape(" Image (https://image.ibb.co/inwVYv/uml.png) "))
+    }
+
     @Test
     void reEscapeAllTest() throws Exception {
         String inp = OdfSimpleConstants.escape("<&>&&<> &bold; text &bold; other") + "<italic<" + OdfSimpleConstants.escape("<non-Italic<")

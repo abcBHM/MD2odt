@@ -14,6 +14,7 @@ import org.odftoolkit.simple.text.Span
 import org.odftoolkit.simple.text.list.BulletDecorator
 import org.odftoolkit.simple.text.list.List
 import org.odftoolkit.simple.text.list.ListDecorator
+import org.odftoolkit.simple.text.list.ListItem
 import org.odftoolkit.simple.text.list.NumberDecorator
 import org.w3c.dom.Node
 
@@ -133,21 +134,42 @@ class OdfSimpleWrapper {
         }
     }
 
-    private void addList(String listHeading, java.util.List<String> listItems, ListDecorator decorator) {
+    private ListDecorator switchDecorator(OdfListEnum e) {
+        ListDecorator decorator = null
+
+        switch (e) {
+            case OdfListEnum.BULLET_LIST:
+                decorator = new BulletDecorator(odt)
+                break
+
+            case OdfListEnum.NUMBERED_LIST:
+                decorator = new NumberDecorator(odt)
+                break
+        }
+
+        return decorator
+    }
+
+    List addList(String listHeading, OdfListEnum e) {
+        ListDecorator decorator = switchDecorator(e)
+
         List newList = odt.addList(decorator)
         newList.setHeader(listHeading)
 
-        for(String item : listItems) {
-            newList.addItem(item)
+        return newList
+    }
+
+    List addSubList(List parentList, OdfListEnum e) {
+        ListDecorator decorator = switchDecorator(e)
+
+        return parentList.getItem(parentList.size() - 1).addList(decorator)
+    }
+
+    void addItemsToList(List list, java.util.List<Object> listItems) {
+
+        for(Object item : listItems) {
+            list.addItem((String)item)
         }
-    }
-
-    void addBulletList(String listHeading, java.util.List<String> listItems) {
-        addList(listHeading, listItems, new BulletDecorator(odt))
-    }
-
-    void addNumberList(String listHeading, java.util.List<String> listItems) {
-        addList(listHeading, listItems, new NumberDecorator(odt))
     }
 
     /** Returns the last operated Node. Used for testing.

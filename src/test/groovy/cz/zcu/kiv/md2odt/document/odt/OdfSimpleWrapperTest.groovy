@@ -4,6 +4,7 @@ package cz.zcu.kiv.md2odt.document.odt
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
+import org.odftoolkit.simple.text.list.List
 import org.w3c.dom.Node
 
 /**
@@ -91,12 +92,14 @@ class OdfSimpleWrapperTest {
     @Ignore
     @Test
     void bulletListTest() {
-        ArrayList<String> list = new ArrayList<>()
+        ArrayList<Object> list = new ArrayList<>()
         for (int i = 1; i < 4; i++) {
             list.add("Polozka " + i)
         }
 
-        odt.addBulletList("Bullet list", list)
+        List odfList = odt.addList("Bullet list", OdfListEnum.BULLET_LIST)
+        odt.addItemsToList(odfList, list)
+        odt.save("test.odt")
     }
 
     @Ignore
@@ -107,6 +110,23 @@ class OdfSimpleWrapperTest {
             list.add("Polozka " + i)
         }
 
-        odt.addNumberList("Numbered list", list)
+        List odfList = odt.addList("Numbered list", OdfListEnum.NUMBERED_LIST)
+        odt.addItemsToList(odfList, list)
+        odt.save("test.odt")
+    }
+
+    @Ignore
+    @Test
+    void subListTest() {
+        ArrayList<String> list = new ArrayList<>()
+        for (int i = 1; i < 4; i++) {
+            list.add("Polozka " + i)
+        }
+
+        List odfList = odt.addList("Nested list", OdfListEnum.NUMBERED_LIST)
+        odt.addItemsToList(odfList, list)
+        List nestedList = odt.addSubList(odfList, OdfListEnum.BULLET_LIST)
+        odt.addItemsToList(nestedList, list)
+        odt.save("test.odt")
     }
 }

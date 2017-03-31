@@ -39,4 +39,14 @@ trait DocumentAdapter implements Document {
     void addList(ListContent content) {
         throw new UnsupportedOperationException()
     }
+
+    @Override
+    void save(String documentPath){
+        throw new UnsupportedOperationException()
+    }
+
+    @Override
+    void save(OutputStream outputStream){
+        throw new UnsupportedOperationException()
+    }
 }

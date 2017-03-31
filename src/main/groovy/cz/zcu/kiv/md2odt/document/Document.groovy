@@ -21,4 +21,7 @@ interface Document {
 
     void addHorizontalRule()
 
+    void save(String documentPath)
+
+    void save(OutputStream outputStream)
 }

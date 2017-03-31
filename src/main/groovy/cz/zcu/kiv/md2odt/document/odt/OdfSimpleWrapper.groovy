@@ -44,6 +44,10 @@ class OdfSimpleWrapper {
         this.odt = TextDocument.loadDocument(documentPath)
     }
 
+    OdfSimpleWrapper(InputStream inputStream) {
+        this.odt = TextDocument.loadDocument(inputStream)
+    }
+
     void addHeading(String text, int level) {
         def paragraph = odt.addParagraph(text)
         paragraph.applyHeading(true, level)
@@ -234,13 +238,22 @@ class OdfSimpleWrapper {
         return lastNode
     }
 
-    void save(String documentPath) {
+    void beforeSave() {
         linkAll()
         inlineCodeAll()
         italicAll()
         boldAll()
         imageAll()
         reEscapeAll()
+    }
+
+    void save(String documentPath) {
+        beforeSave()
         odt.save(documentPath)
+    }
+
+    void save(OutputStream outputStream) {
+        beforeSave()
+        odt.save(outputStream)
     }
 }

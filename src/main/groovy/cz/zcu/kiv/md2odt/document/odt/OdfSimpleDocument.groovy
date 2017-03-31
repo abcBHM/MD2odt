@@ -18,6 +18,18 @@ class OdfSimpleDocument implements DocumentAdapter {
         doc = new OdfSimpleWrapper()
     }
 
+    OdfSimpleDocument(File file) {
+        doc = new OdfSimpleWrapper(file)
+    }
+
+    OdfSimpleDocument(String documentPath) {
+        doc = new OdfSimpleWrapper(documentPath)
+    }
+
+    OdfSimpleDocument(InputStream inputStream) {
+        doc = new OdfSimpleWrapper(inputStream)
+    }
+
     protected String parToString(ParagraphContent content) {
         String rtn = ""
         for(SpanContent sc : content.list) {
@@ -71,8 +83,14 @@ class OdfSimpleDocument implements DocumentAdapter {
         return doc
     }
 
+    @Override
     void save(String documentPath) {
         doc.save(documentPath)
+    }
+
+    @Override
+    void save(OutputStream outputStream) {
+        doc.save(outputStream)
     }
 
     @Override

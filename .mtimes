@@ -1,0 +1,4 @@
+1490960535|src/main/groovy/cz/zcu/kiv/md2odt/document/Document.groovy
+1490960617|src/main/groovy/cz/zcu/kiv/md2odt/document/DocumentAdapter.groovy
+1490960628|src/main/groovy/cz/zcu/kiv/md2odt/document/odt/OdfSimpleDocument.groovy
+1490960427|src/main/groovy/cz/zcu/kiv/md2odt/document/odt/OdfSimpleWrapper.groovy

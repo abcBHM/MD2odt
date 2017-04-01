@@ -9,14 +9,18 @@ import cz.zcu.kiv.md2odt.document.BlockContent
 import cz.zcu.kiv.md2odt.document.ListContent
 import cz.zcu.kiv.md2odt.document.ListContentBuilder
 import cz.zcu.kiv.md2odt.document.ListType
+import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
+import org.apache.log4j.Logger
 
 /**
  * Converts AST node into {@link ListContent}.
  *
- * @version 2017-03-24
+ * @version 2017-04-01
  * @author Patrik Harag
  */
 class ListCollector {
+
+    private static final Logger LOGGER = Logger.getLogger(ListCollector)
 
     ListContent processList(AstList list) {
         def builder = ListContentBuilder.builder(type(list))
@@ -46,7 +50,8 @@ class ListCollector {
 
             default:
                 // TODO: headers? code blocks? quote blocks?
-                throw new UnsupportedOperationException("class: ${node.class}")
+                LOGGER.warn("Unknown node: " + node.class)
+                return ParagraphContentBuilder.builder().addRegular("").build()
         }
     }
 

@@ -14,6 +14,7 @@ import com.vladsch.flexmark.ast.Paragraph as AstParagraph
 import com.vladsch.flexmark.ast.Text as AstText
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
+import org.apache.log4j.Logger
 import org.jsoup.Jsoup
 
 /**
@@ -22,6 +23,8 @@ import org.jsoup.Jsoup
  * @author Patrik Harag
  */
 class ParagraphCollector {
+
+    private static final Logger LOGGER = Logger.getLogger(ParagraphCollector)
 
     ParagraphContent processParagraph(AstParagraph paragraphNode) {
         def builder = ParagraphContentBuilder.builder()
@@ -70,7 +73,7 @@ class ParagraphCollector {
                     break
 
                 default:
-                    throw new UnsupportedOperationException('Not implemented yet')
+                    LOGGER.warn("Unknown node: " + node.class)
             }
         }
 
@@ -87,6 +90,7 @@ class ParagraphCollector {
                 return Jsoup.parse(node.chars.toString()).text()
         }
 
+        LOGGER.debug("Flattenize: " + node.class)
         node.children.collect { flatten(it) }.join("")
     }
 

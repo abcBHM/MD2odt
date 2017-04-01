@@ -5,13 +5,16 @@ import com.vladsch.flexmark.ast.Node as AstNode
 import com.vladsch.flexmark.parser.Parser
 import cz.zcu.kiv.md2odt.document.Document
 import cz.zcu.kiv.md2odt.filler.Filler
+import org.apache.log4j.Logger
 
 /**
  *
- * @version 2017-03-24
+ * @version 2017-04-01
  * @author Patrik Harag
  */
 class FlexMarkFiller implements Filler {
+
+    private static final Logger LOGGER = Logger.getLogger(FlexMarkFiller)
 
     private static final List<AstNodeHandler> converters = [
             new ParagraphHandler(),
@@ -51,7 +54,7 @@ class FlexMarkFiller implements Filler {
             if (converter)
                 converter.handle(node, document)
             else
-                throw new UnsupportedOperationException(node.class.toString())
+                LOGGER.warn("Unknown node: " + node.class)
         }
     }
 

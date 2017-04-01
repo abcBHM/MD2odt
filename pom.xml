@@ -42,6 +42,13 @@
             <version>1.10.2</version>
         </dependency>
 
+        <!-- LOGGING -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>  <!-- Note: some of our dependencies are using this version -->
+        </dependency>
+
         <!-- TESTING -->
         <dependency>
             <groupId>junit</groupId>

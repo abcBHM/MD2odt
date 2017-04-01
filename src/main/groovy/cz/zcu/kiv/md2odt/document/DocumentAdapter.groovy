@@ -1,15 +1,19 @@
 package cz.zcu.kiv.md2odt.document
 
+import org.apache.log4j.Logger
+
 /**
  * Adapter for {@link Document}.
  *
- * @version 2017-03-24
+ * @version 2017-04-01
  * @author Patrik Harag
  */
 trait DocumentAdapter implements Document {
 
+    private static final Logger LOGGER = Logger.getLogger(DocumentAdapter)
+
     void addParagraph(ParagraphContent content) {
-        throw new UnsupportedOperationException()
+        LOGGER.error("Unsupported operation: addParagraph")
     }
 
     void addCodeBlock(String code) {
@@ -17,27 +21,27 @@ trait DocumentAdapter implements Document {
     }
 
     void addCodeBlock(String code, String lang) {
-        throw new UnsupportedOperationException()
+        LOGGER.error("Unsupported operation: addCodeBlock")
     }
 
     @Override
     void addQuoteBlock(List<ParagraphContent> paragraphs) {
-        throw new UnsupportedOperationException()
+        LOGGER.error("Unsupported operation: addQuoteBlock")
     }
 
     @Override
     void addHorizontalRule() {
-        throw new UnsupportedOperationException()
+        LOGGER.error("Unsupported operation: addHorizontalRule")
     }
 
     @Override
     void addHeading(String text, int level) {
-        throw new UnsupportedOperationException()
+        LOGGER.error("Unsupported operation: addHeading")
     }
 
     @Override
     void addList(ListContent content) {
-        throw new UnsupportedOperationException()
+        LOGGER.error("Unsupported operation: addList")
     }
 
     @Override

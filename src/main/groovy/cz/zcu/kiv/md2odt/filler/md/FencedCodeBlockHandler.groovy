@@ -3,14 +3,17 @@ package cz.zcu.kiv.md2odt.filler.md
 import com.vladsch.flexmark.ast.Node as AstNode
 import com.vladsch.flexmark.ast.FencedCodeBlock as AstFencedCodeBlock
 import cz.zcu.kiv.md2odt.document.Document
+import org.apache.log4j.Logger
 
 /**
  * Handles {@link com.vladsch.flexmark.ast.FencedCodeBlock} AST node.
  *
- * @version 2017-03-17
+ * @version 2017-04-01
  * @author Patrik Harag
  */
 class FencedCodeBlockHandler implements AstNodeHandler {
+
+    private static final Logger LOGGER = Logger.getLogger(FencedCodeBlockHandler)
 
     @Override
     Class<?> getTarget() {
@@ -33,7 +36,7 @@ class FencedCodeBlockHandler implements AstNodeHandler {
             document.addCodeBlock(code, lang)
 
         } else {
-            throw new UnsupportedOperationException("segments: ${segments.size()}")
+            LOGGER.warn("Segments: ${segments.size()}")
         }
     }
 

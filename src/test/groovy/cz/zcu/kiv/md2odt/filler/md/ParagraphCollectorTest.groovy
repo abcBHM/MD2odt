@@ -9,7 +9,7 @@ import static cz.zcu.kiv.md2odt.document.SpanType.*
 
 /**
  *
- * @version 2017-03-22
+ * @version 2017-04-01
  * @author Patrik Harag
  */
 class ParagraphCollectorTest {
@@ -98,6 +98,24 @@ class ParagraphCollectorTest {
         assert paragraph.list*.text == ["link"]
         assert paragraph.list*.type == [LINK]
         assert paragraph.list*.url  == ["www.example.com"]
+    }
+
+    @Test
+    void autoLink() {
+        def paragraph = paragraph("<http://www.url.net/>")
+
+        assert paragraph.list*.text == ["http://www.url.net/"]
+        assert paragraph.list*.type == [LINK]
+        assert paragraph.list*.url  == ["http://www.url.net/"]
+    }
+
+    @Test
+    void mailLink() {
+        def paragraph = paragraph("<address@example.com>")
+
+        assert paragraph.list*.text == ["address@example.com"]
+        assert paragraph.list*.type == [LINK]
+        assert paragraph.list*.url  == ["mailto:address@example.com"]
     }
 
     @Test

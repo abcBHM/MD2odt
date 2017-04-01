@@ -1,5 +1,6 @@
 package cz.zcu.kiv.md2odt.filler.md
 
+import com.vladsch.flexmark.ast.AutoLink as AstAutoLink
 import com.vladsch.flexmark.ast.Code as AstCode
 import com.vladsch.flexmark.ast.Emphasis as AstEmphasis
 import com.vladsch.flexmark.ast.HtmlEntity as AstHtmlEntity
@@ -8,6 +9,7 @@ import com.vladsch.flexmark.ast.Link as AstLink
 import com.vladsch.flexmark.ast.SoftLineBreak as AstSoftLineBreak
 import com.vladsch.flexmark.ast.StrongEmphasis as AstStrongEmphasis
 import com.vladsch.flexmark.ast.Node as AstNode
+import com.vladsch.flexmark.ast.MailLink as AstMailLink
 import com.vladsch.flexmark.ast.Paragraph as AstParagraph
 import com.vladsch.flexmark.ast.Text as AstText
 import cz.zcu.kiv.md2odt.document.ParagraphContent
@@ -16,7 +18,7 @@ import org.jsoup.Jsoup
 
 /**
  *
- * @version 2017-03-22
+ * @version 2017-04-01
  * @author Patrik Harag
  */
 class ParagraphCollector {
@@ -49,6 +51,16 @@ class ParagraphCollector {
                     String url = (node as AstLink).url
                     String text = flatten(node)
                     builder.addLink(text, url)
+                    break
+
+                case AstAutoLink:
+                    String url = (node as AstAutoLink).text.toString()
+                    builder.addLink(url, url)
+                    break
+
+                case AstMailLink:
+                    String address = (node as AstMailLink).text.toString()
+                    builder.addLink(address, 'mailto:' + address)
                     break
 
                 case AstImage:

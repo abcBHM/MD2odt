@@ -20,7 +20,7 @@ class FlexmarkTest {
 
         assert renderer.render(document).trim() == "<p>This is <em>Sparta</em>!</p>"
 
-        printAST(document, "")
+        // printAST(document, "")
     }
 
     void printAST(ASTNode node, String indent) {

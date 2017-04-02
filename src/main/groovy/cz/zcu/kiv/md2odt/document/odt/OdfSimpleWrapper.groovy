@@ -1,5 +1,9 @@
 package cz.zcu.kiv.md2odt.document.odt
 
+import org.odftoolkit.odfdom.dom.attribute.fo.FoBackgroundColorAttribute
+import org.odftoolkit.odfdom.dom.attribute.fo.FoPaddingAttribute
+import org.odftoolkit.odfdom.dom.element.style.StyleParagraphPropertiesElement
+import org.odftoolkit.odfdom.pkg.OdfFileDom
 import org.odftoolkit.odfdom.type.Color
 import org.odftoolkit.simple.Document
 import org.odftoolkit.simple.TextDocument
@@ -76,7 +80,12 @@ class OdfSimpleWrapper {
         paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginBottom(10)
         paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginRight(10)
         paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginTop(10)
-        //paragraph.getStyleHandler().getGraphicPropertiesForWrite().setFill(StyleTypeDefinitions.OdfDrawFill.SOLID, new Color(160,160,160))
+
+        StyleParagraphPropertiesElement styleParProp = paragraph.getStyleHandler().styleElementForWrite.newStyleParagraphPropertiesElement()
+        FoBackgroundColorAttribute n = new FoBackgroundColorAttribute((OdfFileDom) styleParProp.ownerDocument)
+        n.setValue("#66ff00")
+        styleParProp.setOdfAttribute(n)
+
         lastNode = odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
     }
 

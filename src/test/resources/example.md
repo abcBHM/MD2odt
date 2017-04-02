@@ -94,7 +94,6 @@ Some regular text.
 ## Images
 
 ![Dog](https://www.seznam.cz/media/img/dogs/krasty_04.png)
-
 ![Dog](https://www.seznam.cz/media/img/dogs/krasty_06.png)
 
 Reference-style (TODO):

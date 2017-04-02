@@ -1,10 +1,12 @@
 package cz.zcu.kiv.md2odt.document.odt
 
+import org.odftoolkit.odfdom.dom.element.text.TextSpanElement
+import org.odftoolkit.odfdom.pkg.OdfFileDom
 import org.odftoolkit.odfdom.dom.attribute.fo.FoBackgroundColorAttribute
 import org.odftoolkit.odfdom.dom.attribute.text.TextStyleNameAttribute
 import org.odftoolkit.odfdom.dom.element.style.StyleParagraphPropertiesElement
-import org.odftoolkit.odfdom.pkg.OdfFileDom
 import org.odftoolkit.simple.TextDocument
+import org.odftoolkit.simple.common.navigation.ImageSelection
 import org.odftoolkit.simple.common.navigation.TextNavigation
 import org.odftoolkit.simple.common.navigation.TextSelection
 import org.odftoolkit.simple.style.DefaultStyleHandler
@@ -15,7 +17,6 @@ import org.odftoolkit.simple.text.Span
 import org.odftoolkit.simple.text.list.BulletDecorator
 import org.odftoolkit.simple.text.list.List
 import org.odftoolkit.simple.text.list.ListDecorator
-import org.odftoolkit.simple.text.list.ListItem
 import org.odftoolkit.simple.text.list.NumberDecorator
 import org.w3c.dom.Node
 
@@ -161,23 +162,23 @@ class OdfSimpleWrapper {
 
         while(nav.hasNext()) {
             sel = nav.nextSelection()
-            String imageData = sel.getText();
+            String imageData = sel.getText()
             imageData = imageData.substring(mark.length(), imageData.length()-mark.length())
 
             String[] atr = imageData.split(OdfSimpleConstants.PARAM.getMark())  //url, alt, text
 
-            sel.pasteAtEndOf(sel)
-
-            def im = sel.replaceWith(new URI(OdfSimpleConstants.reEscape(atr[0])))
-
-            sel = nav.nextSelection()
+            def imSel = new ImageSelection(sel)
+            def im = imSel.replaceWithImage(new URI(OdfSimpleConstants.reEscape(atr[0])))
 
             if(im == null) {
-                println("NULL")
-                sel.replaceWith(OdfSimpleConstants.escape(" Image (") + atr[0] + OdfSimpleConstants.escape(") "))
+                def nl = sel.element.getElementsByTagName("draw:frame")
+                def imNode = nl.item(nl.length-1)   //node of a last image which was not added successfully
+
+                TextSpanElement textSpan = new TextSpanElement((OdfFileDom) sel.element.ownerDocument)
+                textSpan.newTextNode(OdfSimpleConstants.escape(" Image (") + atr[0] + OdfSimpleConstants.escape(") "))
+                sel.element.insertBefore(textSpan, imNode)
             }
             else {
-                sel.cut()
                   /*  im.setDescription("desc")
                     im.setName("name")
                     im.setTitle("title")*/

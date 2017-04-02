@@ -73,9 +73,17 @@ class OdfSimpleWrapperTest {
     @Ignore
     @Test
     void imageAllTest() throws Exception {
-        odt.addParagraph(OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("obrazek.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark())
+        odt.addParagraph(OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("obrazek.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark()+
+                OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("https://www.seznam.cz/media/img/logo_v2.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark()+
+                OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("https://image.ibb.co/inwVYv/uml.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark()+
+                OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("https://image.ibb.co/inwVYv/uml.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark()+
+                OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("https://image.ibb.co/inwVYv/uml.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark()+
+                OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("https://www.seznam.cz/media/img/logo_v2.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark()+
+                OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("https://www.seznam.cz/media/img/logo_v2.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark()+
+                OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("https://image.ibb.co/inwVYv/uml.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark()+
+                OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("https://www.seznam.cz/media/img/logo_v2.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark()
+        )
         odt.save("test.odt")
-        assert odt.getLastNode().getTextContent().equals("")
     }
 
     @Test

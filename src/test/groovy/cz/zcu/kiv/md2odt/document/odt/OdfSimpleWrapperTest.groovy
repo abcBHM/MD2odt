@@ -106,9 +106,17 @@ class OdfSimpleWrapperTest {
     void templateNotFound1() throws Exception {
         odt = new OdfSimpleWrapper("wrongtemplate.odt")
     }
+
     @Test(expected = FileNotFoundException.class)
     void templateNotFound2() throws Exception {
         odt = new OdfSimpleWrapper(new File("wrongtemplate.odt"))
+    }
+
+    @Ignore
+    @Test
+    void horizontalRuleTest() {
+        odt.addHorizontalRule()
+        odt.save("test.odt")
     }
 
     @Ignore

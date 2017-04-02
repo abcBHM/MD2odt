@@ -1,7 +1,9 @@
 package cz.zcu.kiv.md2odt.document.odt
 
+import cz.zcu.kiv.md2odt.document.BlockContent
 import cz.zcu.kiv.md2odt.document.DocumentAdapter
 import cz.zcu.kiv.md2odt.document.ListContent
+import cz.zcu.kiv.md2odt.document.ListType
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.SpanContent
 import cz.zcu.kiv.md2odt.document.SpanContentImage
@@ -115,18 +117,20 @@ class OdfSimpleDocument implements DocumentAdapter {
         }
     }
 
- /*   @Override
+    @Override
     void addHorizontalRule() {
-        throw new UnsupportedOperationException()
-    }*/
+        doc.addHorizontalRule();
+    }
 
     @Override
     void addHeading(String text, int level) {
         doc.addHeading(OdfSimpleConstants.escape(text), level)
     }
-/*
+
+    /*
     @Override
     void addList(ListContent content) {
         throw new UnsupportedOperationException()
-    }*/
+    }
+    */
 }

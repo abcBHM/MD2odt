@@ -229,6 +229,13 @@ class OdfSimpleWrapper {
         }
     }
 
+    void addHorizontalRule() {
+        def text = odt.addText("")
+        text.setStyleName("Horizontal_20_Line")
+        lastNode = odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
+        lastNode.getAttributes().getNamedItem("text:style-name").setNodeValue("Horizontal_20_Line")
+    }
+
     /** Returns the last operated Node. Used for testing.
      *
      * @return the last operated Node

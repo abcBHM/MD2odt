@@ -1,18 +1,12 @@
 package cz.zcu.kiv.md2odt.document.odt
 
 import org.odftoolkit.odfdom.dom.attribute.fo.FoBackgroundColorAttribute
-import org.odftoolkit.odfdom.dom.attribute.fo.FoPaddingAttribute
+import org.odftoolkit.odfdom.dom.attribute.text.TextStyleNameAttribute
 import org.odftoolkit.odfdom.dom.element.style.StyleParagraphPropertiesElement
 import org.odftoolkit.odfdom.pkg.OdfFileDom
-import org.odftoolkit.odfdom.type.Color
-import org.odftoolkit.simple.Document
 import org.odftoolkit.simple.TextDocument
-import org.odftoolkit.simple.common.navigation.ImageSelection
 import org.odftoolkit.simple.common.navigation.TextNavigation
 import org.odftoolkit.simple.common.navigation.TextSelection
-import org.odftoolkit.simple.draw.Frame
-import org.odftoolkit.simple.draw.Image
-import org.odftoolkit.simple.style.Border
 import org.odftoolkit.simple.style.DefaultStyleHandler
 import org.odftoolkit.simple.style.Font
 import org.odftoolkit.simple.style.StyleTypeDefinitions
@@ -56,15 +50,22 @@ class OdfSimpleWrapper {
         def paragraph = odt.addParagraph(text)
         paragraph.applyHeading(true, level)
 
+        TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
+        paragraph.odfElement.setOdfAttribute(attr)
+        attr.setValue("Heading_20_"+level)
+
         lastNode = odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
-        lastNode.getAttributes().getNamedItem("text:style-name").setNodeValue("Heading_20_"+level)       //set the style (1-10)
+     //   lastNode.getAttributes().getNamedItem("text:style-name").setNodeValue("Heading_20_"+level)       //set the style (1-10)
     }
 
     void addParagraph(String text) {
         def paragraph = odt.addParagraph(text)
-        paragraph.setStyleName("Text_20_body")
+
+        TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
+        paragraph.odfElement.setOdfAttribute(attr)
+        attr.setValue("Text_20_body")
+
         lastNode = odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
-        lastNode.getAttributes().getNamedItem("text:style-name").setNodeValue("Text_20_body")
     }
 
     void addQuoteParagraph(String text) {

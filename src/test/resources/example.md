@@ -1,6 +1,7 @@
 # Markdown
 
 ## Formatting
+
 *single asterisks* or _single underscores_
 
 **double asterisks** or __double underscores__
@@ -9,8 +10,11 @@ Inline `code`
 
 Escaping: \*literal asterisks\*
 
+Diacritics: Příliš žluťoučký kůň úpěl ďábelské ódy.
+
 
 ## Links
+
 Email link: <address@example.com>
 
 Autolink: <http://google.com/>
@@ -24,13 +28,16 @@ Normal link 2: [Yahoo](http://search.yahoo.com/)
 Normal link 3: [http://search.msn.com/]()
 
 
-### References (TODO)
-Ref. link 1: [Google] [1]
+### References
 
-Ref. link 2: [Yahoo][]
+Ref. link 1: [Google][1]
 
-  [1]:      http://google.com/       "Google"
-  [yahoo]:  http://search.yahoo.com/ "Yahoo Search"
+Ref. link 2: [1]
+
+Ref. link 3: [Yahoo][yahoo]
+
+[1]:      http://google.com/       "Google"
+[yahoo]:  http://search.yahoo.com/ "Yahoo Search"
 
 
 ## Lists
@@ -96,7 +103,7 @@ Some regular text.
 ![Dog](https://www.seznam.cz/media/img/dogs/krasty_04.png)
 ![Dog](https://www.seznam.cz/media/img/dogs/krasty_06.png)
 
-Reference-style (TODO):
+Reference-style:
 
 ![alt text][dog]
 
@@ -104,7 +111,13 @@ Reference-style (TODO):
 
 
 ## HTML
-A paragraph with some HTML entities: &copy; &reg; &para;.
+
+### Entities
+A paragraph with some HTML entities: &copy; &para; &euro; &ncaron;.
+
+Inside inline code: `&copy; &para; &euro; &ncaron;`.
+
+Formatted: **&copy; &para; &euro; &ncaron;**
 
 ### HTML snippet (TODO)
 <div>
@@ -116,5 +129,6 @@ A paragraph with some HTML entities: &copy; &reg; &para;.
 ## Horizontal Rules
 
 ---
+
 ***
 ___

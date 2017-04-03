@@ -27,7 +27,6 @@ import org.w3c.dom.Node
  */
 class OdfSimpleWrapper {
     private TextDocument odt
-    private Node lastNode
 
     OdfSimpleWrapper() {
         odt = TextDocument.newTextDocument()
@@ -54,9 +53,6 @@ class OdfSimpleWrapper {
         TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
         paragraph.odfElement.setOdfAttribute(attr)
         attr.setValue("Heading_20_"+level)
-
-        lastNode = odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
-     //   lastNode.getAttributes().getNamedItem("text:style-name").setNodeValue("Heading_20_"+level)       //set the style (1-10)
     }
 
     void addParagraph(String text) {
@@ -65,30 +61,22 @@ class OdfSimpleWrapper {
         TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
         paragraph.odfElement.setOdfAttribute(attr)
         attr.setValue("Text_20_body")
-
-        lastNode = odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
     }
 
     void addQuoteParagraph(String text) {
         def paragraph = odt.addParagraph(text)
-        paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginLeft(20)
-        lastNode = odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
+
+        TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
+        paragraph.odfElement.setOdfAttribute(attr)
+        attr.setValue("Quotations")
     }
 
     void addCodeBlock(String code, String lang) {
         def paragraph = odt.addParagraph(code)
-        paragraph.getStyleHandler().textPropertiesForWrite.setFont(new Font("Courier New", FontStyle.REGULAR, 12))
-        paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginLeft(10)
-        paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginBottom(10)
-        paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginRight(10)
-        paragraph.getStyleHandler().paragraphPropertiesForWrite.setMarginTop(10)
 
-        StyleParagraphPropertiesElement styleParProp = paragraph.getStyleHandler().styleElementForWrite.newStyleParagraphPropertiesElement()
-        FoBackgroundColorAttribute n = new FoBackgroundColorAttribute((OdfFileDom) styleParProp.ownerDocument)
-        n.setValue("#66ff00")
-        styleParProp.setOdfAttribute(n)
-
-        lastNode = odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
+        TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
+        paragraph.odfElement.setOdfAttribute(attr)
+        attr.setValue("Preformatted_20_Text")
     }
 
     void italicAll() {
@@ -241,10 +229,11 @@ class OdfSimpleWrapper {
     }
 
     void addHorizontalRule() {
-        def text = odt.addText("")
-        text.setStyleName("Horizontal_20_Line")
-        lastNode = odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
-        lastNode.getAttributes().getNamedItem("text:style-name").setNodeValue("Horizontal_20_Line")
+        def paragraph = odt.addParagraph("")
+
+        TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
+        paragraph.odfElement.setOdfAttribute(attr)
+        attr.setValue("Horizontal_20_Line")
     }
 
     /** Returns the last operated Node. Used for testing.
@@ -252,8 +241,8 @@ class OdfSimpleWrapper {
      * @return the last operated Node
      * */
     @Deprecated
-    Node getLastNode() {
-        return lastNode
+    protected Node getLastNode() {
+        return odt.getContentDom().getElementsByTagName("office:text").item(0).lastChild
     }
 
     void beforeSave() {

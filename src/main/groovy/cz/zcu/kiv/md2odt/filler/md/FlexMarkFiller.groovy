@@ -1,6 +1,7 @@
 package cz.zcu.kiv.md2odt.filler.md
 
 import com.vladsch.flexmark.ast.Document as AstDocument
+import com.vladsch.flexmark.ast.HtmlCommentBlock as AstHtmlCommentBlock
 import com.vladsch.flexmark.ast.Node as AstNode
 import com.vladsch.flexmark.ast.Reference as AstReference
 import com.vladsch.flexmark.parser.Parser
@@ -10,7 +11,7 @@ import org.apache.log4j.Logger
 
 /**
  *
- * @version 2017-04-02
+ * @version 2017-04-03
  * @author Patrik Harag
  */
 class FlexMarkFiller implements Filler {
@@ -25,7 +26,8 @@ class FlexMarkFiller implements Filler {
             new HorizontalRuleHandler(),
             new HeadingHandler(),
             new ListHandler(),
-            BasicHandlers.ignore(AstReference)
+            BasicHandlers.ignore(AstReference),
+            BasicHandlers.ignore(AstHtmlCommentBlock)
     ]
 
 

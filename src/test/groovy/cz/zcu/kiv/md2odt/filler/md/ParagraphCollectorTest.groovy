@@ -155,6 +155,14 @@ class ParagraphCollectorTest {
     }
 
     @Test
+    void htmlComment() {
+        def paragraph = paragraph("ab<!-- comment -->*cd*")
+
+        assert paragraph.list*.text == ["ab", "cd"]
+        assert paragraph.list*.type == [REGULAR, ITALIC]
+    }
+
+    @Test
     void image() {
         def paragraph = paragraph('![alt text](img.png "title")')
 

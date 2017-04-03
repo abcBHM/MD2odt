@@ -119,7 +119,14 @@ Inside inline code: `&copy; &para; &euro; &ncaron;`.
 
 Formatted: **&copy; &para; &euro; &ncaron;**
 
-### HTML snippet (TODO)
+### HTML comments
+<!-- comment (1 of 3) -->
+<!--
+ comment (2 of 3)
+ -->
+regular text (1 of 2) <!-- comment (3 of 3) --> regular text (2 of 2)
+
+### HTML snippets (TODO)
 <div>
   <h4>London</h4>
   <p><strong>London</strong> is the capital city of England.</p>

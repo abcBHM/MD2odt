@@ -4,6 +4,7 @@ import com.vladsch.flexmark.ast.AutoLink as AstAutoLink
 import com.vladsch.flexmark.ast.Code as AstCode
 import com.vladsch.flexmark.ast.Emphasis as AstEmphasis
 import com.vladsch.flexmark.ast.HtmlEntity as AstHtmlEntity
+import com.vladsch.flexmark.ast.HtmlInlineComment as AstHtmlInlineComment
 import com.vladsch.flexmark.ast.Image as AstImage
 import com.vladsch.flexmark.ast.ImageRef as AstImageRef
 import com.vladsch.flexmark.ast.Link as AstLink
@@ -21,7 +22,7 @@ import org.jsoup.Jsoup
 
 /**
  *
- * @version 2017-04-02
+ * @version 2017-04-03
  * @author Patrik Harag
  */
 class ParagraphCollector {
@@ -101,6 +102,10 @@ class ParagraphCollector {
                 String title = ref.title.toString()
 
                 builder.addImage(title, url, alt)
+                break
+
+            case AstHtmlInlineComment:
+                // ignore
                 break
 
             default:

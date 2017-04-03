@@ -1,17 +1,24 @@
 package cz.zcu.kiv.md2odt.document.odt
 
-
+import cz.zcu.kiv.md2odt.MD2odt
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.odftoolkit.simple.text.list.List
 import org.w3c.dom.Node
 
+import java.nio.file.Files
+import java.nio.file.Paths
+
 /**
  * Created by pepe on 13. 3. 2017.
  */
 class OdfSimpleWrapperTest {
     OdfSimpleWrapper odt
+
+    private static final String TEMPLATE = 'src/test/resources/template.odt'
+    private static final String WRONG_TEMPLATE = 'wrongtemplate.odt'
+    private static final String TEST = 'test.odt'
 
     @Before
     void setUp() throws Exception {
@@ -23,16 +30,48 @@ class OdfSimpleWrapperTest {
     void example() throws Exception {
         odt.addParagraph("par")
         println(odt.lastNode.toString())
-        odt.save("test.odt")
+        odt.save(TEST)
     }
 
     @Ignore
     @Test
     void templateExample() throws Exception {
-        odt = new OdfSimpleWrapper("test.odt")
+        odt = new OdfSimpleWrapper(TEST)
 
         odt.addHeading("nadpis 1 se stylem sablony",1)
         //odt.save("template_test.odt")
+    }
+
+    @Test
+    void odfSimpleWrapperFileInputStreamConstructor() throws Exception {
+        odt = null
+        odt = new OdfSimpleWrapper(new FileInputStream(TEMPLATE))
+        assert odt != null
+    }
+
+    @Test(expected = FileNotFoundException.class)
+    void odfSimpleWrapperTemplateNotFound1() throws Exception {
+        odt = new OdfSimpleWrapper(WRONG_TEMPLATE)
+    }
+
+    @Test(expected = FileNotFoundException.class)
+    void odfSimpleWrapperTemplateNotFound2() throws Exception {
+        odt = new OdfSimpleWrapper(new File(WRONG_TEMPLATE))
+    }
+
+    @Test
+    void save1() throws Exception {
+        odt.save(TEST)
+        File f = new File(TEST)
+        assert f.exists()
+        f.delete()
+    }
+    @Test
+    void save2() throws Exception {
+        odt.save(Files.newOutputStream(Paths.get(TEST)))
+        File f = new File(TEST)
+        assert f.exists()
+        f.delete()
     }
 
     @Test
@@ -83,7 +122,7 @@ class OdfSimpleWrapperTest {
                 OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("https://image.ibb.co/inwVYv/uml.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark()+
                 OdfSimpleConstants.IMAGE.getMark() + OdfSimpleConstants.escape("https://www.seznam.cz/media/img/logo_v2.png")+"@alt@text" +OdfSimpleConstants.IMAGE.getMark()
         )
-        odt.save("test.odt")
+        odt.save(TEST)
     }
 
     @Test
@@ -108,16 +147,6 @@ class OdfSimpleWrapperTest {
         odt.italicAll()
         odt.reEscapeAll()
         assert odt.getLastNode().getTextContent().equals(exp)
-    }
-
-    @Test(expected = FileNotFoundException.class)
-    void templateNotFound1() throws Exception {
-        odt = new OdfSimpleWrapper("wrongtemplate.odt")
-    }
-
-    @Test(expected = FileNotFoundException.class)
-    void templateNotFound2() throws Exception {
-        odt = new OdfSimpleWrapper(new File("wrongtemplate.odt"))
     }
 
     @Ignore

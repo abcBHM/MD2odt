@@ -2,15 +2,25 @@ package cz.zcu.kiv.md2odt.document.odt
 
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
+import cz.zcu.kiv.md2odt.document.SpanContentImage
+import cz.zcu.kiv.md2odt.document.SpanContentText
+import cz.zcu.kiv.md2odt.document.SpanType
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
+
+import java.nio.file.Files
+import java.nio.file.Paths
 
 /**
  * Created by pepe on 15. 3. 2017.
  */
 class OdfSimpleDocumentTest {
     OdfSimpleDocument doc
+
+    private static final String TEMPLATE = 'src/test/resources/template.odt'
+    private static final String WRONG_TEMPLATE = 'wrongtemplate.odt'
+    private static final String TEST = 'test.odt'
 
     @Before
     void setUp() throws Exception {
@@ -34,19 +44,39 @@ class OdfSimpleDocumentTest {
         list.add(pc)
         list.add(pc)
         doc.addQuoteBlock(list)
-        doc.save("test.odt")
+        doc.save(TEST)
     }
 
     @Test
-    void parToStringTest() throws Exception {
-        def pc = ParagraphContentBuilder.builder().addRegular("regular ").addBold("bold ").addItalic("italic ").build()
-        assert doc.parToString(pc).equals("regular >bold ><italic <")
+    void odfSimpleDocumentFileInputStreamConstructor() throws Exception {
+        doc = null
+        doc = new OdfSimpleDocument(new FileInputStream(TEMPLATE))
+        assert doc != null
+    }
+
+    @Test(expected = FileNotFoundException.class)
+    void odfSimpleDocumentTemplateNotFound1() throws Exception {
+        doc = new OdfSimpleDocument(WRONG_TEMPLATE)
+    }
+
+    @Test(expected = FileNotFoundException.class)
+    void odfSimpleDocumentTemplateNotFound2() throws Exception {
+        doc = new OdfSimpleDocument(new File(WRONG_TEMPLATE))
     }
 
     @Test
-    void parToStringLinkTest() throws Exception {
-        def pc = ParagraphContentBuilder.builder().addLink("pokus", "www.seznam.cz").build()
-        assert doc.parToString(pc).equals("#www.seznam.cz@pokus#")
+    void save1() throws Exception {
+        doc.save(TEST)
+        File f = new File(TEST)
+        assert f.exists()
+        f.delete()
+    }
+    @Test
+    void save2() throws Exception {
+        doc.save(Files.newOutputStream(Paths.get(TEST)))
+        File f = new File(TEST)
+        assert f.exists()
+        f.delete()
     }
 
     @Test
@@ -82,7 +112,7 @@ class OdfSimpleDocumentTest {
 
     @Test
     void addCodeBlockTest() throws Exception {
-        doc.addCodeBlock("List<> x = new ArrayList<>()", "java")
+        doc.addCodeBlock("List<> x = new ArrayList<>()")
         assert doc.getOdfSimpleWrapper().getLastNode().getTextContent().equals(OdfSimpleConstants.escape("List<> x = new ArrayList<>()"))
     }
 

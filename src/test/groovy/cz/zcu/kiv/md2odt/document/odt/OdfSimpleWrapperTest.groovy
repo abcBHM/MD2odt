@@ -47,6 +47,20 @@ class OdfSimpleWrapperTest {
     }
 
     @Test
+    void odfSimpleWrapperFileConstructor() throws Exception {
+        odt = null
+        odt = new OdfSimpleWrapper(new File(TEMPLATE))
+        assert odt != null
+    }
+
+    @Test
+    void odfSimpleWrapperStringConstructor() throws Exception {
+        odt = null
+        odt = new OdfSimpleWrapper(TEMPLATE)
+        assert odt != null
+    }
+
+    @Test
     void odfSimpleWrapperFileInputStreamConstructor() throws Exception {
         odt = null
         odt = new OdfSimpleWrapper(new FileInputStream(TEMPLATE))

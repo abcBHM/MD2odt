@@ -18,7 +18,9 @@ import org.odftoolkit.simple.text.list.BulletDecorator
 import org.odftoolkit.simple.text.list.List
 import org.odftoolkit.simple.text.list.ListDecorator
 import org.odftoolkit.simple.text.list.NumberDecorator
+import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
+import org.w3c.dom.NodeList
 
 /**
  * Created by pepe on 13. 3. 2017.
@@ -36,14 +38,45 @@ class OdfSimpleWrapper {
 
     OdfSimpleWrapper(File file) {
         this.odt = TextDocument.loadDocument(file)
+        fillDefaultStyles()
     }
 
     OdfSimpleWrapper(String documentPath) {
         this.odt = TextDocument.loadDocument(documentPath)
+        fillDefaultStyles()
     }
 
     OdfSimpleWrapper(InputStream inputStream) {
         this.odt = TextDocument.loadDocument(inputStream)
+        fillDefaultStyles()
+    }
+
+    protected Set<String> getStyleNames(TextDocument td) {
+        Set<String> styleNames = new TreeSet<>()
+        NodeList nl = td.getStylesDom().getOfficeStyles().getElementsByTagName("style:style")
+        for (int i = 0; i < nl.length; i++) {
+            Node n = nl.item(i).getAttributes().getNamedItem("style:name")
+            if(n != null)
+                styleNames.add(n.getNodeValue())
+        }
+        return styleNames
+    }
+
+    protected void fillDefaultStyles() {
+        Set<String> odtStyleNames = getStyleNames(odt)
+
+        TextDocument defaultTextDocument = TextDocument.newTextDocument()
+
+        NodeList nl = defaultTextDocument.getStylesDom().getOfficeStyles().getElementsByTagName("style:style")
+        for (int i = 0; i < nl.length; i++) {
+            Node node = nl.item(i)
+            String styleName = node.getAttributes().getNamedItem("style:name").getNodeValue()
+
+            if(!odtStyleNames.contains(styleName)) {
+                Node n = odt.getStylesDom().importNode(node, true)
+                odt.getStylesDom().getOfficeStyles().appendChild(n)
+            }
+        }
     }
 
     void addHeading(String text, int level) {

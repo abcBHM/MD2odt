@@ -64,7 +64,12 @@ class ParagraphCollector {
             case AstLink:
                 String url = (node as AstLink).url
                 String text = flatten(node)
-                builder.addLink(text, url)
+
+                if (url && text)
+                    builder.addLink(text, url)
+                else if (text)
+                    builder.addLink(text, text)
+
                 break
 
             case AstAutoLink:

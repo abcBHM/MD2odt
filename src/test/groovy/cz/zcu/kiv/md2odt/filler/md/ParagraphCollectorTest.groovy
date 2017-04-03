@@ -10,7 +10,7 @@ import static cz.zcu.kiv.md2odt.document.SpanType.*
 
 /**
  *
- * @version 2017-04-02
+ * @version 2017-04-03
  * @author Patrik Harag
  */
 class ParagraphCollectorTest {
@@ -42,7 +42,7 @@ class ParagraphCollectorTest {
     }
 
     @Test
-    void lineBreak() {
+    void softLineBreak() {
         def paragraph = paragraph("a\nb")
 
         // AST:
@@ -51,16 +51,33 @@ class ParagraphCollectorTest {
         //  class com.vladsch.flexmark.ast.SoftLineBreak
         //  class com.vladsch.flexmark.ast.Text
 
-        assert paragraph.list*.text == ["a\nb"]
+        assert paragraph.list*.text == ["a b"]
         assert paragraph.list*.type == [REGULAR]
     }
 
     @Test
-    void lineBreakNested() {
+    void softLineBreakWithTrailingSpaces() {
+        def paragraph = paragraph("a \n b")
+        // note: more than one space after 'a' -> hard linebreak
+
+        assert paragraph.list*.text == ["a b"]
+        assert paragraph.list*.type == [REGULAR]
+    }
+
+    @Test
+    void softLineBreakNested() {
         def paragraph = paragraph("*a\nb*")
 
-        assert paragraph.list*.text == ["a\nb"]
+        assert paragraph.list*.text == ["a b"]
         assert paragraph.list*.type == [ITALIC]
+    }
+
+    @Test
+    void hardLineBreak() {
+        def paragraph = paragraph("a  \nb")
+
+        assert paragraph.list*.text == ["a\nb"]
+        assert paragraph.list*.type == [REGULAR]
     }
 
     @Test

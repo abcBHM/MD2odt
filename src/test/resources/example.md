@@ -1,6 +1,12 @@
 # Markdown
 
-## Formatting
+## Basics
+
+This is a paragraph.
+Soft linebreak.
+
+This is an another paragraph.  
+Hard linebreak. (Because of two spaces.)
 
 *single asterisks* or _single underscores_
 

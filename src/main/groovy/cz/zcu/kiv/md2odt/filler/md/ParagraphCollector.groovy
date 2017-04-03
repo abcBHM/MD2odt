@@ -3,6 +3,7 @@ package cz.zcu.kiv.md2odt.filler.md
 import com.vladsch.flexmark.ast.AutoLink as AstAutoLink
 import com.vladsch.flexmark.ast.Code as AstCode
 import com.vladsch.flexmark.ast.Emphasis as AstEmphasis
+import com.vladsch.flexmark.ast.HardLineBreak as AstHardLineBreak
 import com.vladsch.flexmark.ast.HtmlEntity as AstHtmlEntity
 import com.vladsch.flexmark.ast.HtmlInlineComment as AstHtmlInlineComment
 import com.vladsch.flexmark.ast.Image as AstImage
@@ -42,6 +43,7 @@ class ParagraphCollector {
         switch (node) {
             case AstText:
             case AstSoftLineBreak:
+            case AstHardLineBreak:
             case AstHtmlEntity:
                 builder.addRegular(flatten(node))
                 break
@@ -118,6 +120,8 @@ class ParagraphCollector {
             case AstText:
                 return node.chars.toString()
             case AstSoftLineBreak:
+                return ' '
+            case AstHardLineBreak:
                 return '\n'
             case AstHtmlEntity:
                 return Jsoup.parse(node.chars.toString()).text()

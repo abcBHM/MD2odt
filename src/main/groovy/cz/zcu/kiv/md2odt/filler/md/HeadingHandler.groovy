@@ -18,7 +18,7 @@ class HeadingHandler implements AstNodeHandler {
     }
 
     @Override
-    void handle(AstNode node, Document document) {
+    void handle(AstNode node, Context context, Document document) {
         assert node instanceof AstHeading
 
         def heading = node as AstHeading

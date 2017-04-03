@@ -19,7 +19,7 @@ class BlockQuoteHandler implements AstNodeHandler {
     }
 
     @Override
-    void handle(AstNode node, Document document) {
+    void handle(AstNode node, Context context, Document document) {
         assert node instanceof AstBlockQuote
 
         // TODO: add support for other nested blocks
@@ -27,7 +27,7 @@ class BlockQuoteHandler implements AstNodeHandler {
         def collector = new ParagraphCollector()
         def paragraphs = node.children
                 .findAll { it instanceof AstParagraph }
-                .collect { collector.processParagraph(it as AstParagraph) }
+                .collect { collector.processParagraph(it as AstParagraph, context) }
 
         document.addQuoteBlock(paragraphs)
     }

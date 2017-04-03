@@ -18,7 +18,7 @@ class HorizontalRuleHandler implements AstNodeHandler {
     }
 
     @Override
-    void handle(AstNode node, Document document) {
+    void handle(AstNode node, Context context, Document document) {
         assert node instanceof AstThematicBreak
 
         document.addHorizontalRule()

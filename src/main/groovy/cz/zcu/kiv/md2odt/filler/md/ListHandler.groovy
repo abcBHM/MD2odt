@@ -19,11 +19,11 @@ class ListHandler implements AstNodeHandler {
     }
 
     @Override
-    void handle(AstNode node, Document document) {
+    void handle(AstNode node, Context context, Document document) {
         assert node instanceof AstList
 
         def collector = new ListCollector()
-        def listContent = collector.processList(node as ListBlock)
+        def listContent = collector.processList(node as ListBlock, context)
 
         document.addList(listContent)
     }

@@ -12,6 +12,7 @@ import cz.zcu.kiv.md2odt.document.Document
  */
 class IntendedCodeBlockHandler implements AstNodeHandler {
 
+    // TODO: tabs?
     private static final int INDENT = 4
     private static final String INDENT_STR = " " * INDENT
 
@@ -21,7 +22,7 @@ class IntendedCodeBlockHandler implements AstNodeHandler {
     }
 
     @Override
-    void handle(AstNode node, Document document) {
+    void handle(AstNode node, Context context, Document document) {
         assert node instanceof AstIndentedCodeBlock
 
         def code = node.chars.toString()

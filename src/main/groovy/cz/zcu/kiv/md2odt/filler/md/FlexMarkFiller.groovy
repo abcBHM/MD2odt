@@ -2,6 +2,7 @@ package cz.zcu.kiv.md2odt.filler.md
 
 import com.vladsch.flexmark.ast.Document as AstDocument
 import com.vladsch.flexmark.ast.Node as AstNode
+import com.vladsch.flexmark.ast.Reference as AstReference
 import com.vladsch.flexmark.parser.Parser
 import cz.zcu.kiv.md2odt.document.Document
 import cz.zcu.kiv.md2odt.filler.Filler
@@ -9,14 +10,14 @@ import org.apache.log4j.Logger
 
 /**
  *
- * @version 2017-04-01
+ * @version 2017-04-02
  * @author Patrik Harag
  */
 class FlexMarkFiller implements Filler {
 
     private static final Logger LOGGER = Logger.getLogger(FlexMarkFiller)
 
-    private static final List<AstNodeHandler> converters = [
+    private static final List<AstNodeHandler> handlers = [
             new ParagraphHandler(),
             new FencedCodeBlockHandler(),
             new IntendedCodeBlockHandler(),
@@ -24,6 +25,7 @@ class FlexMarkFiller implements Filler {
             new HorizontalRuleHandler(),
             new HeadingHandler(),
             new ListHandler(),
+            BasicHandlers.ignore(AstReference)
     ]
 
 
@@ -39,20 +41,22 @@ class FlexMarkFiller implements Filler {
 
     @Override
     void fill(String md, Document document) {
-        def ast = parser.parse(md)
-        walk(ast, document)
+        def ast = parser.parse(md) as AstDocument
+        def context = Context.of(ast)
+
+        convert(ast, context, document)
     }
 
-    private void walk(AstNode node, Document document) {
+    private void convert(AstNode node, Context context, Document document) {
         if (node.class == AstDocument) {
             // top level node
-            node.children.each { walk(it, document) }
+            node.children.each { convert(it, context, document) }
 
         } else {
-            def converter = converters.find { it.target.isInstance(node) }
+            def handler = handlers.find { it.target.isInstance(node) }
 
-            if (converter)
-                converter.handle(node, document)
+            if (handler)
+                handler.handle(node, context, document)
             else
                 LOGGER.warn("Unknown node: " + node.class)
         }

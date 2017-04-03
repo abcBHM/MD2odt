@@ -21,7 +21,7 @@ class FencedCodeBlockHandler implements AstNodeHandler {
     }
 
     @Override
-    void handle(AstNode node, Document document) {
+    void handle(AstNode node, Context context, Document document) {
         assert node instanceof AstFencedCodeBlock
 
         def segments = (node as AstFencedCodeBlock).segments

@@ -6,13 +6,25 @@ import cz.zcu.kiv.md2odt.document.Document
 /**
  * Interface for handling specific AST node.
  *
- * @version 2017-03-17
+ * @version 2017-04-02
  * @author Patrik Harag
  */
 interface AstNodeHandler {
 
+    /**
+     * Returns class of target AST node.
+     *
+     * @return class
+     */
     Class<?> getTarget()
 
-    void handle(AstNode node, Document document)
+    /**
+     * Handles AST node.
+     *
+     * @param node AST node
+     * @param context context
+     * @param document output document
+     */
+    void handle(AstNode node, Context context, Document document)
 
 }

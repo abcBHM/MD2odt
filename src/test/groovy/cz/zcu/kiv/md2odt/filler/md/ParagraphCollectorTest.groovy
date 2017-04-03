@@ -1,5 +1,6 @@
 package cz.zcu.kiv.md2odt.filler.md
 
+import com.vladsch.flexmark.ast.Document
 import com.vladsch.flexmark.ast.Paragraph
 import com.vladsch.flexmark.parser.Parser
 import cz.zcu.kiv.md2odt.document.ParagraphContent
@@ -9,7 +10,7 @@ import static cz.zcu.kiv.md2odt.document.SpanType.*
 
 /**
  *
- * @version 2017-04-01
+ * @version 2017-04-02
  * @author Patrik Harag
  */
 class ParagraphCollectorTest {
@@ -20,7 +21,8 @@ class ParagraphCollectorTest {
         def astParagraph = document.children[0] as Paragraph
 
         def collector = new ParagraphCollector()
-        return collector.processParagraph(astParagraph)
+        def context = Context.of(document as Document)
+        return collector.processParagraph(astParagraph, context)
     }
 
     @Test
@@ -119,6 +121,32 @@ class ParagraphCollectorTest {
     }
 
     @Test
+    void linkRef() {
+        def paragraph = paragraph('''
+            [Google][1]
+
+            [1]: http://google.com
+        '''.stripIndent())
+
+        assert paragraph.list*.text == ["Google"]
+        assert paragraph.list*.type == [LINK]
+        assert paragraph.list*.url  == ["http://google.com"]
+    }
+
+    @Test
+    void linkRefWithoutText() {
+        def paragraph = paragraph('''
+            [1]
+
+            [1]: http://google.com
+        '''.stripIndent())
+
+        assert paragraph.list*.text == ["1"]
+        assert paragraph.list*.type == [LINK]
+        assert paragraph.list*.url  == ["http://google.com"]
+    }
+
+    @Test
     void htmlEntity() {
         def paragraph = paragraph("&amp;")
 
@@ -142,6 +170,20 @@ class ParagraphCollectorTest {
 
         assert paragraph.list*.text == [""]
         assert paragraph.list*.url == ["img.png"]
+        assert paragraph.list*.alt == ["alt text"]
+        assert paragraph.list*.type == [IMAGE]
+    }
+
+    @Test
+    void imageRef() {
+        def paragraph = paragraph('''
+            ![alt text][pic]
+
+            [pic]: https://www.example.com/img.png "title"
+        '''.stripIndent())
+
+        assert paragraph.list*.text == ["title"]
+        assert paragraph.list*.url == ["https://www.example.com/img.png"]
         assert paragraph.list*.alt == ["alt text"]
         assert paragraph.list*.type == [IMAGE]
     }

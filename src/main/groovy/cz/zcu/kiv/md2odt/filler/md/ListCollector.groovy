@@ -15,38 +15,39 @@ import org.apache.log4j.Logger
 /**
  * Converts AST node into {@link ListContent}.
  *
- * @version 2017-04-01
+ * @version 2017-04-02
  * @author Patrik Harag
  */
 class ListCollector {
 
     private static final Logger LOGGER = Logger.getLogger(ListCollector)
 
-    ListContent processList(AstList list) {
+    ListContent processList(AstList list, Context context) {
         def builder = ListContentBuilder.builder(type(list))
 
         list.children.each {
-            builder.addListItem(buildListItem(it))
+            builder.addListItem(buildListItem(it, context))
         }
 
         builder.build()
     }
 
-    private List<BlockContent> buildListItem(AstNode node) {
+    private List<BlockContent> buildListItem(AstNode node, Context context) {
         assert node instanceof AstListItem
 
-        node.children.collect { build(it) }.toList()
+        node.children.collect { build(it, context) }.toList()
     }
 
-    private BlockContent build(AstNode node) {
+    private BlockContent build(AstNode node, Context context) {
         switch (node) {
             case AstList:
                 // nested list
-                return processList(node as AstList)
+                return processList(node as AstList, context)
 
             case AstParagraph:
                 // paragraph
-                return new ParagraphCollector().processParagraph(node as AstParagraph)
+                return new ParagraphCollector()
+                        .processParagraph(node as AstParagraph, context)
 
             default:
                 // TODO: headers? code blocks? quote blocks?

@@ -1,9 +1,13 @@
 package cz.zcu.kiv.md2odt.document.odt
 
-import cz.zcu.kiv.md2odt.MD2odt
+import cz.zcu.kiv.md2odt.document.ListContent
+import cz.zcu.kiv.md2odt.document.ListContentBuilder
+import cz.zcu.kiv.md2odt.document.ListType
+import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
+import org.odftoolkit.simple.text.Paragraph
 import org.odftoolkit.simple.text.list.List
 import org.w3c.dom.Node
 

@@ -1,5 +1,8 @@
 package cz.zcu.kiv.md2odt.document.odt
 
+import cz.zcu.kiv.md2odt.document.ListContent
+import cz.zcu.kiv.md2odt.document.ListContentBuilder
+import cz.zcu.kiv.md2odt.document.ListType
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
 import cz.zcu.kiv.md2odt.document.SpanContentImage
@@ -120,5 +123,18 @@ class OdfSimpleDocumentTest {
     void addHeadingTest() throws Exception {
         doc.addHeading("heading 1", 1)
         assert doc.getOdfSimpleWrapper().getLastNode().toString().equals("<text:h text:outline-level=\"1\" text:style-name=\"Heading_20_1\">heading 1</text:h>")
+    }
+
+    @Ignore
+    @Test
+    void testListContent() {
+        ListContent content = ListContentBuilder.builder(ListType.ORDERED)
+                .addListItem(ParagraphContentBuilder.builder().addBold("bla1").build())
+                .addListItem(ListContentBuilder.builder(ListType.ORDERED)
+                        .addListItem(ParagraphContentBuilder.builder().addBold("bla2").build()).addListItem(ParagraphContentBuilder.builder().addBold("bla21").build()).build())
+                .addListItem(ParagraphContentBuilder.builder().addBold("bla3").build())
+                .build()
+        doc.addList(content)
+        doc.save("test.odt")
     }
 }

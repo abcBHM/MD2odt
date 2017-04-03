@@ -9,6 +9,8 @@ import cz.zcu.kiv.md2odt.document.SpanContent
 import cz.zcu.kiv.md2odt.document.SpanContentImage
 import cz.zcu.kiv.md2odt.document.SpanContentLink
 import cz.zcu.kiv.md2odt.document.SpanType
+import org.odftoolkit.simple.text.list.List as OdfList
+import org.odftoolkit.simple.text.list.ListItem
 
 /**
  * Created by pepe on 15. 3. 2017.
@@ -107,7 +109,7 @@ class OdfSimpleDocument implements DocumentAdapter {
 
     @Override
     void addCodeBlock(String code, String lang) {
-        doc.addCodeBlock(OdfSimpleConstants.escape(code), lang);
+        doc.addCodeBlock(OdfSimpleConstants.escape(code), lang)
     }
 
     @Override
@@ -119,7 +121,7 @@ class OdfSimpleDocument implements DocumentAdapter {
 
     @Override
     void addHorizontalRule() {
-        doc.addHorizontalRule();
+        doc.addHorizontalRule()
     }
 
     @Override
@@ -127,10 +129,47 @@ class OdfSimpleDocument implements DocumentAdapter {
         doc.addHeading(OdfSimpleConstants.escape(text), level)
     }
 
-    /*
     @Override
     void addList(ListContent content) {
-        throw new UnsupportedOperationException()
+        OdfList list = doc.addList("", switchListTypes(content.getType()))
+
+        addListRec(content, list)
     }
-    */
+
+    private void addListRec(ListContent content, OdfList list) {
+        List<List<BlockContent>> listListBlockContent = content.getListItems()
+
+        for (List<BlockContent> listBlock : listListBlockContent) {
+            def itemInList = null
+
+            for (BlockContent blockContent : listBlock) {
+                if(blockContent instanceof ParagraphContent) {
+                    if(itemInList == null) {
+                        list.addItem("")
+                        itemInList = list.getItem(list.size() - 1)
+                    }
+                    itemInList.textContent += parToString(blockContent) + "\r\n"
+                }
+
+                else if(blockContent instanceof ListContent) {
+                    OdfList newList = doc.addSubList(list, switchListTypes(blockContent.getType()))
+                    addListRec(blockContent, newList)
+                }
+            }
+        }
+    }
+
+    private static OdfListEnum switchListTypes(ListType listType) {
+        switch (listType) {
+            case ListType.BULLET:
+                return OdfListEnum.BULLET_LIST
+                break
+            case ListType.ORDERED:
+                return OdfListEnum.NUMBERED_LIST
+                break
+            default:
+                return OdfListEnum.BULLET_LIST
+                break
+        }
+    }
 }

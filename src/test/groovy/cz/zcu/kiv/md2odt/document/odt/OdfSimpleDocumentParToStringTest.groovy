@@ -58,9 +58,9 @@ class OdfSimpleDocumentParToStringTest {
         assert doc.parToString(pc).equals("text")
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    void parToStringUnsupportedOperationException() throws Exception {
+    @Test
+    void parToStringUnsupportedOperation() throws Exception {
         pc.getList().add(new SpanContentText("text", null))
-        doc.parToString(pc)
+        assert doc.parToString(pc).equals("")
     }
 }

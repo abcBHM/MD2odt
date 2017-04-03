@@ -9,6 +9,7 @@ import cz.zcu.kiv.md2odt.document.SpanContent
 import cz.zcu.kiv.md2odt.document.SpanContentImage
 import cz.zcu.kiv.md2odt.document.SpanContentLink
 import cz.zcu.kiv.md2odt.document.SpanType
+import org.apache.log4j.Logger
 import org.odftoolkit.simple.text.list.List as OdfList
 import org.odftoolkit.simple.text.list.ListItem
 
@@ -17,6 +18,8 @@ import org.odftoolkit.simple.text.list.ListItem
  */
 class OdfSimpleDocument implements DocumentAdapter {
     private OdfSimpleWrapper doc
+
+    private static final Logger LOGGER = Logger.getLogger(OdfSimpleDocument)
 
     OdfSimpleDocument() {
         doc = new OdfSimpleWrapper()
@@ -71,7 +74,7 @@ class OdfSimpleDocument implements DocumentAdapter {
                     }
                     break
                 default:
-                    throw new UnsupportedOperationException("Not implemented in OdfSimpleDocument yet")
+                    LOGGER.warn("SpanType not implemented: " + sc.getType() + " in class " + sc.class)
             }
 
         }

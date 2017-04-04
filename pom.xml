@@ -27,6 +27,11 @@
             <artifactId>flexmark</artifactId>
             <version>0.18.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-ext-autolink</artifactId>
+            <version>0.18.5</version>
+        </dependency>
 
         <!-- ODFDOM - ODF API -->
         <dependency>

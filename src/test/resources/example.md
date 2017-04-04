@@ -25,7 +25,7 @@ Email link: <address@example.com>
 
 Autolink: <http://google.com/>
 
-http://google.com/ (disabled by default)
+Autolink: http://google.com/ (extension, disabled by default)
 
 Normal link 1: [Google](http://google.com/ "Google")
 

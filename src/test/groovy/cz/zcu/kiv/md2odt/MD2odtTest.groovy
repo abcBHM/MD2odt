@@ -20,10 +20,15 @@ class MD2odtTest {
     @Ignore
     void test() {
         def md = new FileInputStream(EXAMPLE)
-        def template = null
         def out = Files.newOutputStream(Paths.get("result.odt"))
 
-        MD2odt.convert(md, template, out)
+        MD2odt.converter()
+                .setInput(md)
+                .setOutput(out)
+
+                .enableAutolinks()
+
+                .convert()
     }
 
     @Test
@@ -33,7 +38,14 @@ class MD2odtTest {
         def template = new FileInputStream(TEMPLATE)
         def out = Files.newOutputStream(Paths.get("result.odt"))
 
-        MD2odt.convert(md, template, out)
+        MD2odt.converter()
+                .setInput(md)
+                .setTemplate(template)
+                .setOutput(out)
+
+                .enableAutolinks()
+
+                .convert()
     }
 
 }

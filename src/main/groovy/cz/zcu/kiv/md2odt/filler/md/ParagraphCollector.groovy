@@ -16,6 +16,7 @@ import com.vladsch.flexmark.ast.Paragraph as AstParagraph
 import com.vladsch.flexmark.ast.SoftLineBreak as AstSoftLineBreak
 import com.vladsch.flexmark.ast.StrongEmphasis as AstStrongEmphasis
 import com.vladsch.flexmark.ast.Text as AstText
+import com.vladsch.flexmark.ast.TextBase as AstTextBase
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
 import org.apache.log4j.Logger
@@ -23,7 +24,7 @@ import org.jsoup.Jsoup
 
 /**
  *
- * @version 2017-04-03
+ * @version 2017-04-04
  * @author Patrik Harag
  */
 class ParagraphCollector {
@@ -113,6 +114,10 @@ class ParagraphCollector {
 
             case AstHtmlInlineComment:
                 // ignore
+                break
+
+            case AstTextBase:
+                node.children.each { processNode(it, context, builder) }
                 break
 
             default:

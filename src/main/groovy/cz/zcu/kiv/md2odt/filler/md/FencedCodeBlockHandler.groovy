@@ -8,7 +8,7 @@ import org.apache.log4j.Logger
 /**
  * Handles {@link com.vladsch.flexmark.ast.FencedCodeBlock} AST node.
  *
- * @version 2017-04-01
+ * @version 2017-04-04
  * @author Patrik Harag
  */
 class FencedCodeBlockHandler implements AstNodeHandler {
@@ -26,11 +26,7 @@ class FencedCodeBlockHandler implements AstNodeHandler {
 
         def segments = (node as AstFencedCodeBlock).segments
 
-        if (segments.size() == 3) {
-            def code = segments[1].toString().trim()
-            document.addCodeBlock(code)
-
-        } else if (segments.size() == 4) {
+        if (segments.size() == 4) {
             def lang = segments[1].toString()
             def code = segments[2].toString().trim()
             document.addCodeBlock(code, lang)

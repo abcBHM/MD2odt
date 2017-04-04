@@ -6,10 +6,10 @@ import org.junit.Test
 
 /**
  *
- * @version 2017-03-21
+ * @version 2017-04-04
  * @author Patrik Harag
  */
-class FillerRestTest {
+class FillerParagraphTest {
 
     def filler = new FlexMarkFiller()
 
@@ -25,16 +25,6 @@ class FillerRestTest {
         assert out.size() == 1
         assert out[0] instanceof ParagraphContent
         assert out[0].list*.text == ["hello ", "world", "!"]
-    }
-
-    @Test
-    void horizontalRule() {
-        int i = 0
-        def documentMock = [addHorizontalRule: { i++ }] as Document
-
-        filler.fill("___\n---\n***\n", documentMock)
-
-        assert i == 3
     }
 
 }

@@ -4,6 +4,7 @@ import com.vladsch.flexmark.Extension;
 import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
 import com.vladsch.flexmark.parser.Parser;
 import cz.zcu.kiv.md2odt.document.Document;
+import cz.zcu.kiv.md2odt.document.odfdom.OdfdomDocument;
 import cz.zcu.kiv.md2odt.document.odt.OdfSimpleDocument;
 import cz.zcu.kiv.md2odt.filler.Filler;
 import cz.zcu.kiv.md2odt.filler.md.FlexMarkFiller;
@@ -77,8 +78,8 @@ public class Converter {
 
     public void convert() throws IOException {
         Document document = (template == null)
-                ? new OdfSimpleDocument()
-                : new OdfSimpleDocument(template);
+                ? new OdfdomDocument()
+                : new OdfdomDocument(template);
 
         String md = (inString == null)
                 ? asString(inStream, charset)

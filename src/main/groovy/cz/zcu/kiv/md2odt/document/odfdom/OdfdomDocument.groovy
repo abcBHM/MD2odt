@@ -1,23 +1,54 @@
 package cz.zcu.kiv.md2odt.document.odfdom
 
+import cz.zcu.kiv.md2odt.document.BlockContent
 import cz.zcu.kiv.md2odt.document.Document
 import cz.zcu.kiv.md2odt.document.DocumentAdapter
 import cz.zcu.kiv.md2odt.document.ListContent
+import cz.zcu.kiv.md2odt.document.ListType
 import cz.zcu.kiv.md2odt.document.ParagraphContent
+import cz.zcu.kiv.md2odt.document.SpanContent
+import cz.zcu.kiv.md2odt.document.SpanContentImage
+import cz.zcu.kiv.md2odt.document.SpanContentLink
+import cz.zcu.kiv.md2odt.document.SpanType
+import cz.zcu.kiv.md2odt.document.odt.OdfListEnum
 import cz.zcu.kiv.md2odt.document.odt.StyleNames
 import org.apache.log4j.Logger
+import org.odftoolkit.odfdom.dom.OdfContentDom
+import org.odftoolkit.odfdom.dom.OdfSchemaDocument
 import org.odftoolkit.odfdom.dom.attribute.text.TextStyleNameAttribute
+import org.odftoolkit.odfdom.dom.element.draw.DrawFrameElement
+import org.odftoolkit.odfdom.dom.element.draw.DrawImageElement
+import org.odftoolkit.odfdom.dom.element.text.TextAElement
+import org.odftoolkit.odfdom.dom.element.text.TextListItemElement
+import org.odftoolkit.odfdom.dom.element.text.TextParagraphElementBase
+import org.odftoolkit.odfdom.dom.element.text.TextSpanElement
+import org.odftoolkit.odfdom.incubator.doc.draw.OdfDrawFrame
+import org.odftoolkit.odfdom.pkg.OdfElement
 import org.odftoolkit.odfdom.pkg.OdfFileDom
+import org.odftoolkit.odfdom.pkg.OdfName
+import org.odftoolkit.odfdom.pkg.manifest.OdfFileEntry
 import org.odftoolkit.simple.TextDocument
+import org.odftoolkit.simple.draw.Image
+import org.odftoolkit.simple.style.Font
+import org.odftoolkit.simple.style.StyleTypeDefinitions
+import org.odftoolkit.simple.text.Paragraph
+import org.odftoolkit.simple.text.Span
+import org.odftoolkit.simple.text.TextHyperlink
+import org.odftoolkit.simple.text.list.BulletDecorator
+import org.odftoolkit.simple.text.list.List as OdfList
+import org.odftoolkit.simple.text.list.ListDecorator
+import org.odftoolkit.simple.text.list.ListItem
+import org.odftoolkit.simple.text.list.NumberDecorator
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import org.w3c.dom.Text
 
 /**
  * Created by pepe on 5. 4. 2017.
  */
 class OdfdomDocument implements DocumentAdapter{
 
-    private TextDocument odt
+    private final TextDocument odt
     private static final Logger LOGGER = Logger.getLogger(OdfdomDocument)
 
     OdfdomDocument() {
@@ -69,29 +100,87 @@ class OdfdomDocument implements DocumentAdapter{
         }
     }
 
+    protected void fillWithParagraphContent(OdfElement element, ParagraphContent paragraphContent) {
+        for(SpanContent sc : paragraphContent.list) {
+            switch (sc.getType()) {
+                case SpanType.REGULAR:
+                    Text textNode = odt.getContentDom().createTextNode(sc.getText())
+                    element.appendChild(textNode)
+                    break
+                case SpanType.BOLD:
+                    Span s = new Span(new TextSpanElement(odt.getContentDom()))
+                    s.setTextContent(sc.getText())
+                    s.getStyleHandler().getTextPropertiesForWrite().setFontStyle(StyleTypeDefinitions.FontStyle.BOLD)
+                    element.appendChild(s.getOdfElement())
+                    break
+                case SpanType.ITALIC:
+                    Span s = new Span(new TextSpanElement(odt.getContentDom()))
+                    s.setTextContent(sc.getText())
+                    s.getStyleHandler().getTextPropertiesForWrite().setFontStyle(StyleTypeDefinitions.FontStyle.ITALIC)
+                    element.appendChild(s.getOdfElement())
+                    break
+                case SpanType.LINK:
+                    if (sc instanceof SpanContentLink) {
+                        TextAElement aElement = (TextAElement) odt.getContentDom().newOdfElement(TextAElement.class)
+                        aElement.setXlinkTypeAttribute("simple")
+                        aElement.setXlinkHrefAttribute(sc.getUrl())
+                        aElement.setTextContent(sc.getText())
+                        element.appendChild(aElement)
+                    } else {
+                        LOGGER.error("SpanContent with a '" + sc.getType() + "' type and instance of '" + sc.class + "'")
+                    }
+                    break
+                case SpanType.CODE:
+                    Span s = new Span(new TextSpanElement(odt.getContentDom()))
+                    s.setTextContent(sc.getText())
+                    s.getStyleHandler().getTextPropertiesForWrite().setFont(new Font("Courier New", StyleTypeDefinitions.FontStyle.REGULAR, 12))
+                    element.appendChild(s.getOdfElement())
+                    break
+                case SpanType.IMAGE:
+                    if (sc instanceof SpanContentImage) {
+                        DrawFrameElement frame = new DrawFrameElement(odt.getContentDom())
+                        DrawImageElement e1 = frame.newDrawImageElement()
+
+                        URI imageUri = new URI(sc.getUrl())
+                        String imageRef1 = imageUri.toString()
+                        String mediaType1 = OdfFileEntry.getMediaTypeString(imageRef1)
+                        OdfSchemaDocument mOdfSchemaDoc1 = (OdfSchemaDocument)odt.getContentDom().getDocument()
+                        String packagePath = Image.getPackagePath(mOdfSchemaDoc1, imageRef1)
+                        mOdfSchemaDoc1.getPackage().insert(imageUri, packagePath, mediaType1)
+                        packagePath = packagePath.replaceFirst(odt.getContentDom().getDocument().getDocumentPath(), "")
+                        Image.configureInsertedImage((OdfSchemaDocument)odt.getContentDom().getDocument(), e1, packagePath, false)
+                        Image mImage = Image.getInstanceof(e1)
+                        mImage.getStyleHandler().setAchorType(StyleTypeDefinitions.AnchorType.AS_CHARACTER)
+
+                        element.appendChild(frame)
+                    } else {
+                        LOGGER.error("SpanContent with a '" + sc.getType() + "' type and instance of '" + sc.class + "'")
+                    }
+                    break
+                default:
+                    LOGGER.warn("SpanType not implemented: " + sc.getType() + " in class " + sc.class)
+            }
+        }
+    }
+
     @Override
     void addHeading(String text, int level) {
         def paragraph = odt.addParagraph(text)
         paragraph.applyHeading(true, level)
 
-        TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
+        TextStyleNameAttribute attr = new TextStyleNameAttribute(odt.getContentDom())
         paragraph.odfElement.setOdfAttribute(attr)
         attr.setValue(StyleNames.HEADING.getLevel(level))
     }
 
     @Override
     void addParagraph(ParagraphContent content) {
-       /* def paragraph = odt.addParagraph(text)
+        Paragraph paragraph = odt.addParagraph("")
+        fillWithParagraphContent(paragraph.getOdfElement(), content)
 
-        TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
+        TextStyleNameAttribute attr = new TextStyleNameAttribute(odt.getContentDom())
         paragraph.odfElement.setOdfAttribute(attr)
-        attr.setValue(StyleNames.BODY_TEXT.getValue())*/
-        LOGGER.warn("addParagraph not implemented in class " + this.class)
-    }
-
-    @Override
-    void addList(ListContent content) {
-        LOGGER.warn("addList not implemented in class " + this.class)
+        attr.setValue(StyleNames.BODY_TEXT.getValue())
     }
 
     @Override
@@ -103,29 +192,118 @@ class OdfdomDocument implements DocumentAdapter{
     void addCodeBlock(String code, String lang) {
         def paragraph = odt.addParagraph(code)
 
-        TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
+        TextStyleNameAttribute attr = new TextStyleNameAttribute(odt.getContentDom())
         paragraph.odfElement.setOdfAttribute(attr)
         attr.setValue(StyleNames.CODE.getValue())
     }
 
     @Override
     void addQuoteBlock(List<ParagraphContent> paragraphs) {
-        /*def paragraph = odt.addParagraph(text)
+        def paragraph = odt.addParagraph("")
 
-        TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
+        for (ParagraphContent pc : paragraphs) {
+            fillWithParagraphContent(paragraph.getOdfElement(), pc)
+        }
+
+
+        TextStyleNameAttribute attr = new TextStyleNameAttribute(odt.getContentDom())
         paragraph.odfElement.setOdfAttribute(attr)
-        attr.setValue(StyleNames.QUOTE.getValue())*/
-        LOGGER.warn("addQuoteBlock not implemented in class " + this.class)
+        attr.setValue(StyleNames.QUOTE.getValue())
     }
 
     @Override
     void addHorizontalRule() {
         def paragraph = odt.addParagraph("")
 
-        TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
+        TextStyleNameAttribute attr = new TextStyleNameAttribute(odt.getContentDom())
         paragraph.odfElement.setOdfAttribute(attr)
         attr.setValue(StyleNames.HORIZONTAL_RULE.getValue())
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private ListDecorator switchDecorator(ListType e) {
+        ListDecorator decorator = null
+        switch (e) {
+            case ListType.BULLET:
+                decorator = new BulletDecorator(odt)
+                break
+            case ListType.ORDERED:
+                decorator = new NumberDecorator(odt)
+                break
+        }
+        return decorator
+    }
+
+    @Override
+    void addList(ListContent content) {
+        OdfList list = odt.addList(switchDecorator(content.getType()))
+        //newList.setHeader(listHeading)
+        addListRec(content, list)
+    }
+
+
+    private void addListRec(ListContent content, OdfList list) {
+        List<List<BlockContent>> listListBlockContent = content.getListItems()
+
+        for (List<BlockContent> listBlock : listListBlockContent) {
+            TextListItemElement textItem = null
+
+            for (BlockContent blockContent : listBlock) {
+                if(blockContent instanceof ParagraphContent) {
+                    if(textItem == null) {
+                        textItem = list.getOdfElement().newTextListItemElement()
+                    }
+                    fillWithParagraphContent(textItem.newTextPElement(), blockContent)
+                }
+                else if(blockContent instanceof ListContent) {
+                    OdfList newList = addSubList(list, blockContent.getType())
+                    addListRec(blockContent, newList)
+                }
+            }
+        }
+    }
+
+    OdfList addSubList(OdfList parentList, ListType e) {
+        ListDecorator decorator = switchDecorator(e)
+        return parentList.getItem(parentList.size() - 1).addList(decorator)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     void save(String documentPath) {

@@ -86,7 +86,7 @@ class OdfSimpleWrapper {
 
         TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
         paragraph.odfElement.setOdfAttribute(attr)
-        attr.setValue("Heading_20_"+level)
+        attr.setValue(StyleNames.HEADING.getLevel(level))
     }
 
     void addParagraph(String text) {
@@ -94,7 +94,7 @@ class OdfSimpleWrapper {
 
         TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
         paragraph.odfElement.setOdfAttribute(attr)
-        attr.setValue("Text_20_body")
+        attr.setValue(StyleNames.BODY_TEXT.getValue())
     }
 
     void addQuoteParagraph(String text) {
@@ -102,7 +102,7 @@ class OdfSimpleWrapper {
 
         TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
         paragraph.odfElement.setOdfAttribute(attr)
-        attr.setValue("Quotations")
+        attr.setValue(StyleNames.QUOTE.getValue())
     }
 
     void addCodeBlock(String code, String lang) {
@@ -110,7 +110,7 @@ class OdfSimpleWrapper {
 
         TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
         paragraph.odfElement.setOdfAttribute(attr)
-        attr.setValue("Preformatted_20_Text")
+        attr.setValue(StyleNames.CODE.getValue())
     }
 
     void italicAll() {
@@ -268,7 +268,7 @@ class OdfSimpleWrapper {
 
         TextStyleNameAttribute attr = new TextStyleNameAttribute((OdfFileDom) paragraph.odfElement.ownerDocument)
         paragraph.odfElement.setOdfAttribute(attr)
-        attr.setValue("Horizontal_20_Line")
+        attr.setValue(StyleNames.HORIZONTAL_RULE.getValue())
     }
 
     /** Returns the last operated Node. Used for testing.

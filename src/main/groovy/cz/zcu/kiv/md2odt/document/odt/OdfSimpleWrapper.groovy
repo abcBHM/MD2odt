@@ -40,16 +40,19 @@ class OdfSimpleWrapper {
     OdfSimpleWrapper(File file) {
         this.odt = TextDocument.loadDocument(file)
         fillDefaultStyles()
+        escapeAll()
     }
 
     OdfSimpleWrapper(String documentPath) {
         this.odt = TextDocument.loadDocument(documentPath)
         fillDefaultStyles()
+        escapeAll()
     }
 
     OdfSimpleWrapper(InputStream inputStream) {
         this.odt = TextDocument.loadDocument(inputStream)
         fillDefaultStyles()
+        escapeAll()
     }
 
     protected Set<String> getStyleNames(TextDocument td) {
@@ -204,6 +207,23 @@ class OdfSimpleWrapper {
                   /*  im.setDescription("desc")
                     im.setName("name")
                     im.setTitle("title")*/
+            }
+        }
+    }
+
+    void escapeAll() {
+        Node root = odt.getContentDom().getElementsByTagName("office:text").item(0)
+        Node n = null
+        Queue<Node> q = new LinkedList<>()
+        q.add(root)
+        while(!q.isEmpty()) {
+            n = q.poll()
+            if(n.hasChildNodes()) {
+                for(Node child : n.childNodes) {
+                    q.add(child)
+                }
+            }else if(n instanceof TextImpl) {
+                n.setTextContent(OdfSimpleConstants.escape(n.getTextContent()))
             }
         }
     }

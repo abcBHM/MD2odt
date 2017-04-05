@@ -31,7 +31,7 @@ import org.w3c.dom.Text
  */
 class OdfdomDocument implements DocumentAdapter{
 
-    private final TextDocument odt
+    protected final TextDocument odt
     private static final Logger LOGGER = Logger.getLogger(OdfdomDocument)
 
     OdfdomDocument() {
@@ -121,21 +121,28 @@ class OdfdomDocument implements DocumentAdapter{
                     break
                 case SpanType.IMAGE:
                     if (sc instanceof SpanContentImage) {
-                        DrawFrameElement frame = new DrawFrameElement(odt.getContentDom())
-                        DrawImageElement e1 = frame.newDrawImageElement()
+                        try {
+                            DrawFrameElement frame = new DrawFrameElement(odt.getContentDom())
+                            DrawImageElement e1 = frame.newDrawImageElement()
 
-                        URI imageUri = new URI(sc.getUrl())
-                        String imageRef1 = imageUri.toString()
-                        String mediaType1 = OdfFileEntry.getMediaTypeString(imageRef1)
-                        OdfSchemaDocument mOdfSchemaDoc1 = (OdfSchemaDocument)odt.getContentDom().getDocument()
-                        String packagePath = Image.getPackagePath(mOdfSchemaDoc1, imageRef1)
-                        mOdfSchemaDoc1.getPackage().insert(imageUri, packagePath, mediaType1)
-                        packagePath = packagePath.replaceFirst(odt.getContentDom().getDocument().getDocumentPath(), "")
-                        Image.configureInsertedImage((OdfSchemaDocument)odt.getContentDom().getDocument(), e1, packagePath, false)
-                        Image mImage = Image.getInstanceof(e1)
-                        mImage.getStyleHandler().setAchorType(StyleTypeDefinitions.AnchorType.AS_CHARACTER)
+                            URI imageUri = new URI(sc.getUrl())
+                            String imageRef1 = imageUri.toString()
+                            String mediaType1 = OdfFileEntry.getMediaTypeString(imageRef1)
+                            OdfSchemaDocument mOdfSchemaDoc1 = (OdfSchemaDocument) odt.getContentDom().getDocument()
+                            String packagePath = Image.getPackagePath(mOdfSchemaDoc1, imageRef1)
+                            mOdfSchemaDoc1.getPackage().insert(imageUri, packagePath, mediaType1)
+                            packagePath = packagePath.replaceFirst(odt.getContentDom().getDocument().getDocumentPath(), "")
+                            Image.configureInsertedImage((OdfSchemaDocument) odt.getContentDom().getDocument(), e1, packagePath, false)
+                            Image mImage = Image.getInstanceof(e1)
+                            mImage.getStyleHandler().setAchorType(StyleTypeDefinitions.AnchorType.AS_CHARACTER)
 
-                        element.appendChild(frame)
+                            element.appendChild(frame)
+                        }
+                        catch (Exception e) {
+                            LOGGER.info("Exception while inserting image in OdfdomDocument: " + e.toString())
+                            Text textNode = odt.getContentDom().createTextNode("Image (" + sc.getUrl() + ")")
+                            element.appendChild(textNode)
+                        }
                     } else {
                         LOGGER.error("SpanContent with a '" + sc.getType() + "' type and instance of '" + sc.class + "'")
                     }
@@ -182,16 +189,14 @@ class OdfdomDocument implements DocumentAdapter{
 
     @Override
     void addQuoteBlock(List<ParagraphContent> paragraphs) {
-        def paragraph = odt.addParagraph("")
-
         for (ParagraphContent pc : paragraphs) {
+            def paragraph = odt.addParagraph("")
             fillWithParagraphContent(paragraph.getOdfElement(), pc)
+
+            TextStyleNameAttribute attr = new TextStyleNameAttribute(odt.getContentDom())
+            paragraph.odfElement.setOdfAttribute(attr)
+            attr.setValue(StyleNames.QUOTE.getValue())
         }
-
-
-        TextStyleNameAttribute attr = new TextStyleNameAttribute(odt.getContentDom())
-        paragraph.odfElement.setOdfAttribute(attr)
-        attr.setValue(StyleNames.QUOTE.getValue())
     }
 
     @Override

@@ -1,7 +1,4 @@
-package cz.zcu.kiv.md2odt.document.odt
-
-import com.vladsch.flexmark.ast.Heading
-
+package cz.zcu.kiv.md2odt.document.odfdom
 /**
  * Created by pepe on 5. 4. 2017.
  */

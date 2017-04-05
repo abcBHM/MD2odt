@@ -1,31 +1,16 @@
 package cz.zcu.kiv.md2odt.document.odfdom
 
-import cz.zcu.kiv.md2odt.document.BlockContent
-import cz.zcu.kiv.md2odt.document.Document
-import cz.zcu.kiv.md2odt.document.DocumentAdapter
-import cz.zcu.kiv.md2odt.document.ListContent
-import cz.zcu.kiv.md2odt.document.ListType
-import cz.zcu.kiv.md2odt.document.ParagraphContent
-import cz.zcu.kiv.md2odt.document.SpanContent
-import cz.zcu.kiv.md2odt.document.SpanContentImage
-import cz.zcu.kiv.md2odt.document.SpanContentLink
-import cz.zcu.kiv.md2odt.document.SpanType
-import cz.zcu.kiv.md2odt.document.odt.OdfListEnum
-import cz.zcu.kiv.md2odt.document.odt.StyleNames
+import cz.zcu.kiv.md2odt.document.*
 import org.apache.log4j.Logger
-import org.odftoolkit.odfdom.dom.OdfContentDom
 import org.odftoolkit.odfdom.dom.OdfSchemaDocument
 import org.odftoolkit.odfdom.dom.attribute.text.TextStyleNameAttribute
 import org.odftoolkit.odfdom.dom.element.draw.DrawFrameElement
 import org.odftoolkit.odfdom.dom.element.draw.DrawImageElement
 import org.odftoolkit.odfdom.dom.element.text.TextAElement
 import org.odftoolkit.odfdom.dom.element.text.TextListItemElement
-import org.odftoolkit.odfdom.dom.element.text.TextParagraphElementBase
+import org.odftoolkit.odfdom.dom.element.text.TextPElement
 import org.odftoolkit.odfdom.dom.element.text.TextSpanElement
-import org.odftoolkit.odfdom.incubator.doc.draw.OdfDrawFrame
 import org.odftoolkit.odfdom.pkg.OdfElement
-import org.odftoolkit.odfdom.pkg.OdfFileDom
-import org.odftoolkit.odfdom.pkg.OdfName
 import org.odftoolkit.odfdom.pkg.manifest.OdfFileEntry
 import org.odftoolkit.simple.TextDocument
 import org.odftoolkit.simple.draw.Image
@@ -33,11 +18,9 @@ import org.odftoolkit.simple.style.Font
 import org.odftoolkit.simple.style.StyleTypeDefinitions
 import org.odftoolkit.simple.text.Paragraph
 import org.odftoolkit.simple.text.Span
-import org.odftoolkit.simple.text.TextHyperlink
 import org.odftoolkit.simple.text.list.BulletDecorator
 import org.odftoolkit.simple.text.list.List as OdfList
 import org.odftoolkit.simple.text.list.ListDecorator
-import org.odftoolkit.simple.text.list.ListItem
 import org.odftoolkit.simple.text.list.NumberDecorator
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -220,27 +203,6 @@ class OdfdomDocument implements DocumentAdapter{
         attr.setValue(StyleNames.HORIZONTAL_RULE.getValue())
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private ListDecorator switchDecorator(ListType e) {
         ListDecorator decorator = null
         switch (e) {
@@ -261,7 +223,6 @@ class OdfdomDocument implements DocumentAdapter{
         addListRec(content, list)
     }
 
-
     private void addListRec(ListContent content, OdfList list) {
         List<List<BlockContent>> listListBlockContent = content.getListItems()
 
@@ -273,7 +234,12 @@ class OdfdomDocument implements DocumentAdapter{
                     if(textItem == null) {
                         textItem = list.getOdfElement().newTextListItemElement()
                     }
-                    fillWithParagraphContent(textItem.newTextPElement(), blockContent)
+                    TextPElement par = textItem.newTextPElement()
+                    TextStyleNameAttribute attr = new TextStyleNameAttribute(odt.getContentDom())
+                    par.setOdfAttribute(attr)
+                    attr.setValue(StyleNames.LIST.getValue())
+                    fillWithParagraphContent(par, blockContent)
+
                 }
                 else if(blockContent instanceof ListContent) {
                     OdfList newList = addSubList(list, blockContent.getType())
@@ -287,23 +253,6 @@ class OdfdomDocument implements DocumentAdapter{
         ListDecorator decorator = switchDecorator(e)
         return parentList.getItem(parentList.size() - 1).addList(decorator)
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Override
     void save(String documentPath) {

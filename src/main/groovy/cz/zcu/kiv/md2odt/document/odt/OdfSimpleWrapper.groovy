@@ -22,12 +22,14 @@ import org.odftoolkit.simple.text.list.NumberDecorator
 import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import cz.zcu.kiv.md2odt.document.odfdom.StyleNames
 
 /**
  * Created by pepe on 13. 3. 2017.
  * cookbook:
  * http://incubator.apache.org/odftoolkit/simple/document/cookbook/index.html
  */
+@Deprecated
 class OdfSimpleWrapper {
     private TextDocument odt
 

@@ -16,6 +16,7 @@ import org.odftoolkit.simple.text.list.ListItem
 /**
  * Created by pepe on 15. 3. 2017.
  */
+@Deprecated
 class OdfSimpleDocument implements DocumentAdapter {
     private OdfSimpleWrapper doc
 

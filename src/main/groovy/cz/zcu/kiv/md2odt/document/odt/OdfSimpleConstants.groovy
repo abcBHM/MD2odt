@@ -3,6 +3,7 @@ package cz.zcu.kiv.md2odt.document.odt
 /**
  * Created by pepe on 14. 3. 2017.
  */
+@Deprecated
 enum OdfSimpleConstants {
     ITALIC("<", "&italic;"),
     BOLD(">", "&bold;"),

@@ -1,5 +1,6 @@
 package cz.zcu.kiv.md2odt.document.odt
 
+import org.apache.xerces.dom.TextImpl
 import org.odftoolkit.odfdom.dom.element.text.TextSpanElement
 import org.odftoolkit.odfdom.pkg.OdfFileDom
 import org.odftoolkit.odfdom.dom.attribute.fo.FoBackgroundColorAttribute
@@ -208,18 +209,19 @@ class OdfSimpleWrapper {
     }
 
     void reEscapeAll() {
-        for (OdfSimpleConstants osc : OdfSimpleConstants.values()) {
-            reEscape(osc.getEscape(), osc.getMark())
-        }
-        reEscape(OdfSimpleConstants.AMP_ESCAPE, OdfSimpleConstants.AMP_MARK)
-    }
-
-    private void reEscape(String what, String with) {
-        TextNavigation nav = new TextNavigation(what, odt)
-        TextSelection sel = null
-        while(nav.hasNext()) {
-            sel = nav.nextSelection()
-            sel.replaceWith(with)
+        Node root = odt.getContentDom().getElementsByTagName("office:text").item(0)
+        Node n = null
+        Queue<Node> q = new LinkedList<>()
+        q.add(root)
+        while(!q.isEmpty()) {
+            n = q.poll()
+            if(n.hasChildNodes()) {
+                for(Node child : n.childNodes) {
+                    q.add(child)
+                }
+            }else if(n instanceof TextImpl) {
+                n.setTextContent(OdfSimpleConstants.reEscape(n.getTextContent()))
+            }
         }
     }
 

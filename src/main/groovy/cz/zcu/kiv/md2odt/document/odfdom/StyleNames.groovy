@@ -13,21 +13,21 @@ enum StyleNames {
 
 
 
-    private String[] value
+    private String[] vals
 
     StyleNames(String... values) {
-        this.value = values
+        this.vals = values
     }
 
     String getValue() {
-        return value[0]
+        return vals[0]
     }
 
     String getLevel(int level) {
-        if(level >= value.length)
-            return value[value.length - 1]
+        if(level >= vals.length)
+            return vals[vals.length - 1]
         if(level < 0)
-            return value[0]
-        return value[level]
+            return vals[0]
+        return vals[level]
     }
 }

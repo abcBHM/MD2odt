@@ -2,16 +2,24 @@ package cz.zcu.kiv.md2odt.document.odfdom
 
 import cz.zcu.kiv.md2odt.document.*
 import org.apache.log4j.Logger
+import org.odftoolkit.odfdom.dom.OdfContentDom
 import org.odftoolkit.odfdom.dom.OdfSchemaDocument
+import org.odftoolkit.odfdom.dom.OdfStylesDom
+import org.odftoolkit.odfdom.dom.attribute.style.StyleFamilyAttribute
+import org.odftoolkit.odfdom.dom.attribute.style.StyleFontNameAttribute
+import org.odftoolkit.odfdom.dom.attribute.style.StyleNameAttribute
 import org.odftoolkit.odfdom.dom.attribute.text.TextStyleNameAttribute
 import org.odftoolkit.odfdom.dom.element.draw.DrawFrameElement
 import org.odftoolkit.odfdom.dom.element.draw.DrawImageElement
+import org.odftoolkit.odfdom.dom.element.style.StyleStyleElement
+import org.odftoolkit.odfdom.dom.element.style.StyleTextPropertiesElement
 import org.odftoolkit.odfdom.dom.element.text.TextAElement
 import org.odftoolkit.odfdom.dom.element.text.TextListItemElement
 import org.odftoolkit.odfdom.dom.element.text.TextPElement
 import org.odftoolkit.odfdom.dom.element.text.TextSpanElement
 import org.odftoolkit.odfdom.pkg.OdfElement
 import org.odftoolkit.odfdom.pkg.manifest.OdfFileEntry
+import org.odftoolkit.odfdom.type.StyleName
 import org.odftoolkit.simple.TextDocument
 import org.odftoolkit.simple.draw.Image
 import org.odftoolkit.simple.style.Font
@@ -37,8 +45,9 @@ class OdfdomDocument implements DocumentAdapter{
 
     OdfdomDocument() {
         odt = TextDocument.newTextDocument()
-        Node n = odt.getContentDom().getElementsByTagName("office:text").item(0)
-        n.removeChild(n.lastChild)      //delete an empty paragraph
+        def par = odt.getParagraphByIndex(0,false)      //retrieves an empty paragraph
+        par.getStyleHandler().setFont(new Font("Courier New", StyleTypeDefinitions.FontStyle.REGULAR, 12))  // init Courier New font to apply in inline code, size doesn't matter :D
+        par.remove()
     }
 
     OdfdomDocument(File file) {
@@ -56,19 +65,24 @@ class OdfdomDocument implements DocumentAdapter{
         fillDefaultStyles()
     }
 
-    protected Set<String> getStyleNames(TextDocument td) {
-        Set<String> styleNames = new TreeSet<>()
-        NodeList nl = td.getStylesDom().getOfficeStyles().getElementsByTagName("style:style")
+    protected Set<String> getNamedItemValues(NodeList nl, String name) {
+        Set<String> set = new TreeSet<>()
+
         for (int i = 0; i < nl.length; i++) {
-            Node n = nl.item(i).getAttributes().getNamedItem("style:name")
+            Node n = nl.item(i).getAttributes().getNamedItem(name)
             if(n != null)
-                styleNames.add(n.getNodeValue())
+                set.add(n.getNodeValue())
         }
-        return styleNames
+        return set
+    }
+
+    protected Set<String> getStyleNames(OdfStylesDom stylesDom) {
+        NodeList nl = stylesDom.getOfficeStyles().getElementsByTagName("style:style")
+        return getNamedItemValues(nl, "style:name")
     }
 
     protected void fillDefaultStyles() {
-        Set<String> odtStyleNames = getStyleNames(odt)
+        Set<String> odtStyleNames = getStyleNames(odt.getStylesDom())
 
         TextDocument defaultTextDocument = TextDocument.newTextDocument()
 
@@ -82,6 +96,10 @@ class OdfdomDocument implements DocumentAdapter{
                 odt.getStylesDom().getOfficeStyles().appendChild(n)
             }
         }
+
+        def par = odt.addParagraph("")      //adds an empty paragraph
+        par.getStyleHandler().setFont(new Font("Courier New", StyleTypeDefinitions.FontStyle.REGULAR, 12))  // init Courier New font to apply in inline code, size doesn't matter :D
+        par.remove()                        //remove a paragraph
     }
 
     protected void appendText(OdfElement element, String text) {
@@ -115,7 +133,7 @@ class OdfdomDocument implements DocumentAdapter{
     protected void appendCode(OdfElement element, String text) {
         Span s = new Span(new TextSpanElement(odt.getContentDom()))
         s.setTextContent(text)
-        s.getStyleHandler().getTextPropertiesForWrite().setFont(new Font("Courier New", StyleTypeDefinitions.FontStyle.REGULAR, 12))
+        s.getStyleHandler().getTextPropertiesForWrite().setFontName("Courier New")
         element.appendChild(s.getOdfElement())
     }
 
@@ -178,15 +196,19 @@ class OdfdomDocument implements DocumentAdapter{
         }
     }
 
+    protected void setTextStyleNameAttr(OdfElement element, String styleName) {
+        TextStyleNameAttribute attr = new TextStyleNameAttribute(odt.getContentDom())
+        element.setOdfAttribute(attr)
+        attr.setValue(styleName)
+    }
+
     protected Paragraph addParagraph(String styleName) {
         return addParagraph("", styleName)
     }
 
     protected Paragraph addParagraph(String text, String styleName) {
         Paragraph paragraph = odt.addParagraph(text)
-        TextStyleNameAttribute attr = new TextStyleNameAttribute(odt.getContentDom())
-        paragraph.odfElement.setOdfAttribute(attr)
-        attr.setValue(styleName)
+        setTextStyleNameAttr(paragraph.getOdfElement(), styleName)
         return paragraph
     }
 
@@ -257,11 +279,8 @@ class OdfdomDocument implements DocumentAdapter{
                         textItem = list.getOdfElement().newTextListItemElement()
                     }
                     TextPElement par = textItem.newTextPElement()
-                    TextStyleNameAttribute attr = new TextStyleNameAttribute(odt.getContentDom())
-                    par.setOdfAttribute(attr)
-                    attr.setValue(StyleNames.LIST.getValue())
+                    setTextStyleNameAttr(par, StyleNames.LIST.getValue())
                     fillWithParagraphContent(par, blockContent)
-
                 }
                 else if(blockContent instanceof ListContent) {
                     OdfList newList = addSubList(list, blockContent.getType())

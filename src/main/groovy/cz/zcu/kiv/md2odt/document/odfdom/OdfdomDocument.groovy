@@ -45,9 +45,8 @@ class OdfdomDocument implements DocumentAdapter{
 
     OdfdomDocument() {
         odt = TextDocument.newTextDocument()
-        def par = odt.getParagraphByIndex(0,false)      //retrieves an empty paragraph
-        par.getStyleHandler().setFont(new Font("Courier New", StyleTypeDefinitions.FontStyle.REGULAR, 12))  // init Courier New font to apply in inline code, size doesn't matter :D
-        par.remove()
+        odt.getParagraphByIndex(0,false) .remove()     //removes an empty paragraph
+        addInlineCodeFont()
     }
 
     OdfdomDocument(File file) {
@@ -63,6 +62,13 @@ class OdfdomDocument implements DocumentAdapter{
     OdfdomDocument(InputStream inputStream) {
         this.odt = TextDocument.loadDocument(inputStream)
         fillDefaultStyles()
+    }
+
+    protected void addInlineCodeFont() {
+        Span s = new Span(new TextSpanElement(odt.getContentDom()))
+        s.setTextContent("")
+        s.getStyleHandler().getTextPropertiesForWrite().setFont(new Font("Courier New", StyleTypeDefinitions.FontStyle.REGULAR, 12))
+        // span is not added to document it only fills the style and set FONT NAME
     }
 
     protected Set<String> getNamedItemValues(NodeList nl, String name) {
@@ -97,9 +103,7 @@ class OdfdomDocument implements DocumentAdapter{
             }
         }
 
-        def par = odt.addParagraph("")      //adds an empty paragraph
-        par.getStyleHandler().setFont(new Font("Courier New", StyleTypeDefinitions.FontStyle.REGULAR, 12))  // init Courier New font to apply in inline code, size doesn't matter :D
-        par.remove()                        //remove a paragraph
+        addInlineCodeFont()
     }
 
     protected void appendText(OdfElement element, String text) {

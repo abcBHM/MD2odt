@@ -4,6 +4,7 @@ import org.junit.Ignore
 import org.junit.Test
 import org.python.core.PyList
 import org.python.core.PyTuple
+import org.python.core.PyTupleDerived
 import org.python.util.PythonInterpreter
 
 /**
@@ -349,23 +350,24 @@ class CodeParserTest {
         from pygments.formatter import Formatter
         ret = None
         class OwnFormatter(Formatter):
-            name = 'Text only'
-            aliases = ['text', 'null']
-            filenames = ['*.txt']
-        
+                
             def format(self, tokensource, outfile):
                 enc = self.encoding
                 global ret
                 ret = list(tokensource)
         
-        result = highlight(code, GroovyLexer(), OwnFormatter())""".stripIndent())
+        highlight(code, GroovyLexer(), OwnFormatter())""".stripIndent())
 
         // Get the result that has been set in a variable
         PyList result = interpreter.get("ret", PyList.class)
         for(int i = 0; i < result.size(); i++) {
             PyTuple tuple = result.get(i)
-
+            PyTupleDerived tuple2 = tuple.get(0)
+            String value = tuple.get(1)
+            print tuple2.get(0) + " : "
+            print value
+            println ""
         }
-        System.out.println(result)
+        //System.out.println(result)
     }
 }

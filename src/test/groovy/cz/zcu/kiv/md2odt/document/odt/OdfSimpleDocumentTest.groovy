@@ -137,4 +137,24 @@ class OdfSimpleDocumentTest {
         doc.addList(content)
         doc.save("test.odt")
     }
+
+    @Test
+    void addHorizontalRuleTest() throws Exception {
+        doc.addHorizontalRule()
+        assert doc.odfSimpleWrapper.lastNode.nodeName.equals("text:p")
+        assert doc.odfSimpleWrapper.lastNode.textContent.equals("")
+    }
+
+    @Test
+    void addMultiListTest() throws Exception {
+        ListContent content = ListContentBuilder.builder(ListType.ORDERED)
+                .addListItem(ParagraphContentBuilder.builder().addRegular("bla1").build())
+                .addListItem(ListContentBuilder.builder(ListType.BULLET)
+                .addListItem(ParagraphContentBuilder.builder().addRegular("bla2").build()).build())
+                .addListItem(ListContentBuilder.builder(null)
+                .addListItem(ParagraphContentBuilder.builder().addRegular("bla2").build()).build())
+                .build()
+        doc.addList(content)
+        assert doc.odfSimpleWrapper.lastNode.nodeName.equals("text:list")
+    }
 }

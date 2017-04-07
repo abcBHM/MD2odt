@@ -214,4 +214,12 @@ class OdfSimpleWrapperTest {
         odt.addItemsToList(nestedList, list)
         odt.save("test.odt")
     }
+
+    @Test
+    void addItemsToList() throws Exception {
+        List l = odt.addList("",OdfListEnum.BULLET_LIST)
+        assert l.items.isEmpty()
+        odt.addItemsToList(l, ["bla"])
+        assert !l.items.isEmpty()
+    }
 }

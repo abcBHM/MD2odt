@@ -7,11 +7,13 @@ import com.vladsch.flexmark.ast.Reference as AstReference
 import com.vladsch.flexmark.parser.Parser
 import cz.zcu.kiv.md2odt.document.Document
 import cz.zcu.kiv.md2odt.filler.Filler
+import cz.zcu.kiv.md2odt.filler.LocalResources
+import cz.zcu.kiv.md2odt.filler.LocalResourcesImpl
 import org.apache.log4j.Logger
 
 /**
  *
- * @version 2017-04-03
+ * @version 2017-04-08
  * @author Patrik Harag
  */
 class FlexMarkFiller implements Filler {
@@ -42,11 +44,15 @@ class FlexMarkFiller implements Filler {
     }
 
     @Override
-    void fill(String md, Document document) {
+    void fill(String md, LocalResources resources, Document document) {
         def ast = parser.parse(md) as AstDocument
-        def context = Context.of(ast)
+        def context = Context.of(ast, resources)
 
         convert(ast, context, document)
+    }
+
+    void fill(String md, Document document) {
+        fill(md, LocalResourcesImpl.EMPTY, document)
     }
 
     private void convert(AstNode node, Context context, Document document) {

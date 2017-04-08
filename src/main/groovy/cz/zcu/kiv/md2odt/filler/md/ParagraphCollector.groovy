@@ -99,7 +99,7 @@ class ParagraphCollector {
 
             case AstImage:
                 (node as AstImage).with {
-                    builder.addImage(*[title, url, text]*.toString())
+                    processImage(*[title, url, text]*.toString(), context, builder)
                 }
                 break
 
@@ -111,7 +111,7 @@ class ParagraphCollector {
                 String url = ref.url.toString()
                 String title = ref.title.toString()
 
-                builder.addImage(title, url, alt)
+                processImage(title, url, alt, context, builder)
                 break
 
             case AstEmoji:
@@ -121,7 +121,7 @@ class ParagraphCollector {
                 if (emoji)
                     builder.addRegular(emoji.getUnicode())
                 else
-                    builder.addRegular(node.chars.toString())
+                    builder.addRegular(flatten(node))
 
                 break
 
@@ -136,6 +136,17 @@ class ParagraphCollector {
             default:
                 LOGGER.warn("Unknown node: " + node.class)
         }
+    }
+
+    private void processImage(String text, String url, String alt,
+                              Context context, ParagraphContentBuilder builder) {
+
+        def stream = context.getResourceAsStream(url)
+
+        if (stream)
+            builder.addImage(text, stream, alt)
+        else
+            builder.addImage(text, url, alt)
     }
 
     static String flatten(AstNode node) {

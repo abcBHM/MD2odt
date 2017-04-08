@@ -6,7 +6,7 @@ import com.vladsch.flexmark.ext.emoji.EmojiExtension;
 import com.vladsch.flexmark.parser.Parser;
 import cz.zcu.kiv.md2odt.document.Document;
 import cz.zcu.kiv.md2odt.document.odfdom.OdfdomDocument;
-import cz.zcu.kiv.md2odt.filler.Filler;
+import cz.zcu.kiv.md2odt.filler.*;
 import cz.zcu.kiv.md2odt.filler.md.FlexMarkFiller;
 
 import java.io.*;
@@ -14,9 +14,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
+ *
  * @author Patrik Harag
  * @version 2017-04-08
  */
@@ -24,33 +24,35 @@ public class Converter {
 
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
-    private String inString;
-    private InputStream inStream;
-    private Charset charset;
-
+    private Source input;
     private InputStream template;
-
-    private OutputStream out;
+    private OutputStream output;
 
     private boolean enableAutolinks;
-    private boolean enableEmojis;
+    private boolean enableEmoji;
 
     // source
 
-    public Converter setInput(InputStream in) {
-        return setInput(in, DEFAULT_CHARSET);
-    }
-
-    public Converter setInput(InputStream in, Charset charset) {
-        this.inString = null;
-        this.inStream = in;
-        this.charset = charset;
+    public Converter setInputString(String md) {
+        this.input = new SourceString(md);
         return this;
     }
 
-    public Converter setInput(String md) {
-        this.inString = md;
-        this.inStream = null;
+    public Converter setInputStream(InputStream in) {
+        return setInputStream(in, DEFAULT_CHARSET);
+    }
+
+    public Converter setInputStream(InputStream in, Charset charset) {
+        this.input = new SourceCharacterStream(in, charset);
+        return this;
+    }
+
+    public Converter setInputZip(InputStream in) {
+        return setInputZip(in, DEFAULT_CHARSET);
+    }
+
+    public Converter setInputZip(InputStream in, Charset charset) {
+        this.input = new SourceZip(in, charset);
         return this;
     }
 
@@ -64,7 +66,7 @@ public class Converter {
     // output
 
     public Converter setOutput(OutputStream out) {
-        this.out = out;
+        this.output = out;
         return this;
     }
 
@@ -75,43 +77,37 @@ public class Converter {
         return this;
     }
 
-    public Converter enableEmojis() {
-        this.enableEmojis = true;
+    public Converter enableEmoji() {
+        this.enableEmoji = true;
         return this;
     }
 
     // ---
 
     public void convert() throws IOException {
+        if (input == null)
+            throw new IllegalArgumentException("Input not set");
+
+        if (output == null)
+            throw new IllegalArgumentException("Output not set");
+
         Document document = (template == null)
                 ? new OdfdomDocument()
                 : new OdfdomDocument(template);
 
-        String md = (inString == null)
-                ? asString(inStream, charset)
-                : inString;
-
         Parser parser = Parser.builder().extensions(getExtensions()).build();
         Filler filler = new FlexMarkFiller(parser);
-        filler.fill(md, document);
-        document.save(out);
+        filler.fill(input.getSource(), input.getResources(), document);
+        document.save(output);
     }
 
     private List<Extension> getExtensions() {
         List<Extension> extensions = new ArrayList<>();
 
         if (enableAutolinks) extensions.add(AutolinkExtension.create());
-        if (enableEmojis) extensions.add(EmojiExtension.create());
+        if (enableEmoji) extensions.add(EmojiExtension.create());
 
         return extensions;
-    }
-
-    private String asString(InputStream in, Charset charset) throws IOException {
-        try (Reader reader = new InputStreamReader(in, charset);
-             BufferedReader br = new BufferedReader(reader)) {
-
-            return br.lines().collect(Collectors.joining("\n"));
-        }
     }
 
 }

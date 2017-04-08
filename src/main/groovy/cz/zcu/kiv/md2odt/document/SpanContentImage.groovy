@@ -1,21 +1,23 @@
 package cz.zcu.kiv.md2odt.document
 
-import groovy.transform.Immutable
-
 /**
  *
- * @version 2017-03-22
+ * @version 2017-04-08
  * @author Patrik Harag
  */
-@Immutable
 class SpanContentImage implements SpanContent {
 
     // ![<alt>](<url> <text>)
 
-    String text  // usually shows on hover
-    String url
-    String alt
+    final String text  // usually shows on hover
+    final String url
+    final String alt
 
-    SpanType type
+    final SpanType type = SpanType.IMAGE
 
+    SpanContentImage(String text, String url, String alt) {
+        this.text = text
+        this.url = url
+        this.alt = alt
+    }
 }

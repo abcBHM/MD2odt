@@ -1,5 +1,6 @@
 package cz.zcu.kiv.md2odt.filler.md
 
+import com.vdurmont.emoji.EmojiManager
 import com.vladsch.flexmark.ast.AutoLink as AstAutoLink
 import com.vladsch.flexmark.ast.Code as AstCode
 import com.vladsch.flexmark.ast.Emphasis as AstEmphasis
@@ -17,6 +18,7 @@ import com.vladsch.flexmark.ast.SoftLineBreak as AstSoftLineBreak
 import com.vladsch.flexmark.ast.StrongEmphasis as AstStrongEmphasis
 import com.vladsch.flexmark.ast.Text as AstText
 import com.vladsch.flexmark.ast.TextBase as AstTextBase
+import com.vladsch.flexmark.ext.emoji.Emoji as AstEmoji
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
 import org.apache.log4j.Logger
@@ -24,7 +26,7 @@ import org.jsoup.Jsoup
 
 /**
  *
- * @version 2017-04-04
+ * @version 2017-04-08
  * @author Patrik Harag
  */
 class ParagraphCollector {
@@ -112,6 +114,17 @@ class ParagraphCollector {
                 builder.addImage(title, url, alt)
                 break
 
+            case AstEmoji:
+                def alias = (node as AstEmoji).getText().toString()
+                def emoji = EmojiManager.getForAlias(alias)
+
+                if (emoji)
+                    builder.addRegular(emoji.getUnicode())
+                else
+                    builder.addRegular(node.chars.toString())
+
+                break
+
             case AstHtmlInlineComment:
                 // ignore
                 break
@@ -135,6 +148,8 @@ class ParagraphCollector {
                 return '\n'
             case AstHtmlEntity:
                 return Jsoup.parse(node.chars.toString()).text()
+            case AstEmoji:
+                return node.chars.toString()
         }
 
         LOGGER.debug("Flattenize: " + node.class)

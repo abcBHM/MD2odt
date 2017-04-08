@@ -116,6 +116,13 @@ Reference-style:
 [dog]: https://www.seznam.cz/media/img/dogs/krasty_07.png
 
 
+### Emoji
+Some animals: :octopus: :pig2: :crocodile:
+
+Smiles: :confused: :cry: :weary:
+
+Wrong: :rtrtrtrtrt:
+
 ## HTML
 
 ### Entities

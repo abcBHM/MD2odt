@@ -8,7 +8,7 @@ import java.nio.file.Paths
 
 /**
  *
- * @version 2017-04-01
+ * @version 2017-04-08
  * @author Patrik Harag
  */
 class MD2odtTest {
@@ -22,13 +22,7 @@ class MD2odtTest {
         def md = new FileInputStream(EXAMPLE)
         def out = Files.newOutputStream(Paths.get("result.odt"))
 
-        MD2odt.converter()
-                .setInput(md)
-                .setOutput(out)
-
-                .enableAutolinks()
-
-                .convert()
+        convert(md, null, out)
     }
 
     @Test
@@ -38,12 +32,17 @@ class MD2odtTest {
         def template = new FileInputStream(TEMPLATE)
         def out = Files.newOutputStream(Paths.get("result.odt"))
 
+        convert(md, template, out)
+    }
+
+    private void convert(md, template, out) {
         MD2odt.converter()
                 .setInput(md)
                 .setTemplate(template)
                 .setOutput(out)
 
                 .enableAutolinks()
+                .enableEmojis()
 
                 .convert()
     }

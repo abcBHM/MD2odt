@@ -2,10 +2,10 @@ package cz.zcu.kiv.md2odt;
 
 import com.vladsch.flexmark.Extension;
 import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
+import com.vladsch.flexmark.ext.emoji.EmojiExtension;
 import com.vladsch.flexmark.parser.Parser;
 import cz.zcu.kiv.md2odt.document.Document;
 import cz.zcu.kiv.md2odt.document.odfdom.OdfdomDocument;
-import cz.zcu.kiv.md2odt.document.odt.OdfSimpleDocument;
 import cz.zcu.kiv.md2odt.filler.Filler;
 import cz.zcu.kiv.md2odt.filler.md.FlexMarkFiller;
 
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author Patrik Harag
- * @version 2017-04-04
+ * @version 2017-04-08
  */
 public class Converter {
 
@@ -33,6 +33,7 @@ public class Converter {
     private OutputStream out;
 
     private boolean enableAutolinks;
+    private boolean enableEmojis;
 
     // source
 
@@ -74,6 +75,11 @@ public class Converter {
         return this;
     }
 
+    public Converter enableEmojis() {
+        this.enableEmojis = true;
+        return this;
+    }
+
     // ---
 
     public void convert() throws IOException {
@@ -95,6 +101,7 @@ public class Converter {
         List<Extension> extensions = new ArrayList<>();
 
         if (enableAutolinks) extensions.add(AutolinkExtension.create());
+        if (enableEmojis) extensions.add(EmojiExtension.create());
 
         return extensions;
     }

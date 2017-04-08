@@ -8,16 +8,17 @@ import org.apache.log4j.Logger
 /**
  * Created by pepe on 6. 4. 2017.
  */
-class CodeParser {
+class CodeParser implements Parser {
     private static final Logger LOGGER = Logger.getLogger(CodeParser)
 
+    @Override
     /** Returns a list of CodeSection, where is specified how to style a text segment.
      *
      * @param code  Code to parse.
      * @param lang  Language used.
      * @return list of CodeSection
      */
-    static List<CodeSectionImpl> parse(String code, CodeLang lang) {
+    List<CodeSection> parse(String code, CodeLang lang) {
         LOGGER.warn("parse(String code, CodeLang lang) not implemented")
         [new CodeSectionImpl(code)]
     }

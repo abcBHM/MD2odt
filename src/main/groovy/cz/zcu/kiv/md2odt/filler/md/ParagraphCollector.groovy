@@ -144,7 +144,7 @@ class ParagraphCollector {
         def stream = context.getResourceAsStream(url)
 
         if (stream)
-            builder.addImage(text, stream, alt)
+            builder.addImage(text, url, alt, stream)
         else
             builder.addImage(text, url, alt)
     }

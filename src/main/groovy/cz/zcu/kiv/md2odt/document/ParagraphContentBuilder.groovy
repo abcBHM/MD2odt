@@ -69,8 +69,8 @@ class ParagraphContentBuilder {
         add(new SpanContentImage(text, url, alt))
     }
 
-    ParagraphContentBuilder addImage(String text, InputStream stream, String alt) {
-        add(new SpanContentImageStream(text, stream, alt))
+    ParagraphContentBuilder addImage(String text, String url, String alt, InputStream is) {
+        add(new SpanContentImageLocal(text, url, alt, is))
     }
 
     ParagraphContent build() {

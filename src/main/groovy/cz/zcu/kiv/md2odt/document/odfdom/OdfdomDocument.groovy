@@ -159,6 +159,23 @@ class OdfdomDocument implements DocumentAdapter{
         element.appendChild(frame)
     }
 
+    protected void appendImageFromStream(OdfElement element, String url, InputStream inputStream) {
+        DrawFrameElement frame = new DrawFrameElement(odt.getContentDom())
+        DrawImageElement e1 = frame.newDrawImageElement()
+
+        String imageRef1 = url
+        String mediaType1 = OdfFileEntry.getMediaTypeString(imageRef1)
+        OdfSchemaDocument mOdfSchemaDoc1 = (OdfSchemaDocument) odt.getContentDom().getDocument()
+        String packagePath = Image.getPackagePath(mOdfSchemaDoc1, imageRef1)
+        mOdfSchemaDoc1.getPackage().insert(inputStream, packagePath, mediaType1)
+        packagePath = packagePath.replaceFirst(odt.getContentDom().getDocument().getDocumentPath(), "")
+        Image.configureInsertedImage((OdfSchemaDocument) odt.getContentDom().getDocument(), e1, packagePath, false)
+        Image mImage = Image.getInstanceof(e1)
+        mImage.getStyleHandler().setAchorType(StyleTypeDefinitions.AnchorType.AS_CHARACTER)
+
+        element.appendChild(frame)
+    }
+
     protected void fillWithParagraphContent(OdfElement element, ParagraphContent paragraphContent) {
         for(SpanContent sc : paragraphContent.list) {
             switch (sc.getType()) {
@@ -182,13 +199,21 @@ class OdfdomDocument implements DocumentAdapter{
                     appendCode(element, sc.getText())
                     break
                 case SpanType.IMAGE:
-                    if (sc instanceof SpanContentImage) {
+                    if (sc instanceof SpanContentImageLocal) {
+                        try {
+                            appendImageFromStream(element, sc.getUrl(), sc.getStream())
+                        }
+                        catch (Exception e) {
+                            LOGGER.info("Exception while inserting image from stream in OdfdomDocument: " + e.toString())
+                            appendText(element, sc.getAlt())
+                        }
+                    } else if (sc instanceof SpanContentImage) {
                         try {
                             appendImage(element, sc.getUrl())
                         }
                         catch (Exception e) {
                             LOGGER.info("Exception while inserting image in OdfdomDocument: " + e.toString())
-                            appendText(element, "Image (" + sc.getUrl() + ")")
+                            appendText(element, sc.getAlt())
                         }
                     } else {
                         LOGGER.error("SpanContent with a '" + sc.getType() + "' type and instance of '" + sc.class + "'")

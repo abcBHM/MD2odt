@@ -119,7 +119,7 @@ class OdfdomDocumentTest {
         doc.addParagraph(pc)
         last.switchToLastChilde()
         assert last.nodeName.equals("#text")
-        assert last.textContent.equals("Image (url)")
+        assert last.textContent.equals("alt")
     }
 
     @Test

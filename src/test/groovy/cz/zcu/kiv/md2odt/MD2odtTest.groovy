@@ -13,14 +13,16 @@ import java.nio.file.Paths
  */
 class MD2odtTest {
 
-    private static final String EXAMPLE = 'src/test/resources/example.md'
-    private static final String TEMPLATE = 'src/test/resources/template.odt'
+    private static final String EXAMPLE = '/example.md'
+    private static final String TEMPLATE = '/template.odt'
+
+    private static final String OUTPUT = "result.odt"
 
     @Test
     @Ignore
     void test() {
-        def md = new FileInputStream(EXAMPLE)
-        def out = Files.newOutputStream(Paths.get("result.odt"))
+        def md = System.class.getResourceAsStream(EXAMPLE)
+        def out = Files.newOutputStream(Paths.get(OUTPUT))
 
         convert(md, null, out)
     }
@@ -28,9 +30,9 @@ class MD2odtTest {
     @Test
     @Ignore
     void testWithTemplate() {
-        def md = new FileInputStream(EXAMPLE)
-        def template = new FileInputStream(TEMPLATE)
-        def out = Files.newOutputStream(Paths.get("result.odt"))
+        def md = System.class.getResourceAsStream(EXAMPLE)
+        def template = System.class.getResourceAsStream(TEMPLATE)
+        def out = Files.newOutputStream(Paths.get(OUTPUT))
 
         convert(md, template, out)
     }

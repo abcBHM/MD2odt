@@ -38,8 +38,7 @@ class SourceZip implements Source {
                     // directory
 
                 } else {
-                    byte[] array = new byte[entry.size]
-                    zis.read(array)
+                    byte[] array = asArray(zis, entry.size)
 
                     if (entry.name.matches(SOURCE_FILE_PATTERN)) {
                         // md
@@ -59,6 +58,17 @@ class SourceZip implements Source {
 
         if (cachedSource == null)
             throw new RuntimeException('Source file not found!')
+    }
+
+    private static byte[] asArray(InputStream is, long size) {
+        byte[] array = new byte[size]
+
+        byte b
+        int index = 0
+        while ((b = is.read()) != -1)
+            array[index++] = b
+
+        return array
     }
 
     @Override

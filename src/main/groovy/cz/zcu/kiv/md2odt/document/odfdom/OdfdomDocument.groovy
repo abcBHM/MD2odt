@@ -18,6 +18,7 @@ import org.odftoolkit.odfdom.dom.element.text.TextListItemElement
 import org.odftoolkit.odfdom.dom.element.text.TextPElement
 import org.odftoolkit.odfdom.dom.element.text.TextSpanElement
 import org.odftoolkit.odfdom.pkg.OdfElement
+import org.odftoolkit.odfdom.pkg.OdfPackage
 import org.odftoolkit.odfdom.pkg.manifest.OdfFileEntry
 import org.odftoolkit.odfdom.type.StyleName
 import org.odftoolkit.simple.TextDocument
@@ -149,7 +150,7 @@ class OdfdomDocument implements DocumentAdapter{
         String imageRef1 = imageUri.toString()
         String mediaType1 = OdfFileEntry.getMediaTypeString(imageRef1)
         OdfSchemaDocument mOdfSchemaDoc1 = (OdfSchemaDocument) odt.getContentDom().getDocument()
-        String packagePath = Image.getPackagePath(mOdfSchemaDoc1, imageRef1)
+        String packagePath = getImagePath(mOdfSchemaDoc1, imageRef1)
         mOdfSchemaDoc1.getPackage().insert(imageUri, packagePath, mediaType1)
         packagePath = packagePath.replaceFirst(odt.getContentDom().getDocument().getDocumentPath(), "")
         Image.configureInsertedImage((OdfSchemaDocument) odt.getContentDom().getDocument(), e1, packagePath, false)
@@ -166,7 +167,7 @@ class OdfdomDocument implements DocumentAdapter{
         String imageRef1 = url
         String mediaType1 = OdfFileEntry.getMediaTypeString(imageRef1)
         OdfSchemaDocument mOdfSchemaDoc1 = (OdfSchemaDocument) odt.getContentDom().getDocument()
-        String packagePath = Image.getPackagePath(mOdfSchemaDoc1, imageRef1)
+        String packagePath = getImagePath(mOdfSchemaDoc1, imageRef1)
         mOdfSchemaDoc1.getPackage().insert(inputStream, packagePath, mediaType1)
         packagePath = packagePath.replaceFirst(odt.getContentDom().getDocument().getDocumentPath(), "")
         Image.configureInsertedImage((OdfSchemaDocument) odt.getContentDom().getDocument(), e1, packagePath, false)
@@ -174,6 +175,19 @@ class OdfdomDocument implements DocumentAdapter{
         mImage.getStyleHandler().setAchorType(StyleTypeDefinitions.AnchorType.AS_CHARACTER)
 
         element.appendChild(frame)
+    }
+
+    private String getImagePath(OdfSchemaDocument mOdfSchemaDoc, String imageRef) {
+        if(imageRef.contains("//")) {
+            imageRef = imageRef.substring(imageRef.lastIndexOf("//") + 2, imageRef.length())
+        }
+        if(imageRef.startsWith("/")) {
+            imageRef = imageRef.substring(1, imageRef.length())
+        }
+        imageRef = imageRef.replaceAll("[^a-zA-Z0-9/.-]", "_")
+
+        String packagePath = OdfPackage.OdfFile.IMAGE_DIRECTORY.getPath() + "/" + imageRef
+        return mOdfSchemaDoc.getDocumentPath() + packagePath;
     }
 
     protected void fillWithParagraphContent(OdfElement element, ParagraphContent paragraphContent) {

@@ -66,6 +66,21 @@
             <version>1.2.16</version>  <!-- Note: some of our dependencies are using this version -->
         </dependency>
 
+        <!-- JYTHON -->
+        <dependency>
+            <groupId>org.python</groupId>
+            <artifactId>jython-standalone</artifactId>
+            <version>2.5.3</version>
+        </dependency>
+
+        <!-- PYGMENTS -->
+        <dependency>
+            <groupId>org.pygments</groupId>
+            <artifactId>pygments</artifactId>
+            <version>1.5</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- TESTING -->
         <dependency>
             <groupId>junit</groupId>

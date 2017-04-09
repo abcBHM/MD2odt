@@ -66,24 +66,29 @@ class CodeParser implements Parser {
 
     static CodeLang switchLang(String lang) {
         CodeLang codeLang = null
-        String lowerLang = lang.toLowerCase()
 
-        for(int i = 0; i < CodeLang.values().size(); i++) {
-            CodeLang pickedLang = CodeLang.values()[i]
-            String codeLangName = pickedLang.getLangName()
-            Integer distance = levenshteinDistance(lowerLang, codeLangName)
-
-            if(distance == 0) {
-                codeLang = pickedLang
-                break
-            } else if(distance < 3) {
-                codeLang = pickedLang
-            }
-        }
-
-        if(codeLang == null) {
+        if(lang == null) {
             codeLang = CodeLang.NONE
-            LOGGER.info("unknown code lang " + lang)
+        } else {
+            String lowerLang = lang.toLowerCase()
+
+            for (int i = 0; i < CodeLang.values().size(); i++) {
+                CodeLang pickedLang = CodeLang.values()[i]
+                String codeLangName = pickedLang.getLangName()
+                Integer distance = levenshteinDistance(lowerLang, codeLangName)
+
+                if (distance == 0) {
+                    codeLang = pickedLang
+                    break
+                } else if (distance < 3) {
+                    codeLang = pickedLang
+                }
+            }
+
+            if (codeLang == null) {
+                codeLang = CodeLang.NONE
+                LOGGER.info("unknown code lang " + lang)
+            }
         }
 
         return codeLang

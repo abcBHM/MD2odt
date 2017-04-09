@@ -35,7 +35,6 @@ class CodeParser implements Parser {
         // Set a variable with the content you want to work with
         interpreter.set("code", code)
 
-        // Simple use Pygments as in Python
         interpreter.exec("""
         from pygments import highlight
         from pygments.lexers import ${lexer}
@@ -67,11 +66,12 @@ class CodeParser implements Parser {
 
     static CodeLang switchLang(String lang) {
         CodeLang codeLang = null
+        String lowerLang = lang.toLowerCase()
 
         for(int i = 0; i < CodeLang.values().size(); i++) {
             CodeLang pickedLang = CodeLang.values()[i]
             String codeLangName = pickedLang.getLangName()
-            Integer distance = levenshteinDistance(lang, codeLangName)
+            Integer distance = levenshteinDistance(lowerLang, codeLangName)
 
             if(distance == 0) {
                 codeLang = pickedLang
@@ -83,6 +83,7 @@ class CodeParser implements Parser {
 
         if(codeLang == null) {
             codeLang = CodeLang.NONE
+            LOGGER.info("unknown code lang " + lang)
         }
 
         return codeLang
@@ -101,6 +102,7 @@ class CodeParser implements Parser {
 
         if(codeSectionType == null) {
             codeSectionType = CodeSectionType.NONE
+            LOGGER.info("unknown CodeSectionType " + type)
         }
 
         return codeSectionType

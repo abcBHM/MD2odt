@@ -43,7 +43,7 @@ class LastNode {
         return node.attributes.getNamedItem("draw:style-name").nodeValue
     }
 
-    void switchToLastChilde() {
+    void switchToLastChild() {
         root = root.lastChild
     }
 }

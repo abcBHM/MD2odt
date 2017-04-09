@@ -177,12 +177,15 @@ class OdfdomDocument implements DocumentAdapter{
         element.appendChild(frame)
     }
 
-    private String getImagePath(OdfSchemaDocument mOdfSchemaDoc, String imageRef) {
+    protected String getImagePath(OdfSchemaDocument mOdfSchemaDoc, String imageRef) {
         if(imageRef.contains("//")) {
             imageRef = imageRef.substring(imageRef.lastIndexOf("//") + 2, imageRef.length())
         }
         if(imageRef.startsWith("/")) {
             imageRef = imageRef.substring(1, imageRef.length())
+        }
+        if(imageRef.endsWith("/")) {
+            imageRef = imageRef.substring(0, imageRef.length()-1)
         }
         imageRef = imageRef.replaceAll("[^a-zA-Z0-9/.-]", "_")
 

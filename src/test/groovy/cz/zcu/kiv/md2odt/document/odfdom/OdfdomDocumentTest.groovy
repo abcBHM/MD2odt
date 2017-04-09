@@ -10,12 +10,7 @@ import cz.zcu.kiv.md2odt.document.SpanContentText
 import cz.zcu.kiv.md2odt.document.SpanType
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
-import org.junit.runners.Parameterized.Parameter
 import org.odftoolkit.odfdom.dom.element.text.TextPElement
-import org.odftoolkit.odfdom.dom.element.text.TextParagraphElementBase
-import org.w3c.dom.Node
 
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -49,7 +44,7 @@ class OdfdomDocumentTest {
     void addParagraphBoldTest() throws Exception {
         def pc = ParagraphContentBuilder.builder().addBold("bold").build()
         doc.addParagraph(pc)
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:span")
         assert !last.textStyleName.equals("")
         assert last.textContent.equals("bold")
@@ -59,7 +54,7 @@ class OdfdomDocumentTest {
     void addParagraphItalicTest() throws Exception {
         def pc = ParagraphContentBuilder.builder().addItalic("italic").build()
         doc.addParagraph(pc)
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:span")
         assert !last.textStyleName.equals("")
         assert last.textContent.equals("italic")
@@ -69,7 +64,7 @@ class OdfdomDocumentTest {
     void addParagraphLinkWrongTest() throws Exception {
         def pc = ParagraphContentBuilder.builder().addLink("pokus", "www.sez#nam.cz").build()
         doc.addParagraph(pc)
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:a")
         assert last.getXLinkHref().equals("www.sez#nam.cz")
         assert last.getXLinkType().equals("simple")
@@ -80,7 +75,7 @@ class OdfdomDocumentTest {
     void addParagraphLinkOkTest() throws Exception {
         def pc = ParagraphContentBuilder.builder().addLink("pokus", "http://www.seznam.cz").build()
         doc.addParagraph(pc)
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:a")
         assert last.getXLinkHref().equals("http://www.seznam.cz")
         assert last.getXLinkType().equals("simple")
@@ -91,7 +86,7 @@ class OdfdomDocumentTest {
     void addParagraphInlineCodeTest() throws Exception {
         def pc = ParagraphContentBuilder.builder().addCode("n();").build()
         doc.addParagraph(pc)
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:span")
         assert last.textContent.equals("n();")
         assert !last.textStyleName.equals("")
@@ -101,12 +96,12 @@ class OdfdomDocumentTest {
     void addParagraphImageOkTest() throws Exception {
         def pc = ParagraphContentBuilder.builder().addImage("text", IMAGE, "alt").build()
         doc.addParagraph(pc)
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("draw:frame")
         assert last.textContent.equals("")
         assert !last.drawStyleName.equals("")
         assert last.textAnchorType.equals("as-char")
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("draw:image")
         assert last.textContent.equals("")
         assert last.getXLinkHref().contains("image.png")
@@ -117,7 +112,32 @@ class OdfdomDocumentTest {
     void addParagraphImageExceptionTest() throws Exception {
         def pc = ParagraphContentBuilder.builder().addImage("text", "url", "alt").build()
         doc.addParagraph(pc)
-        last.switchToLastChilde()
+        last.switchToLastChild()
+        assert last.nodeName.equals("#text")
+        assert last.textContent.equals("alt")
+    }
+
+    @Test
+    void addParagraphImageFromStreamOkTest() throws Exception {
+        def pc = ParagraphContentBuilder.builder().addImage("text", IMAGE, "alt", new FileInputStream(IMAGE)).build()
+        doc.addParagraph(pc)
+        last.switchToLastChild()
+        assert last.nodeName.equals("draw:frame")
+        assert last.textContent.equals("")
+        assert !last.drawStyleName.equals("")
+        assert last.textAnchorType.equals("as-char")
+        last.switchToLastChild()
+        assert last.nodeName.equals("draw:image")
+        assert last.textContent.equals("")
+        assert last.getXLinkHref().contains("image.png")
+        assert last.getXLinkType().equals("simple")
+    }
+
+    @Test
+    void addParagraphImageFromStreamExceptionTest() throws Exception {
+        def pc = ParagraphContentBuilder.builder().addImage("text", IMAGE, "alt", new FileInputStream(IMAGE).close()).build()
+        doc.addParagraph(pc)
+        last.switchToLastChild()
         assert last.nodeName.equals("#text")
         assert last.textContent.equals("alt")
     }
@@ -155,9 +175,9 @@ class OdfdomDocumentTest {
         doc.addList(content)
         assert last.nodeName.equals("text:list")
         assert !last.textStyleName.equals("")
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:list-item")
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:p")
         assert last.textStyleName.equals(StyleNames.LIST.getValue())
         assert last.textContent.equals("bla1")
@@ -171,9 +191,9 @@ class OdfdomDocumentTest {
         doc.addList(content)
         assert last.nodeName.equals("text:list")
         assert !last.textStyleName.equals("")
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:list-item")
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:p")
         assert last.textStyleName.equals(StyleNames.LIST.getValue())
         assert last.textContent.equals("bla1")
@@ -188,13 +208,13 @@ class OdfdomDocumentTest {
                 .build()
         doc.addList(content)
         assert last.nodeName.equals("text:list")
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:list-item")
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:list")
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:list-item")
-        last.switchToLastChilde()
+        last.switchToLastChild()
         assert last.nodeName.equals("text:p")
         assert last.textStyleName.equals(StyleNames.LIST.getValue())
         assert last.textContent.equals("bla2")

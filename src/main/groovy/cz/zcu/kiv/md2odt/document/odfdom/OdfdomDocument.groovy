@@ -1,6 +1,9 @@
 package cz.zcu.kiv.md2odt.document.odfdom
 
 import cz.zcu.kiv.md2odt.document.*
+import cz.zcu.kiv.md2odt.highlight.CodeParser
+import cz.zcu.kiv.md2odt.highlight.Parser
+import cz.zcu.kiv.md2odt.highlight.content.CodeSection
 import org.apache.log4j.Logger
 import org.odftoolkit.odfdom.dom.OdfContentDom
 import org.odftoolkit.odfdom.dom.OdfSchemaDocument
@@ -20,6 +23,7 @@ import org.odftoolkit.odfdom.dom.element.text.TextSpanElement
 import org.odftoolkit.odfdom.pkg.OdfElement
 import org.odftoolkit.odfdom.pkg.OdfPackage
 import org.odftoolkit.odfdom.pkg.manifest.OdfFileEntry
+import org.odftoolkit.odfdom.type.Color
 import org.odftoolkit.odfdom.type.StyleName
 import org.odftoolkit.simple.TextDocument
 import org.odftoolkit.simple.draw.Image
@@ -272,12 +276,24 @@ class OdfdomDocument implements DocumentAdapter{
 
     @Override
     void addCodeBlock(String code) {
-        addCodeBlock(code, null)
+        addParagraph(code, StyleNames.CODE.getValue())
+    }
+
+    private void appendColorSpan(OdfElement element, String text, java.awt.Color color) {
+        Span s = new Span(new TextSpanElement(odt.getContentDom()))
+        s.setTextContent(text)
+        s.getStyleHandler().getTextPropertiesForWrite().setFontColor(new Color(color))
+        element.appendChild(s.getOdfElement())
     }
 
     @Override
     void addCodeBlock(String code, String lang) {
-        addParagraph(code, StyleNames.CODE.getValue())
+        def parElement = addParagraph(StyleNames.CODE.getValue()).getOdfElement()
+        Parser codeParser = new CodeParser()
+        List<CodeSection> codeSections = codeParser.parse(code, lang)
+        for (CodeSection cs : codeSections) {
+            appendColorSpan(parElement, cs.getText(), cs.getType().getColor())
+        }
     }
 
     @Override

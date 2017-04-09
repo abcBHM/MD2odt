@@ -151,6 +151,14 @@ class OdfdomDocumentTest {
     }
 
     @Test
+    void addCodeBlockHighlightTest() throws Exception {
+        doc.addCodeBlock("code", "java")
+        assert last.nodeName.equals("text:p")
+        assert last.textStyleName.equals(StyleNames.CODE.getValue())
+        assert last.textContent.equals("code")
+    }
+
+    @Test
     void addQuoteBlockTest() throws Exception {
         def pc = ParagraphContentBuilder.builder().addRegular("regular").build()
         doc.addQuoteBlock([pc])

@@ -151,6 +151,15 @@ class OdfdomDocumentTest {
     }
 
     @Test
+    void addCodeBlockNoHighlihtTest() throws Exception {
+        doc.addCodeBlock("code", null)
+        assert last.nodeName.equals("text:p")
+        assert last.textStyleName.equals(StyleNames.CODE.getValue())
+        last.switchToLastChild()
+        assert last.nodeS.equals("[#text: code]")
+    }
+
+    @Test
     void addCodeBlockHighlightTest() throws Exception {
         doc.addCodeBlock("code", "java")
         assert last.nodeName.equals("text:p")

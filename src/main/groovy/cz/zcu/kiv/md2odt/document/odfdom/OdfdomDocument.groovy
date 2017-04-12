@@ -111,24 +111,34 @@ class OdfdomDocument implements DocumentAdapter{
         addInlineCodeFont()
     }
 
-    protected void appendText(OdfElement element, String text) {
+    protected Text appendText(OdfElement element, String text) {
         Text textNode = odt.getContentDom().createTextNode(text)
         element.appendChild(textNode)
+        return textNode
     }
 
-    protected void appendBoldText(OdfElement element, String text) {
-        appendStyleText(element, text, StyleTypeDefinitions.FontStyle.BOLD)
-    }
-
-    protected void appendItalicText(OdfElement element, String text) {
-        appendStyleText(element, text, StyleTypeDefinitions.FontStyle.ITALIC)
-    }
-
-    private void appendStyleText(OdfElement element, String text, FontStyle style) {
+    protected Span appendSpan(OdfElement element) {
         Span s = new Span(new TextSpanElement(odt.getContentDom()))
-        s.setTextContent(text)
-        s.getStyleHandler().getTextPropertiesForWrite().setFontStyle(style)
         element.appendChild(s.getOdfElement())
+        return s
+    }
+
+    protected Span appendCodeSpan(OdfElement element) {
+        Span s = appendSpan(element)
+        s.getStyleHandler().getTextPropertiesForWrite().setFontName("Courier New")
+        return s
+    }
+
+    protected Span appendBoldSpan(OdfElement element) {
+        Span s = appendSpan(element)
+        s.getStyleHandler().getTextPropertiesForWrite().setFontStyle(StyleTypeDefinitions.FontStyle.BOLD)
+        return s
+    }
+
+    protected Span appendItalicSpan(OdfElement element) {
+        Span s = appendSpan(element)
+        s.getStyleHandler().getTextPropertiesForWrite().setFontStyle(StyleTypeDefinitions.FontStyle.ITALIC)
+        return s
     }
 
     protected void appendLink(OdfElement element, String text, String url) {
@@ -137,13 +147,6 @@ class OdfdomDocument implements DocumentAdapter{
         aElement.setXlinkHrefAttribute(url)
         aElement.setTextContent(text)
         element.appendChild(aElement)
-    }
-
-    protected void appendCode(OdfElement element, String text) {
-        Span s = new Span(new TextSpanElement(odt.getContentDom()))
-        s.setTextContent(text)
-        s.getStyleHandler().getTextPropertiesForWrite().setFontName("Courier New")
-        element.appendChild(s.getOdfElement())
     }
 
     protected void appendImage(OdfElement element, String url) {
@@ -198,17 +201,51 @@ class OdfdomDocument implements DocumentAdapter{
     }
 
     protected void fillWithParagraphContent(OdfElement element, ParagraphContent paragraphContent) {
+        if (paragraphContent == null) {
+            LOGGER.info("ParagraphContent is null in fillWithParagraphContent() method.")
+            return
+        }
         for(SpanContent sc : paragraphContent.list) {
+            if(sc == null) {
+                LOGGER.info("SpanContent is null in fillWithParagraphContent() method.")
+                continue
+            }
+
             switch (sc.getType()) {
-                case { sc && sc.type == SpanType.TEXT && sc.styles.isEmpty() }:
-                    appendText(element, sc.getText())
+               case SpanType.TEXT:
+                    if (sc instanceof SpanContentText) {
+                        if (sc.styles.isEmpty()) {
+                            appendText(element, sc.getText())
+                        }
+                        else {
+                            OdfElement e = element
+                            Span s
+
+                            for (TextStyle ts : sc.styles ) {
+                                switch (ts) {
+                                    case TextStyle.ITALIC:
+                                        s = appendItalicSpan(e)
+                                        e = s.odfElement
+                                        break
+                                    case TextStyle.BOLD:
+                                        s = appendBoldSpan(e)
+                                        e = s.odfElement
+                                        break
+                                    case TextStyle.CODE:
+                                        s = appendCodeSpan(e)
+                                        e = s.odfElement
+                                        break
+                                    default:
+                                        LOGGER.warn("TextStyle not implemented: " + ts + " in class " + sc.class)
+                                }
+                            }
+                            appendText(e, sc.getText())
+                        }
+                    } else {
+                        LOGGER.error("SpanContent with a '" + sc.getType() + "' type and instance of '" + sc.class + "'")
+                    }
                     break
-                case { sc && sc.type == SpanType.TEXT && TextStyle.BOLD in sc.styles }:
-                    appendBoldText(element, sc.getText())
-                    break
-                case { sc && sc.type == SpanType.TEXT && TextStyle.ITALIC in sc.styles }:
-                    appendItalicText(element, sc.getText())
-                    break
+
                 case SpanType.LINK:
                     if (sc instanceof SpanContentLink) {
                         appendLink(element, sc.getText(), sc.getUrl())
@@ -216,9 +253,7 @@ class OdfdomDocument implements DocumentAdapter{
                         LOGGER.error("SpanContent with a '" + sc.getType() + "' type and instance of '" + sc.class + "'")
                     }
                     break
-                case { sc && sc.type == SpanType.TEXT && TextStyle.CODE in sc.styles }:
-                    appendCode(element, sc.getText())
-                    break
+
                 case SpanType.IMAGE:
                     if (sc instanceof SpanContentImageLocal) {
                         try {

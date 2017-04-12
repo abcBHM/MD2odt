@@ -63,7 +63,7 @@ class ParagraphContentBuilder {
     }
 
     ParagraphContentBuilder addLink(String text, String url) {
-        add(new SpanContentLink(text, url, SpanType.LINK))
+        add(new SpanContentLink(text, url))
     }
 
     ParagraphContentBuilder addImage(String text, String url, String alt) {

@@ -237,46 +237,6 @@ class OdfdomDocumentTest {
         assert last.textContent.equals("bla2")
     }
 
-    ParagraphContent getParagraphContent() {
-        new ParagraphContent() {
-            List<SpanContent> list = new ArrayList<SpanContent>(1)
-
-            @Override
-            List<SpanContent> getList() {
-                return list
-            }
-        }
-    }
-
-    /*
-    @Test
-    void fillWithParagraphContentLinkNotLinkInstanceTest() throws Exception {
-        ParagraphContent pc = getParagraphContent()
-        pc.getList().add(new SpanContentText("text", SpanType.LINK))
-        TextPElement par = new TextPElement(doc.odt.getContentDom())
-        doc.fillWithParagraphContent(par, pc)
-        assert par.textContent.equals("")
-    }
-
-    @Test
-    void fillWithParagraphContentImageNotImageInstanceTest() throws Exception {
-        ParagraphContent pc = getParagraphContent()
-        pc.getList().add(new SpanContentText("text", SpanType.IMAGE))
-        TextPElement par = new TextPElement(doc.odt.getContentDom())
-        doc.fillWithParagraphContent(par, pc)
-        assert par.textContent.equals("")
-    }
-
-    @Test
-    void fillWithParagraphContentNotImplemented() throws Exception {
-        ParagraphContent pc = getParagraphContent()
-        pc.getList().add(new SpanContentText("text", null))
-        TextPElement par = new TextPElement(doc.odt.getContentDom())
-        doc.fillWithParagraphContent(par, pc)
-        assert par.textContent.equals("")
-    }
-    */
-
     @Test
     void save1() throws Exception {
         doc.save(TEST)

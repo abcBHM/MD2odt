@@ -1,17 +1,18 @@
 package cz.zcu.kiv.md2odt.document
 
-import groovy.transform.Immutable
-
 /**
  *
  * @version 2017-03-15
  * @author Patrik Harag
  */
-@Immutable
 class SpanContentLink implements SpanContent {
 
     String text
     String url
-    SpanType type
+    final SpanType type = SpanType.LINK
 
+    SpanContentLink(String text, String url) {
+        this.text = text
+        this.url = url
+    }
 }

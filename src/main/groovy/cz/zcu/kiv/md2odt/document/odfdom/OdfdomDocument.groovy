@@ -20,6 +20,7 @@ import org.odftoolkit.odfdom.dom.element.draw.DrawImageElement
 import org.odftoolkit.odfdom.dom.element.style.StyleStyleElement
 import org.odftoolkit.odfdom.dom.element.style.StyleTextPropertiesElement
 import org.odftoolkit.odfdom.dom.element.text.TextAElement
+import org.odftoolkit.odfdom.dom.element.text.TextLineBreakElement
 import org.odftoolkit.odfdom.dom.element.text.TextListItemElement
 import org.odftoolkit.odfdom.dom.element.text.TextPElement
 import org.odftoolkit.odfdom.dom.element.text.TextSpanElement
@@ -117,7 +118,6 @@ class OdfdomDocument implements DocumentAdapter{
 
     protected void addInlineCodeFont() {
         Span s = new Span(new TextSpanElement(odt.getContentDom()))
-        s.setTextContent("")
         s.getStyleHandler().getTextPropertiesForWrite().setFont(new Font("Courier New", StyleTypeDefinitions.FontStyle.REGULAR, 12))
         // span is not added to document it only fills the style and set FONT NAME
     }
@@ -155,10 +155,30 @@ class OdfdomDocument implements DocumentAdapter{
         }
     }
 
-    protected Text appendText(OdfElement element, String text) {
-        Text textNode = odt.getContentDom().createTextNode(text)
+    protected void appendText(OdfElement element, String text) {
+        if (text.equals("\n")) {
+            TextLineBreakElement tlbe = new TextLineBreakElement(odt.contentDom)
+            element.appendChild(tlbe)
+            return
+        }
+
+        String[] s = text.split("\n")
+
+        Text textNode = odt.getContentDom().createTextNode(s[0])
         element.appendChild(textNode)
-        return textNode
+
+        for (int i = 1; i < s.length; i++) {
+            TextLineBreakElement tlbe = new TextLineBreakElement(odt.contentDom)
+            element.appendChild(tlbe)
+
+            textNode = odt.getContentDom().createTextNode(s[i])
+            element.appendChild(textNode)
+        }
+
+        if (text.endsWith("\n")) {
+            TextLineBreakElement tlbe = new TextLineBreakElement(odt.contentDom)
+            element.appendChild(tlbe)
+        }
     }
 
     protected Span appendSpan(OdfElement element) {
@@ -207,7 +227,7 @@ class OdfdomDocument implements DocumentAdapter{
         TextAElement aElement = (TextAElement) odt.getContentDom().newOdfElement(TextAElement.class)
         aElement.setXlinkTypeAttribute("simple")
         aElement.setXlinkHrefAttribute(url)
-        aElement.setTextContent(text)
+        appendText(aElement, text)
         element.appendChild(aElement)
     }
 
@@ -396,7 +416,7 @@ class OdfdomDocument implements DocumentAdapter{
 
     private void appendColorSpan(OdfElement element, String text, java.awt.Color color) {
         Span s = new Span(new TextSpanElement(odt.getContentDom()))
-        s.setTextContent(text)
+        appendText(s.odfElement, text)
         s.getStyleHandler().getTextPropertiesForWrite().setFontColor(new Color(color))
         element.appendChild(s.getOdfElement())
     }

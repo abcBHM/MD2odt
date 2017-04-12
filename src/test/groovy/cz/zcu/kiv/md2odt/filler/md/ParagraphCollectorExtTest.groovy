@@ -2,6 +2,8 @@ package cz.zcu.kiv.md2odt.filler.md
 
 import com.vladsch.flexmark.ext.emoji.EmojiExtension
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension
+import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension
+import com.vladsch.flexmark.superscript.SuperscriptExtension
 import org.junit.Test
 
 import static cz.zcu.kiv.md2odt.document.TextStyle.*
@@ -16,6 +18,8 @@ import static cz.zcu.kiv.md2odt.filler.md.ParagraphCollectorTest.styles
 class ParagraphCollectorExtTest {
 
     static def EXT_STRIKE = [StrikethroughExtension.create()]
+    static def EXT_SUB = [SubscriptExtension.create()]
+    static def EXT_SUP = [SuperscriptExtension.create()]
     static def EXT_EMOJI = [EmojiExtension.create()]
 
     @Test
@@ -24,6 +28,22 @@ class ParagraphCollectorExtTest {
 
         assert paragraph.list*.text == ["strike"]
         assert paragraph.list*.styles == styles([STRIKE])
+    }
+
+    @Test
+    void sub() {
+        def paragraph = paragraph("~text~", EXT_SUB)
+
+        assert paragraph.list*.text == ["text"]
+        assert paragraph.list*.styles == styles([SUBSCRIPT])
+    }
+
+    @Test
+    void sup() {
+        def paragraph = paragraph("^text^", EXT_SUP)
+
+        assert paragraph.list*.text == ["text"]
+        assert paragraph.list*.styles == styles([SUPERSCRIPT])
     }
 
     @Test

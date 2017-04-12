@@ -11,5 +11,7 @@ enum TextStyle {
     BOLD,
     CODE,
     STRIKE,
+    SUBSCRIPT,
+    SUPERSCRIPT
 
 }

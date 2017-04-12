@@ -21,6 +21,8 @@ import com.vladsch.flexmark.ast.Text as AstText
 import com.vladsch.flexmark.ast.TextBase as AstTextBase
 import com.vladsch.flexmark.ext.emoji.Emoji as AstEmoji
 import com.vladsch.flexmark.ext.gfm.strikethrough.Strikethrough as AstStrike
+import com.vladsch.flexmark.ext.gfm.strikethrough.Subscript as AstSub
+import com.vladsch.flexmark.superscript.Superscript as AstSup
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder as Builder
 import cz.zcu.kiv.md2odt.document.TextStyle
@@ -71,6 +73,16 @@ class ParagraphCollector {
 
             case AstStrike:
                 styles.add(TextStyle.STRIKE)
+                process(node.children, styles, builder)
+                break
+
+            case AstSub:
+                styles.add(TextStyle.SUBSCRIPT)
+                process(node.children, styles, builder)
+                break
+
+            case AstSup:
+                styles.add(TextStyle.SUPERSCRIPT)
                 process(node.children, styles, builder)
                 break
 

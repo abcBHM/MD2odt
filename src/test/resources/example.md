@@ -18,6 +18,10 @@ Inline `code`
 
 Strikethrough: ~~something wrong~~ (extension)
 
+Subscript: H~2~O (extension)
+
+Superscript: x^2^, October 31^st^ (extension)
+
 Escaping: \*literal asterisks\*
 
 Diacritics: Příliš žluťoučký kůň úpěl ďábelské ódy.

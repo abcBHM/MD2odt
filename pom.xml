@@ -41,6 +41,12 @@
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-ext-gfm-strikethrough</artifactId>
+                <!-- includes subscript extension -->
+            <version>0.18.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-ext-superscript</artifactId>
             <version>0.18.5</version>
         </dependency>
 

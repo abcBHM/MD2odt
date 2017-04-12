@@ -4,7 +4,10 @@ import com.vladsch.flexmark.Extension;
 import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
 import com.vladsch.flexmark.ext.emoji.EmojiExtension;
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
+import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughSubscriptExtension;
+import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension;
 import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.superscript.SuperscriptExtension;
 import cz.zcu.kiv.md2odt.document.Document;
 import cz.zcu.kiv.md2odt.document.odfdom.OdfdomDocument;
 import cz.zcu.kiv.md2odt.filler.*;
@@ -32,6 +35,8 @@ public class Converter {
     private boolean enableAutolinks;
     private boolean enableEmoji;
     private boolean enableStrikethrough;
+    private boolean enableSubscript;
+    private boolean enableSuperscript;
 
     // source
 
@@ -89,10 +94,22 @@ public class Converter {
         return this;
     }
 
+    public Converter enableSubscript() {
+        this.enableSubscript = true;
+        return this;
+    }
+
+    public Converter enableSuperscript() {
+        this.enableSuperscript = true;
+        return this;
+    }
+
     public Converter enableAllExtensions() {
-        this.enableAutolinks = true;
-        this.enableEmoji = true;
-        this.enableStrikethrough = true;
+        enableAutolinks();
+        enableEmoji();
+        enableStrikethrough();
+        enableSubscript();
+        enableSuperscript();
         return this;
     }
 
@@ -120,7 +137,14 @@ public class Converter {
 
         if (enableAutolinks) extensions.add(AutolinkExtension.create());
         if (enableEmoji) extensions.add(EmojiExtension.create());
-        if (enableStrikethrough) extensions.add(StrikethroughExtension.create());
+        if (enableSuperscript) extensions.add(SuperscriptExtension.create());
+
+        if (enableStrikethrough && enableSubscript)
+            extensions.add(StrikethroughSubscriptExtension.create());
+        else if (enableStrikethrough)
+            extensions.add(StrikethroughExtension.create());
+        else if (enableSubscript)
+            extensions.add(SubscriptExtension.create());
 
         return extensions;
     }

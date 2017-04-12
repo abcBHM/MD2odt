@@ -12,6 +12,8 @@ Hard linebreak. (Because of two spaces.)
 
 **double asterisks** or __double underscores__
 
+regular **bold *bold italic***
+
 Inline `code`
 
 Escaping: \*literal asterisks\*

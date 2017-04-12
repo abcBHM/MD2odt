@@ -21,8 +21,8 @@ class ParagraphHandler implements AstNodeHandler {
     void handle(AstNode node, Context context, Document document) {
         assert node instanceof AstParagraph
 
-        def collector = new ParagraphCollector()
-        def paragraph = collector.processParagraph(node as AstParagraph, context)
+        def collector = new ParagraphCollector(context)
+        def paragraph = collector.processParagraph(node as AstParagraph)
         document.addParagraph(paragraph)
     }
 

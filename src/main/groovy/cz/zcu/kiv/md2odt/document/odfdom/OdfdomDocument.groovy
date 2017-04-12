@@ -200,13 +200,13 @@ class OdfdomDocument implements DocumentAdapter{
     protected void fillWithParagraphContent(OdfElement element, ParagraphContent paragraphContent) {
         for(SpanContent sc : paragraphContent.list) {
             switch (sc.getType()) {
-                case SpanType.REGULAR:
+                case { sc && sc.type == SpanType.TEXT && sc.styles.isEmpty() }:
                     appendText(element, sc.getText())
                     break
-                case SpanType.BOLD:
+                case { sc && sc.type == SpanType.TEXT && TextStyle.BOLD in sc.styles }:
                     appendBoldText(element, sc.getText())
                     break
-                case SpanType.ITALIC:
+                case { sc && sc.type == SpanType.TEXT && TextStyle.ITALIC in sc.styles }:
                     appendItalicText(element, sc.getText())
                     break
                 case SpanType.LINK:
@@ -216,7 +216,7 @@ class OdfdomDocument implements DocumentAdapter{
                         LOGGER.error("SpanContent with a '" + sc.getType() + "' type and instance of '" + sc.class + "'")
                     }
                     break
-                case SpanType.CODE:
+                case { sc && sc.type == SpanType.TEXT && TextStyle.CODE in sc.styles }:
                     appendCode(element, sc.getText())
                     break
                 case SpanType.IMAGE:

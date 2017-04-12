@@ -24,10 +24,10 @@ class BlockQuoteHandler implements AstNodeHandler {
 
         // TODO: add support for other nested blocks
 
-        def collector = new ParagraphCollector()
+        def collector = new ParagraphCollector(context)
         def paragraphs = node.children
                 .findAll { it instanceof AstParagraph }
-                .collect { collector.processParagraph(it as AstParagraph, context) }
+                .collect { collector.processParagraph(it as AstParagraph) }
 
         document.addQuoteBlock(paragraphs)
     }

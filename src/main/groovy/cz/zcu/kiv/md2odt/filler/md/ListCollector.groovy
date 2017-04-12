@@ -46,8 +46,8 @@ class ListCollector {
 
             case AstParagraph:
                 // paragraph
-                return new ParagraphCollector()
-                        .processParagraph(node as AstParagraph, context)
+                def collector = new ParagraphCollector(context)
+                return collector.processParagraph(node as AstParagraph)
 
             default:
                 // TODO: headers? code blocks? quote blocks?

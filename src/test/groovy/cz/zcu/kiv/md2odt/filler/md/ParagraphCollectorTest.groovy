@@ -4,13 +4,15 @@ import com.vladsch.flexmark.ast.Document
 import com.vladsch.flexmark.ast.Paragraph
 import com.vladsch.flexmark.parser.Parser
 import cz.zcu.kiv.md2odt.document.ParagraphContent
+import cz.zcu.kiv.md2odt.document.TextStyle
 import org.junit.Test
 
+import static cz.zcu.kiv.md2odt.document.TextStyle.*
 import static cz.zcu.kiv.md2odt.document.SpanType.*
 
 /**
  *
- * @version 2017-04-03
+ * @version 2017-04-11
  * @author Patrik Harag
  */
 class ParagraphCollectorTest {
@@ -20,17 +22,23 @@ class ParagraphCollectorTest {
         def document = parser.parse(md)
         def astParagraph = document.children[0] as Paragraph
 
-        def collector = new ParagraphCollector()
         def context = Context.of(document as Document)
-        return collector.processParagraph(astParagraph, context)
+        def collector = new ParagraphCollector(context)
+        return collector.processParagraph(astParagraph)
     }
+
+    static styles(Collection<TextStyle>... collOfStyles) {
+        return collOfStyles.collect { it as Set }
+    }
+
+    // --- FORMATTING
 
     @Test
     void simpleFormatting1() {
         def paragraph = paragraph("This is *Sparta*!")
 
         assert paragraph.list*.text == ["This is ", "Sparta", "!"]
-        assert paragraph.list*.type == [REGULAR, ITALIC, REGULAR]
+        assert paragraph.list*.styles == styles([], [ITALIC], [])
     }
 
     @Test
@@ -38,8 +46,34 @@ class ParagraphCollectorTest {
         def paragraph = paragraph("a*b***c**")
 
         assert paragraph.list*.text == ["a", "b", "c"]
-        assert paragraph.list*.type == [REGULAR, ITALIC, BOLD]
+        assert paragraph.list*.styles == styles([], [ITALIC], [BOLD])
     }
+
+    @Test
+    void inlineCode() {
+        def paragraph = paragraph("text`code`text")
+
+        assert paragraph.list*.text == ["text", "code", "text"]
+        assert paragraph.list*.styles == styles([], [CODE], [])
+    }
+
+    @Test
+    void nestedFormatting_1() {
+        def paragraph = paragraph("***abc***")
+
+        assert paragraph.list*.text == ["abc"]
+        assert paragraph.list*.styles == styles([ITALIC, BOLD])
+    }
+
+    @Test
+    void nestedFormatting_2() {
+        def paragraph = paragraph("**a `code` a *italic* a**")
+
+        assert paragraph.list*.text == ["a ", "code", " a ", "italic", " a"]
+        assert paragraph.list*.styles == styles([BOLD], [BOLD, CODE], [BOLD], [BOLD, ITALIC], [BOLD])
+    }
+
+    // --- LINE BREAKS
 
     @Test
     void softLineBreak() {
@@ -52,7 +86,7 @@ class ParagraphCollectorTest {
         //  class com.vladsch.flexmark.ast.Text
 
         assert paragraph.list*.text == ["a b"]
-        assert paragraph.list*.type == [REGULAR]
+        assert paragraph.list*.styles == styles([])
     }
 
     @Test
@@ -61,7 +95,7 @@ class ParagraphCollectorTest {
         // note: more than one space after 'a' -> hard linebreak
 
         assert paragraph.list*.text == ["a b"]
-        assert paragraph.list*.type == [REGULAR]
+        assert paragraph.list*.styles == styles([])
     }
 
     @Test
@@ -69,7 +103,7 @@ class ParagraphCollectorTest {
         def paragraph = paragraph("*a\nb*")
 
         assert paragraph.list*.text == ["a b"]
-        assert paragraph.list*.type == [ITALIC]
+        assert paragraph.list*.styles == styles([ITALIC])
     }
 
     @Test
@@ -77,28 +111,10 @@ class ParagraphCollectorTest {
         def paragraph = paragraph("a  \nb")
 
         assert paragraph.list*.text == ["a\nb"]
-        assert paragraph.list*.type == [REGULAR]
+        assert paragraph.list*.styles == styles([])
     }
 
-    @Test
-    void nestedFormatting() {
-        def paragraph = paragraph("*a**b***")
-
-        assert paragraph.list*.text == ["ab"]
-        assert paragraph.list*.type == [ITALIC]
-
-        // TODO: nested formatting is ignored
-        // assert paragraph.list*.text == ["a", "b"]
-        // assert paragraph.list*.type == [ITALIC, BOLD]
-    }
-
-    @Test
-    void inlineCode() {
-        def paragraph = paragraph("text`code`text")
-
-        assert paragraph.list*.text == ["text", "code", "text"]
-        assert paragraph.list*.type == [REGULAR, CODE, REGULAR]
-    }
+    // --- LINKS
 
     @Test
     void link() {
@@ -163,21 +179,7 @@ class ParagraphCollectorTest {
         assert paragraph.list*.url  == ["http://google.com"]
     }
 
-    @Test
-    void htmlEntity() {
-        def paragraph = paragraph("&amp;")
-
-        assert paragraph.list*.text == ["&"]
-        assert paragraph.list*.type == [REGULAR]
-    }
-
-    @Test
-    void htmlComment() {
-        def paragraph = paragraph("ab<!-- comment -->*cd*")
-
-        assert paragraph.list*.text == ["ab", "cd"]
-        assert paragraph.list*.type == [REGULAR, ITALIC]
-    }
+    // --- IMAGES
 
     @Test
     void image() {
@@ -211,6 +213,24 @@ class ParagraphCollectorTest {
         assert paragraph.list*.url == ["https://www.example.com/img.png"]
         assert paragraph.list*.alt == ["alt text"]
         assert paragraph.list*.type == [IMAGE]
+    }
+
+    // --- HTML
+
+    @Test
+    void htmlEntity() {
+        def paragraph = paragraph("&amp;")
+
+        assert paragraph.list*.text == ["&"]
+        assert paragraph.list*.styles == styles([])
+    }
+
+    @Test
+    void htmlComment() {
+        def paragraph = paragraph("ab<!-- comment -->*cd*")
+
+        assert paragraph.list*.text == ["ab", "cd"]
+        assert paragraph.list*.styles == styles([], [ITALIC])
     }
 
 }

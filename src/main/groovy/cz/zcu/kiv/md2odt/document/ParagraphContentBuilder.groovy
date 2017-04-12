@@ -3,7 +3,7 @@ package cz.zcu.kiv.md2odt.document
 /**
  * Builder for {@link ParagraphContent}.
  *
- * @version 2017-04-08
+ * @version 2017-04-11
  * @author Patrik Harag
  */
 class ParagraphContentBuilder {
@@ -35,30 +35,31 @@ class ParagraphContentBuilder {
         return this
     }
 
-    ParagraphContentBuilder addText(String text, SpanType type) {
+    ParagraphContentBuilder addText(String text, Set<TextStyle> styles) {
         // try append text after the last span
-        if (buffer && buffer[-1].type == type)
-            buffer[-1] = new SpanContentText(buffer[-1].text + text, type)
+        def last = buffer ? buffer[-1] : null
+        if (last && last.type == SpanType.TEXT && last.styles == styles)
+            buffer[-1] = new SpanContentText(last.text + text, styles)
         else
-            add(new SpanContentText(text, type))
+            add(new SpanContentText(text, styles))
 
         return this
     }
 
     ParagraphContentBuilder addRegular(String text) {
-        addText(text, SpanType.REGULAR)
+        addText(text, [] as Set)
     }
 
     ParagraphContentBuilder addItalic(String text) {
-        addText(text, SpanType.ITALIC)
+        addText(text, [TextStyle.ITALIC] as Set)
     }
 
     ParagraphContentBuilder addBold(String text) {
-        addText(text, SpanType.BOLD)
+        addText(text, [TextStyle.BOLD] as Set)
     }
 
     ParagraphContentBuilder addCode(String text) {
-        addText(text, SpanType.CODE)
+        addText(text, [TextStyle.CODE] as Set)
     }
 
     ParagraphContentBuilder addLink(String text, String url) {

@@ -9,6 +9,7 @@ import cz.zcu.kiv.md2odt.document.SpanContent
 import cz.zcu.kiv.md2odt.document.SpanContentImage
 import cz.zcu.kiv.md2odt.document.SpanContentLink
 import cz.zcu.kiv.md2odt.document.SpanType
+import cz.zcu.kiv.md2odt.document.TextStyle
 import org.apache.log4j.Logger
 import org.odftoolkit.simple.text.list.List as OdfList
 import org.odftoolkit.simple.text.list.ListItem
@@ -42,13 +43,13 @@ class OdfSimpleDocument implements DocumentAdapter {
         String rtn = ""
         for(SpanContent sc : content.list) {
             switch (sc.getType()) {
-                case SpanType.REGULAR:
+                case { sc && sc.type == SpanType.TEXT && sc.styles.isEmpty() }:
                     rtn += OdfSimpleConstants.escape(sc.getText())
                     break
-                case SpanType.BOLD:
+                case { sc && sc.type == SpanType.TEXT && TextStyle.BOLD in sc.styles }:
                     rtn += OdfSimpleConstants.BOLD.getMark() + OdfSimpleConstants.escape(sc.getText()) + OdfSimpleConstants.BOLD.getMark()
                     break
-                case SpanType.ITALIC:
+                case { sc && sc.type == SpanType.TEXT && TextStyle.ITALIC in sc.styles }:
                     rtn += OdfSimpleConstants.ITALIC.getMark() + OdfSimpleConstants.escape(sc.getText()) + OdfSimpleConstants.ITALIC.getMark()
                     break
                 case SpanType.LINK:
@@ -58,7 +59,7 @@ class OdfSimpleDocument implements DocumentAdapter {
                         rtn += OdfSimpleConstants.escape(sc.getText())
                     }
                     break
-                case SpanType.CODE:
+                case { sc && sc.type == SpanType.TEXT && TextStyle.CODE in sc.styles }:
                     rtn += OdfSimpleConstants.INLINE_CODE.getMark() + OdfSimpleConstants.escape(sc.getText()) + OdfSimpleConstants.INLINE_CODE.getMark()
                     break
                 case SpanType.IMAGE:

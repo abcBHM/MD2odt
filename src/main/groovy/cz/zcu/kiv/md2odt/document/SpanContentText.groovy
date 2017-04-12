@@ -1,16 +1,19 @@
 package cz.zcu.kiv.md2odt.document
 
-import groovy.transform.Immutable
-
 /**
  *
- * @version 2017-03-15
+ * @version 2017-04-11
  * @author Patrik Harag
  */
-@Immutable
 class SpanContentText implements SpanContent {
 
-    String text
-    SpanType type
+    SpanContentText(String text, Collection<TextStyle> styles) {
+        this.text = text
+        this.styles = styles
+    }
+
+    final String text
+    final Set<TextStyle> styles
+    final SpanType type = SpanType.TEXT
 
 }

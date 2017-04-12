@@ -40,11 +40,13 @@ class OdfSimpleDocumentParToStringTest {
         assert doc.parToString(pc).equals("#www.seznam.cz@pokus#")
     }
 
+    /*
     @Test
     void parToStringLinkNotLinkInstanceTest() throws Exception {
         pc.getList().add(new SpanContentText("text", SpanType.LINK))
         assert doc.parToString(pc).equals("text")
     }
+    */
 
     @Test
     void parToStringImageTest() throws Exception {
@@ -52,6 +54,7 @@ class OdfSimpleDocumentParToStringTest {
         assert doc.parToString(pc).equals(OdfSimpleConstants.IMAGE.getMark()+"url@alt@text"+OdfSimpleConstants.IMAGE.getMark())
     }
 
+    /*
     @Test
     void parToStringImageNotImageInstanceTest() throws Exception {
         pc.getList().add(new SpanContentText("text", SpanType.IMAGE))
@@ -63,4 +66,5 @@ class OdfSimpleDocumentParToStringTest {
         pc.getList().add(new SpanContentText("text", null))
         assert doc.parToString(pc).equals("")
     }
+    */
 }

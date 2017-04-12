@@ -10,6 +10,7 @@ import com.vladsch.flexmark.ast.HtmlInlineComment as AstHtmlInlineComment
 import com.vladsch.flexmark.ast.Image as AstImage
 import com.vladsch.flexmark.ast.ImageRef as AstImageRef
 import com.vladsch.flexmark.ast.Link as AstLink
+import com.vladsch.flexmark.ast.LinkNode as AstLinkNode
 import com.vladsch.flexmark.ast.LinkRef as AstLinkRef
 import com.vladsch.flexmark.ast.MailLink as AstMailLink
 import com.vladsch.flexmark.ast.Node as AstNode
@@ -20,50 +21,124 @@ import com.vladsch.flexmark.ast.Text as AstText
 import com.vladsch.flexmark.ast.TextBase as AstTextBase
 import com.vladsch.flexmark.ext.emoji.Emoji as AstEmoji
 import cz.zcu.kiv.md2odt.document.ParagraphContent
-import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
+import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder as Builder
+import cz.zcu.kiv.md2odt.document.TextStyle
 import org.apache.log4j.Logger
 import org.jsoup.Jsoup
 
 /**
  *
- * @version 2017-04-08
+ * @version 2017-04-11
  * @author Patrik Harag
  */
 class ParagraphCollector {
 
     private static final Logger LOGGER = Logger.getLogger(ParagraphCollector)
 
-    ParagraphContent processParagraph(AstParagraph node, Context context) {
-        def builder = ParagraphContentBuilder.builder()
+    private final Context context
 
-        node.children.each { processNode(it, context, builder) }
+    ParagraphCollector(Context context) {
+        this.context = context
+    }
+
+    ParagraphContent processParagraph(AstParagraph node) {
+        def builder = Builder.builder()
+
+        process(node.children, null, builder)
         builder.build()
     }
 
-    private void processNode(AstNode node, Context context,
-                             ParagraphContentBuilder builder) {
+    private void process(Iterable<AstNode> nodes, Set<TextStyle> styles, Builder builder) {
+        nodes.each {
+            def stylesCopy = styles ? EnumSet.copyOf(styles) : EnumSet.noneOf(TextStyle)
+            process(it, stylesCopy, builder)
+        }
+    }
 
+    private void process(AstNode node, Set<TextStyle> styles, Builder builder) {
         switch (node) {
+            // styles
+            case AstEmphasis:
+                styles.add(TextStyle.ITALIC)
+                process(node.children, styles, builder)
+                break
+
+            case AstStrongEmphasis:
+                styles.add(TextStyle.BOLD)
+                process(node.children, styles, builder)
+                break
+
+            case AstCode:  // leaf node!
+                styles.add(TextStyle.CODE)
+                String code = (node as AstCode).text.toString()
+                builder.addText(code, styles)
+                break
+
+            // text
             case AstText:
             case AstSoftLineBreak:
             case AstHardLineBreak:
             case AstHtmlEntity:
-                builder.addRegular(flatten(node))
+            case AstEmoji:
+                builder.addText(flatten(node), styles)
                 break
 
-            case AstEmphasis:
-                builder.addItalic(flatten(node))
+            // images (image nodes extends link node!)
+            case AstImage:
+            case AstImageRef:
+                processImage(node, builder)
                 break
 
-            case AstStrongEmphasis:
-                builder.addBold(flatten(node))
+            // links
+            case AstLinkNode:
+                processLink(node as AstLinkNode, styles, builder)
                 break
 
-            case AstCode:
-                String code = (node as AstCode).chars.toString()
-                builder.addCode(code[1..-2])  // without `
+            // ignored
+            case AstHtmlInlineComment:
                 break
 
+            case AstTextBase:
+                process(node.children, styles, builder)
+                break
+
+            default:
+                LOGGER.warn("Unknown node: " + node.class)
+        }
+    }
+
+    private void processImage(AstNode node, Builder builder) {
+        if (node instanceof AstImage) {
+            (node as AstImage).with {
+                processImage(*[title, url, text]*.toString(), builder)
+            }
+
+        } else if (node instanceof AstImageRef) {
+            def imageRef = node as AstImageRef
+            def ref = context.getReference(imageRef.reference.toString())
+
+            String alt = imageRef.text.toString()
+            String url = ref.url.toString()
+            String title = ref.title.toString()
+
+            processImage(title, url, alt, builder)
+
+        } else {
+            assert false
+        }
+    }
+
+    private void processImage(String text, String url, String alt, Builder builder) {
+        def stream = context.getResourceAsStream(url)
+
+        if (stream)
+            builder.addImage(text, url, alt, stream)
+        else
+            builder.addImage(text, url, alt)
+    }
+
+    private void processLink(AstLinkNode node, Set<TextStyle> styles, Builder builder) {
+        switch (node) {
             case AstLink:
                 String url = (node as AstLink).url
                 String text = flatten(node)
@@ -97,56 +172,9 @@ class ParagraphCollector {
                 builder.addLink(text, url)
                 break
 
-            case AstImage:
-                (node as AstImage).with {
-                    processImage(*[title, url, text]*.toString(), context, builder)
-                }
-                break
-
-            case AstImageRef:
-                def imageRef = node as AstImageRef
-                def ref = context.getReference(imageRef.reference.toString())
-
-                String alt = imageRef.text.toString()
-                String url = ref.url.toString()
-                String title = ref.title.toString()
-
-                processImage(title, url, alt, context, builder)
-                break
-
-            case AstEmoji:
-                def alias = (node as AstEmoji).getText().toString()
-                def emoji = EmojiManager.getForAlias(alias)
-
-                if (emoji)
-                    builder.addRegular(emoji.getUnicode())
-                else
-                    builder.addRegular(flatten(node))
-
-                break
-
-            case AstHtmlInlineComment:
-                // ignore
-                break
-
-            case AstTextBase:
-                node.children.each { processNode(it, context, builder) }
-                break
-
             default:
-                LOGGER.warn("Unknown node: " + node.class)
+                LOGGER.warn("Unknown link node: " + node.class)
         }
-    }
-
-    private void processImage(String text, String url, String alt,
-                              Context context, ParagraphContentBuilder builder) {
-
-        def stream = context.getResourceAsStream(url)
-
-        if (stream)
-            builder.addImage(text, url, alt, stream)
-        else
-            builder.addImage(text, url, alt)
     }
 
     static String flatten(AstNode node) {
@@ -160,7 +188,9 @@ class ParagraphCollector {
             case AstHtmlEntity:
                 return Jsoup.parse(node.chars.toString()).text()
             case AstEmoji:
-                return node.chars.toString()
+                def alias = (node as AstEmoji).getText().toString()
+                def emoji = EmojiManager.getForAlias(alias)
+                return (emoji) ? emoji.getUnicode() : node.chars.toString()
         }
 
         LOGGER.debug("Flattenize: " + node.class)

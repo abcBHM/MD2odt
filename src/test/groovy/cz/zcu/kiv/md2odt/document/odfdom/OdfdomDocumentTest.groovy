@@ -239,6 +239,7 @@ class OdfdomDocumentTest {
         }
     }
 
+    /*
     @Test
     void fillWithParagraphContentLinkNotLinkInstanceTest() throws Exception {
         ParagraphContent pc = getParagraphContent()
@@ -265,6 +266,7 @@ class OdfdomDocumentTest {
         doc.fillWithParagraphContent(par, pc)
         assert par.textContent.equals("")
     }
+    */
 
     @Test
     void save1() throws Exception {

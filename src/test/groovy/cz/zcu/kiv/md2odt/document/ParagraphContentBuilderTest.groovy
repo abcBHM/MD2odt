@@ -4,7 +4,7 @@ import org.junit.Test
 
 /**
  *
- * @version 2017-03-15
+ * @version 2017-04-11
  * @author Patrik Harag
  */
 class ParagraphContentBuilderTest {
@@ -17,9 +17,13 @@ class ParagraphContentBuilderTest {
 
     @Test
     void testClasses() {
-        assert par.list[0].type == SpanType.REGULAR
-        assert par.list[1].type == SpanType.ITALIC
-        assert par.list[2].type == SpanType.BOLD
+        assert par.list[0].type == SpanType.TEXT
+        assert par.list[1].type == SpanType.TEXT
+        assert par.list[2].type == SpanType.TEXT
+
+        assert par.list[0].styles == [] as Set
+        assert par.list[1].styles == [TextStyle.ITALIC] as Set
+        assert par.list[2].styles == [TextStyle.BOLD] as Set
     }
 
     @Test

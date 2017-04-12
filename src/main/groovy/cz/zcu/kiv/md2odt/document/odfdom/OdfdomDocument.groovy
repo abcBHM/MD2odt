@@ -288,6 +288,10 @@ class OdfdomDocument implements DocumentAdapter{
 
     @Override
     void addCodeBlock(String code, String lang) {
+        if (lang == null || lang.equals("")) {
+            addCodeBlock(code)
+            return
+        }
         def parElement = addParagraph(StyleNames.CODE.getValue()).getOdfElement()
         Parser codeParser = new CodeParser()
         List<CodeSection> codeSections = codeParser.parse(code, lang)

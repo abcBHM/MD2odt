@@ -20,6 +20,7 @@ import com.vladsch.flexmark.ast.StrongEmphasis as AstStrongEmphasis
 import com.vladsch.flexmark.ast.Text as AstText
 import com.vladsch.flexmark.ast.TextBase as AstTextBase
 import com.vladsch.flexmark.ext.emoji.Emoji as AstEmoji
+import com.vladsch.flexmark.ext.gfm.strikethrough.Strikethrough as AstStrike
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder as Builder
 import cz.zcu.kiv.md2odt.document.TextStyle
@@ -28,7 +29,7 @@ import org.jsoup.Jsoup
 
 /**
  *
- * @version 2017-04-11
+ * @version 2017-04-12
  * @author Patrik Harag
  */
 class ParagraphCollector {
@@ -65,6 +66,11 @@ class ParagraphCollector {
 
             case AstStrongEmphasis:
                 styles.add(TextStyle.BOLD)
+                process(node.children, styles, builder)
+                break
+
+            case AstStrike:
+                styles.add(TextStyle.STRIKE)
                 process(node.children, styles, builder)
                 break
 

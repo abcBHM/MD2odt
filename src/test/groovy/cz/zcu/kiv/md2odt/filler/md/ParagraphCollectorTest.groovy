@@ -1,5 +1,6 @@
 package cz.zcu.kiv.md2odt.filler.md
 
+import com.vladsch.flexmark.Extension
 import com.vladsch.flexmark.ast.Document
 import com.vladsch.flexmark.ast.Paragraph
 import com.vladsch.flexmark.parser.Parser
@@ -12,13 +13,13 @@ import static cz.zcu.kiv.md2odt.document.SpanType.*
 
 /**
  *
- * @version 2017-04-11
+ * @version 2017-04-12
  * @author Patrik Harag
  */
 class ParagraphCollectorTest {
 
-    static ParagraphContent paragraph(String md) {
-        def parser = Parser.builder().build()
+    static ParagraphContent paragraph(String md, List<Extension> extensions = []) {
+        def parser = Parser.builder().extensions(extensions).build()
         def document = parser.parse(md)
         def astParagraph = document.children[0] as Paragraph
 

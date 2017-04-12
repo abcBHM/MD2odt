@@ -38,6 +38,11 @@
             <artifactId>flexmark-ext-emoji</artifactId>
             <version>0.18.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-ext-gfm-strikethrough</artifactId>
+            <version>0.18.5</version>
+        </dependency>
 
         <dependency>
             <groupId>com.vdurmont</groupId>

@@ -8,7 +8,7 @@ import java.nio.file.Paths
 
 /**
  *
- * @version 2017-04-08
+ * @version 2017-04-12
  * @author Patrik Harag
  */
 class MD2odtTest {
@@ -43,10 +43,7 @@ class MD2odtTest {
                 .setInputStream(input)
                 .setTemplate(template)
                 .setOutput(out)
-
-                .enableAutolinks()
-                .enableEmoji()
-
+                .enableAllExtensions()
                 .convert()
     }
 
@@ -59,10 +56,7 @@ class MD2odtTest {
         MD2odt.converter()
                 .setInputZip(zip)
                 .setOutput(out)
-
-                .enableAutolinks()
-                .enableEmoji()
-
+                .enableAllExtensions()
                 .convert()
     }
 

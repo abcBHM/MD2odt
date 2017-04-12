@@ -16,6 +16,8 @@ regular **bold *bold italic***
 
 Inline `code`
 
+Strikethrough: ~~something wrong~~ (extension)
+
 Escaping: \*literal asterisks\*
 
 Diacritics: Příliš žluťoučký kůň úpěl ďábelské ódy.
@@ -118,7 +120,7 @@ Reference-style:
 [dog]: https://www.seznam.cz/media/img/dogs/krasty_07.png
 
 
-### Emoji
+### Emoji (extension)
 Some animals: :octopus: :pig2: :crocodile:
 
 Smiles: :confused: :cry: :weary:

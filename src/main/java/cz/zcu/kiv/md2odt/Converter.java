@@ -3,6 +3,7 @@ package cz.zcu.kiv.md2odt;
 import com.vladsch.flexmark.Extension;
 import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
 import com.vladsch.flexmark.ext.emoji.EmojiExtension;
+import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
 import com.vladsch.flexmark.parser.Parser;
 import cz.zcu.kiv.md2odt.document.Document;
 import cz.zcu.kiv.md2odt.document.odfdom.OdfdomDocument;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  *
  * @author Patrik Harag
- * @version 2017-04-08
+ * @version 2017-04-12
  */
 public class Converter {
 
@@ -30,6 +31,7 @@ public class Converter {
 
     private boolean enableAutolinks;
     private boolean enableEmoji;
+    private boolean enableStrikethrough;
 
     // source
 
@@ -82,6 +84,18 @@ public class Converter {
         return this;
     }
 
+    public Converter enableStrikethrough() {
+        this.enableStrikethrough = true;
+        return this;
+    }
+
+    public Converter enableAllExtensions() {
+        this.enableAutolinks = true;
+        this.enableEmoji = true;
+        this.enableStrikethrough = true;
+        return this;
+    }
+
     // ---
 
     public void convert() throws IOException {
@@ -106,6 +120,7 @@ public class Converter {
 
         if (enableAutolinks) extensions.add(AutolinkExtension.create());
         if (enableEmoji) extensions.add(EmojiExtension.create());
+        if (enableStrikethrough) extensions.add(StrikethroughExtension.create());
 
         return extensions;
     }

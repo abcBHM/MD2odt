@@ -11,6 +11,9 @@ import org.odftoolkit.odfdom.dom.OdfStylesDom
 import org.odftoolkit.odfdom.dom.attribute.style.StyleFamilyAttribute
 import org.odftoolkit.odfdom.dom.attribute.style.StyleFontNameAttribute
 import org.odftoolkit.odfdom.dom.attribute.style.StyleNameAttribute
+import org.odftoolkit.odfdom.dom.attribute.style.StyleParentStyleNameAttribute
+import org.odftoolkit.odfdom.dom.attribute.style.StyleTextLineThroughStyleAttribute
+import org.odftoolkit.odfdom.dom.attribute.style.StyleTextLineThroughTypeAttribute
 import org.odftoolkit.odfdom.dom.attribute.text.TextStyleNameAttribute
 import org.odftoolkit.odfdom.dom.element.draw.DrawFrameElement
 import org.odftoolkit.odfdom.dom.element.draw.DrawImageElement
@@ -47,26 +50,69 @@ class OdfdomDocument implements DocumentAdapter{
 
     protected final TextDocument odt
     private static final Logger LOGGER = Logger.getLogger(OdfdomDocument)
+    protected String strikeStyleName, subScriptStyleName, superScriptStyleName
 
     OdfdomDocument() {
         odt = TextDocument.newTextDocument()
         odt.getParagraphByIndex(0,false) .remove()     //removes an empty paragraph
-        addInlineCodeFont()
+        addTextStyles()
     }
 
     OdfdomDocument(File file) {
         this.odt = TextDocument.loadDocument(file)
         fillDefaultStyles()
+        addTextStyles()
     }
 
     OdfdomDocument(String documentPath) {
         this.odt = TextDocument.loadDocument(documentPath)
         fillDefaultStyles()
+        addTextStyles()
+
     }
 
     OdfdomDocument(InputStream inputStream) {
         this.odt = TextDocument.loadDocument(inputStream)
         fillDefaultStyles()
+        addTextStyles()
+    }
+
+    protected StyleTextPropertiesElement addStyleStyleElementForSpan(String styleName) {
+        def oas = odt.contentDom.getOrCreateAutomaticStyles()
+        StyleStyleElement sse = new StyleStyleElement(odt.getContentDom())
+        oas.appendChild(sse)
+        sse.setStyleNameAttribute(styleName)
+        sse.setStyleFamilyAttribute("text")
+
+        StyleTextPropertiesElement stpe = new StyleTextPropertiesElement(odt.getContentDom())
+        sse.appendChild(stpe)
+        return stpe
+    }
+
+    protected void addStrikeStyle() {
+        strikeStyleName = "BHM_MD2odt_Strike"
+        def stpe = addStyleStyleElementForSpan(strikeStyleName)
+        stpe.setStyleTextLineThroughTypeAttribute("single")
+        stpe.setStyleTextLineThroughStyleAttribute("solid")
+    }
+
+    protected void addSubScriptStyle() {
+        subScriptStyleName = "BHM_MD2odt_SubScript"
+        def stpe = addStyleStyleElementForSpan(subScriptStyleName)
+        stpe.setStyleTextPositionAttribute("sub 58%")
+    }
+
+    protected void addSuperScriptStyle() {
+        superScriptStyleName = "BHM_MD2odt_SuperScript"
+        def stpe = addStyleStyleElementForSpan(superScriptStyleName)
+        stpe.setStyleTextPositionAttribute("super 58%")
+    }
+
+    protected void addTextStyles() {
+        addStrikeStyle()
+        addSubScriptStyle()
+        addSuperScriptStyle()
+        addInlineCodeFont()
     }
 
     protected void addInlineCodeFont() {
@@ -87,13 +133,13 @@ class OdfdomDocument implements DocumentAdapter{
         return set
     }
 
-    protected Set<String> getStyleNames(OdfStylesDom stylesDom) {
+    protected Set<String> getStylesStyleNames(OdfStylesDom stylesDom) {
         NodeList nl = stylesDom.getOfficeStyles().getElementsByTagName("style:style")
         return getNamedItemValues(nl, "style:name")
     }
 
     protected void fillDefaultStyles() {
-        Set<String> odtStyleNames = getStyleNames(odt.getStylesDom())
+        Set<String> odtStyleNames = getStylesStyleNames(odt.getStylesDom())
 
         TextDocument defaultTextDocument = TextDocument.newTextDocument()
 
@@ -107,8 +153,6 @@ class OdfdomDocument implements DocumentAdapter{
                 odt.getStylesDom().getOfficeStyles().appendChild(n)
             }
         }
-
-        addInlineCodeFont()
     }
 
     protected Text appendText(OdfElement element, String text) {
@@ -138,6 +182,24 @@ class OdfdomDocument implements DocumentAdapter{
     protected Span appendItalicSpan(OdfElement element) {
         Span s = appendSpan(element)
         s.getStyleHandler().getTextPropertiesForWrite().setFontStyle(StyleTypeDefinitions.FontStyle.ITALIC)
+        return s
+    }
+
+    protected Span appendStrikeSpan(OdfElement element) {
+        Span s = appendSpan(element)
+        setTextStyleNameAttr(s.odfElement, strikeStyleName)
+        return s
+    }
+
+    protected Span appendSubScriptSpan(OdfElement element) {
+        Span s = appendSpan(element)
+        setTextStyleNameAttr(s.odfElement, subScriptStyleName)
+        return s
+    }
+
+    protected Span appendSuperScriptSpan(OdfElement element) {
+        Span s = appendSpan(element)
+        setTextStyleNameAttr(s.odfElement, superScriptStyleName)
         return s
     }
 
@@ -233,6 +295,18 @@ class OdfdomDocument implements DocumentAdapter{
                                         break
                                     case TextStyle.CODE:
                                         s = appendCodeSpan(e)
+                                        e = s.odfElement
+                                        break
+                                    case TextStyle.STRIKE:
+                                        s = appendStrikeSpan(e)
+                                        e = s.odfElement
+                                        break
+                                    case TextStyle.SUBSCRIPT:
+                                        s = appendSubScriptSpan(e)
+                                        e = s.odfElement
+                                        break
+                                    case TextStyle.SUPERSCRIPT:
+                                        s = appendSuperScriptSpan(e)
                                         e = s.odfElement
                                         break
                                     default:
@@ -404,5 +478,6 @@ class OdfdomDocument implements DocumentAdapter{
     @Override
     void save(OutputStream outputStream) {
         odt.save(outputStream)
+        println()
     }
 }

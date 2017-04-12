@@ -19,6 +19,7 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>2.4.4</version>
+            <classifier>indy</classifier>
         </dependency>
 
         <!-- FILLER -->
@@ -121,6 +122,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <invokeDynamic>true</invokeDynamic>
+                </configuration>
             </plugin>
 
             <!-- JAR -->

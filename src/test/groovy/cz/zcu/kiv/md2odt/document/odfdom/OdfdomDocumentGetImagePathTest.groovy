@@ -25,7 +25,8 @@ class OdfdomDocumentGetImagePathTest {
         [
                 ["http://www.xxx.xx/folder/img.png", "www.xxx.xx/folder/img.png"],
                 ["random", "random"],
-                ["imgěščřžýáíé.png", "img_________.png"],
+                ["imgěščřžýáíé/řepa.png", "img_________/řepa.png"],
+                ["imgěščřžýáíé.png", "imgěščřžýáíé.png"],
                 ["/x/x", "x/x"],
                 ["x/x", "x/x"],
                 ["x/x/x/x/x", "x/x/x/x/x"],

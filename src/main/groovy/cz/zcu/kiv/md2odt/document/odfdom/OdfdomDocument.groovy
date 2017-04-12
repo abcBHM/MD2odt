@@ -256,9 +256,15 @@ class OdfdomDocument implements DocumentAdapter{
         if(imageRef.endsWith("/")) {
             imageRef = imageRef.substring(0, imageRef.length()-1)
         }
-        imageRef = imageRef.replaceAll("[^a-zA-Z0-9/.-]", "_")
 
-        String packagePath = OdfPackage.OdfFile.IMAGE_DIRECTORY.getPath() + "/" + imageRef
+        String path = ""
+        String name = imageRef
+        if(imageRef.contains("/")) {
+            path = imageRef.substring(0, imageRef.lastIndexOf("/")).replaceAll("[^a-zA-Z0-9/.-]", "_")
+            name = imageRef.substring(imageRef.lastIndexOf("/"), imageRef.length())
+        }
+
+        String packagePath = OdfPackage.OdfFile.IMAGE_DIRECTORY.getPath() + "/" + path + name
         return mOdfSchemaDoc.getDocumentPath() + packagePath;
     }
 

@@ -46,4 +46,8 @@ class LastNode {
     void switchToLastChild() {
         root = root.lastChild
     }
+
+    void setLastNode(Node n) {
+        root = n
+    }
 }

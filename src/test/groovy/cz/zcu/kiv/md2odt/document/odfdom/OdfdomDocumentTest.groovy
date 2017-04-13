@@ -8,6 +8,8 @@ import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
 import cz.zcu.kiv.md2odt.document.SpanContent
 import cz.zcu.kiv.md2odt.document.SpanContentText
 import cz.zcu.kiv.md2odt.document.SpanType
+import cz.zcu.kiv.md2odt.document.TableCellContent
+import cz.zcu.kiv.md2odt.document.TableContentBuilder
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -243,6 +245,27 @@ class OdfdomDocumentTest {
     }
 
     @Test
+    void addTable() {
+        def pc = ParagraphContentBuilder.builder().addRegular("text").build()
+        List<TableCellContent> ltcc = [
+                new TableCellContent(pc, TableCellContent.Align.LEFT, false),
+                new TableCellContent(pc, TableCellContent.Align.CENTER, true),
+                new TableCellContent(pc, TableCellContent.Align.RIGHT, false)
+        ]
+        def tc = TableContentBuilder.builder().addRow(ltcc).build()
+        doc.addTable(tc)
+        assert last.node.textContent.equals("texttexttext")
+        assert last.nodeName.equals("table:table")
+        last.switchToLastChild()
+        assert last.nodeName.equals("table:table-row")
+        last.switchToLastChild()
+        assert last.nodeName.equals("table:table-cell")
+        last.switchToLastChild()
+        assert last.nodeName.equals("text:p")
+        assert last.textContent.equals("text")
+    }
+
+    @Test
     void save1() throws Exception {
         doc.save(TEST)
         File f = new File(TEST)
@@ -255,36 +278,5 @@ class OdfdomDocumentTest {
         File f = new File(TEST)
         assert f.exists()
         f.delete()
-    }
-
-
-
-
-
-
-
-
-    @Ignore
-    @Test
-    void addTable() {
-
-        Table table=Table.newTable(doc.odt,2,2)
-        Cell cell =table.getCellByPosition(0,0)
-
-        def par = cell.addParagraph("sdsd")
-
-       // table.getCellRangeByPosition(0,0,1,1).merge()
-
-        doc.setTextStyleNameAttr(par.odfElement, StyleNames.TABLE_HEADING.getValue())
-
-        OdfList list = new OdfList(cell)
-
-        doc.fillList(ListContentBuilder.builder(ListType.BULLET).addListItem(ParagraphContentBuilder.builder().addBold("bold").addRegular("reg").build())
-                .addListItem(ParagraphContentBuilder.builder().addBold("bold").addRegular("reg").build())
-                .addListItem(ParagraphContentBuilder.builder().addBold("bold").addRegular("reg").build()).build(), list)
-
-        table.setTableName("table")
-
-        doc.save("test.odt")
     }
 }

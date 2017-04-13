@@ -4,6 +4,7 @@ import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.SpanContent
 import cz.zcu.kiv.md2odt.document.SpanContentText
 import cz.zcu.kiv.md2odt.document.SpanType
+import cz.zcu.kiv.md2odt.document.TextStyle
 import org.junit.Before
 import org.junit.Test
 import org.odftoolkit.odfdom.dom.element.text.TextPElement
@@ -93,5 +94,62 @@ class OdfdomDocumentFillWithParagraphContentTest {
         pc.getList().add(new SpanContentText("text", [null] as Set))
         doc.fillWithParagraphContent(par, pc)
         assert par.textContent.equals("text")
+    }
+
+    @Test
+    void strikeTextTest() throws Exception {
+        pc.getList().add(new SpanContentText("text", [TextStyle.STRIKE] as Set))
+        doc.fillWithParagraphContent(par, pc)
+        last.setLastNode(par)
+        assert !last.textStyleName.isEmpty()
+        assert last.textContent.equals("text")
+    }
+
+    @Test
+    void subScriptTextTest() throws Exception {
+        pc.getList().add(new SpanContentText("text", [TextStyle.SUBSCRIPT] as Set))
+        doc.fillWithParagraphContent(par, pc)
+        last.setLastNode(par)
+        assert !last.textStyleName.isEmpty()
+        assert last.textContent.equals("text")
+    }
+
+    @Test
+    void superScriptTextTest() throws Exception {
+        pc.getList().add(new SpanContentText("text", [TextStyle.SUPERSCRIPT] as Set))
+        doc.fillWithParagraphContent(par, pc)
+        last.setLastNode(par)
+        assert !last.textStyleName.isEmpty()
+        assert last.textContent.equals("text")
+    }
+
+    @Test
+    void hardLineBreakTest1() throws Exception {
+        pc.getList().add(new SpanContentText("text\n", [TextStyle.CODE] as Set))
+        doc.fillWithParagraphContent(par, pc)
+        last.setLastNode(par)
+        assert last.textContent.equals("text")
+        last.switchToLastChild()
+        assert last.nodeName.equals("text:line-break")
+    }
+
+    @Test
+    void hardLineBreakTest2() throws Exception {
+        pc.getList().add(new SpanContentText("te\nxt", [TextStyle.CODE] as Set))
+        doc.fillWithParagraphContent(par, pc)
+        last.setLastNode(par)
+
+        assert last.textContent.equals("text")
+        assert last.node.getChildNodes().item(1).nodeName.equals("text:line-break")
+    }
+
+    @Test
+    void hardLineBreakTest3() throws Exception {
+        pc.getList().add(new SpanContentText("\ntext", [TextStyle.CODE] as Set))
+        doc.fillWithParagraphContent(par, pc)
+        last.setLastNode(par)
+
+        assert last.textContent.equals("text")
+        assert last.nodeS.contains("><text:line-break></text:line-break>text<")
     }
 }

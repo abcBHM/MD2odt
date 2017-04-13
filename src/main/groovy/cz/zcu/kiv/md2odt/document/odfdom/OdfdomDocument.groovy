@@ -468,9 +468,8 @@ class OdfdomDocument implements DocumentAdapter{
 
     @Override
     void addList(ListContent content) {
-        OdfList list = odt.addList(switchDecorator(content.getType()))
-        //newList.setHeader(listHeading)
-        addListRec(content, list)
+        OdfList list = odt.addList()
+        fillList(content, list)
     }
 
     protected void fillList(ListContent content, OdfList list) {

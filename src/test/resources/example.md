@@ -1,4 +1,4 @@
-# Markdown
+﻿# Markdown
 
 ## Basics
 
@@ -44,6 +44,8 @@ Normal link 3: [http://search.msn.com/]()
 Link with formatting 1: [**Google** `something`](http://google.com/)
 
 Link with formatting 2: *[Google](http://google.com/)*
+
+Image inside link: [Image inside ![Foo](http://www.google.com.au/images/nav_logo7.png) link](http://google.com.au/)
 
 ### References
 

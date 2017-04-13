@@ -223,11 +223,11 @@ class OdfdomDocument implements DocumentAdapter{
         return s
     }
 
-    protected void appendLink(OdfElement element, String text, String url) {
+    protected void appendLink(OdfElement element, ParagraphContent content, String url) {
         TextAElement aElement = (TextAElement) odt.getContentDom().newOdfElement(TextAElement.class)
         aElement.setXlinkTypeAttribute("simple")
         aElement.setXlinkHrefAttribute(url)
-        appendText(aElement, text)
+        fillWithParagraphContent(aElement, content)
         element.appendChild(aElement)
     }
 
@@ -348,7 +348,7 @@ class OdfdomDocument implements DocumentAdapter{
 
                 case SpanType.LINK:
                     if (sc instanceof SpanContentLink) {
-                        appendLink(element, sc.getText(), sc.getUrl())
+                        appendLink(element, sc.content, sc.url)
                     } else {
                         LOGGER.error("SpanContent with a '" + sc.getType() + "' type and instance of '" + sc.class + "'")
                     }
@@ -464,6 +464,12 @@ class OdfdomDocument implements DocumentAdapter{
     @Override
     void addList(ListContent content) {
         OdfList list = odt.addList(switchDecorator(content.getType()))
+        //newList.setHeader(listHeading)
+        addListRec(content, list)
+    }
+
+    protected void fillList(ListContent content, OdfList list) {
+        list.setDecorator(switchDecorator(content.getType()))
         //newList.setHeader(listHeading)
         addListRec(content, list)
     }

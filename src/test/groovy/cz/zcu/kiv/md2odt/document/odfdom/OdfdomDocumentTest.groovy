@@ -9,8 +9,13 @@ import cz.zcu.kiv.md2odt.document.SpanContent
 import cz.zcu.kiv.md2odt.document.SpanContentText
 import cz.zcu.kiv.md2odt.document.SpanType
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.odftoolkit.odfdom.dom.element.text.TextPElement
+import org.odftoolkit.simple.table.Cell
+import org.odftoolkit.simple.table.Table
+import org.odftoolkit.simple.text.list.List as OdfList
+import org.odftoolkit.simple.text.list.ListContainer
 
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -250,5 +255,36 @@ class OdfdomDocumentTest {
         File f = new File(TEST)
         assert f.exists()
         f.delete()
+    }
+
+
+
+
+
+
+
+
+    @Ignore
+    @Test
+    void addTable() {
+
+        Table table=Table.newTable(doc.odt,2,2)
+        Cell cell =table.getCellByPosition(0,0)
+
+        def par = cell.addParagraph("sdsd")
+
+       // table.getCellRangeByPosition(0,0,1,1).merge()
+
+        doc.setTextStyleNameAttr(par.odfElement, StyleNames.TABLE_HEADING.getValue())
+
+        OdfList list = new OdfList(cell)
+
+        doc.fillList(ListContentBuilder.builder(ListType.BULLET).addListItem(ParagraphContentBuilder.builder().addBold("bold").addRegular("reg").build())
+                .addListItem(ParagraphContentBuilder.builder().addBold("bold").addRegular("reg").build())
+                .addListItem(ParagraphContentBuilder.builder().addBold("bold").addRegular("reg").build()).build(), list)
+
+        table.setTableName("table")
+
+        doc.save("test.odt")
     }
 }

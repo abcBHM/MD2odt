@@ -8,7 +8,9 @@ enum StyleNames {
     HEADING("Heading", "Heading_20_1", "Heading_20_2", "Heading_20_3", "Heading_20_4", "Heading_20_5", "Heading_20_6", "Heading_20_7", "Heading_20_8", "Heading_20_9", "Heading_20_10"),
     QUOTE("Quotations"),
     CODE("Preformatted_20_Text"),
-    HORIZONTAL_RULE("Horizontal_20_Line")
+    HORIZONTAL_RULE("Horizontal_20_Line"),
+    TABLE_HEADING("Table_20_Heading"),
+    TABLE_CONTENTS("Table_20_Contents")
 
 
 

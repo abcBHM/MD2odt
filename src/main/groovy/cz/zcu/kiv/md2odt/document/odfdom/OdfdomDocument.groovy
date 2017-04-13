@@ -14,6 +14,7 @@ import org.odftoolkit.odfdom.dom.attribute.style.StyleNameAttribute
 import org.odftoolkit.odfdom.dom.attribute.style.StyleParentStyleNameAttribute
 import org.odftoolkit.odfdom.dom.attribute.style.StyleTextLineThroughStyleAttribute
 import org.odftoolkit.odfdom.dom.attribute.style.StyleTextLineThroughTypeAttribute
+import org.odftoolkit.odfdom.dom.attribute.table.TableStyleNameAttribute
 import org.odftoolkit.odfdom.dom.attribute.text.TextStyleNameAttribute
 import org.odftoolkit.odfdom.dom.element.draw.DrawFrameElement
 import org.odftoolkit.odfdom.dom.element.draw.DrawImageElement
@@ -34,6 +35,8 @@ import org.odftoolkit.simple.draw.Image
 import org.odftoolkit.simple.style.Font
 import org.odftoolkit.simple.style.StyleTypeDefinitions
 import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle
+import org.odftoolkit.simple.table.Cell
+import org.odftoolkit.simple.table.Table
 import org.odftoolkit.simple.text.Paragraph
 import org.odftoolkit.simple.text.Span
 import org.odftoolkit.simple.text.list.BulletDecorator
@@ -43,6 +46,8 @@ import org.odftoolkit.simple.text.list.NumberDecorator
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.w3c.dom.Text
+
+import java.util.function.ToIntFunction
 
 /**
  * Created by pepe on 5. 4. 2017.
@@ -500,6 +505,57 @@ class OdfdomDocument implements DocumentAdapter{
     OdfList addSubList(OdfList parentList, ListType e) {
         ListDecorator decorator = switchDecorator(e)
         return parentList.getItem(parentList.size() - 1).addList(decorator)
+    }
+
+    protected void setTableStyleNameAttr(OdfElement element, String styleName) {
+        TableStyleNameAttribute attr = new TableStyleNameAttribute(odt.getContentDom())
+        element.setOdfAttribute(attr)
+        attr.setValue(styleName)
+    }
+
+    @Override
+    void addTable(TableContent content) {
+        List<List<TableCellContent>> rows = content.getRows()
+        int rowCount = rows.size()
+        int colCount = 0
+        for (List<TableCellContent> cols : rows) {
+            if (cols.size()>colCount) {
+                colCount = cols.size()
+            }
+        }
+
+        Table table=Table.newTable(odt, rowCount, colCount)
+        table.setVerticalMargin(0.1, 0.1)
+
+        int r = 0
+        for (List<TableCellContent> row : rows) {
+            int c = 0
+            for (TableCellContent tableCellContent : row) {
+                Cell cell = table.getCellByPosition(c, r)
+                def par = cell.addParagraph("")
+                fillWithParagraphContent(par.odfElement, tableCellContent.content)
+                if (tableCellContent.heading) {
+                    setTableStyleNameAttr(cell.odfElement, StyleNames.TABLE_HEADING.getValue())
+                }
+                else {
+                    setTableStyleNameAttr(cell.odfElement, StyleNames.TABLE_CONTENTS.getValue())
+                }
+
+                switch (tableCellContent.align) {
+                    case TableCellContent.Align.LEFT:
+                        par.setHorizontalAlignment(StyleTypeDefinitions.HorizontalAlignmentType.LEFT)
+                        break
+                    case TableCellContent.Align.CENTER:
+                        par.setHorizontalAlignment(StyleTypeDefinitions.HorizontalAlignmentType.CENTER)
+                        break
+                    case TableCellContent.Align.RIGHT:
+                        par.setHorizontalAlignment(StyleTypeDefinitions.HorizontalAlignmentType.RIGHT)
+                        break
+                }
+                c++
+            }
+            r++
+        }
     }
 
     @Override

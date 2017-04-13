@@ -6,6 +6,7 @@ import com.vladsch.flexmark.ast.Node as AstNode
 import com.vladsch.flexmark.ast.Reference as AstReference
 import com.vladsch.flexmark.parser.Parser
 import cz.zcu.kiv.md2odt.document.Document
+import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
 import cz.zcu.kiv.md2odt.filler.Filler
 import cz.zcu.kiv.md2odt.filler.LocalResources
 import cz.zcu.kiv.md2odt.filler.LocalResourcesImpl
@@ -64,10 +65,18 @@ class FlexMarkFiller implements Filler {
         } else {
             def handler = handlers.find { it.target.isInstance(node) }
 
-            if (handler)
+            if (handler) {
                 handler.handle(node, context, document)
-            else
+
+            } else {
                 LOGGER.warn("Unknown node: " + node.class)
+
+                def paragraph = ParagraphContentBuilder.builder()
+                        .addRegular(node.chars.toString().trim())
+                        .build()
+
+                document.addParagraph(paragraph)
+            }
         }
     }
 

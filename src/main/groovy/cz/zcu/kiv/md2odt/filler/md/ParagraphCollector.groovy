@@ -7,6 +7,7 @@ import com.vladsch.flexmark.ast.Emphasis as AstEmphasis
 import com.vladsch.flexmark.ast.HardLineBreak as AstHardLineBreak
 import com.vladsch.flexmark.ast.HtmlEntity as AstHtmlEntity
 import com.vladsch.flexmark.ast.HtmlInlineComment as AstHtmlInlineComment
+import com.vladsch.flexmark.ast.HtmlInline as AstHtmlHtmlInline
 import com.vladsch.flexmark.ast.Image as AstImage
 import com.vladsch.flexmark.ast.ImageRef as AstImageRef
 import com.vladsch.flexmark.ast.Link as AstLink
@@ -100,6 +101,7 @@ class ParagraphCollector {
             case AstSoftLineBreak:
             case AstHardLineBreak:
             case AstHtmlEntity:
+            case AstHtmlHtmlInline:
             case AstEmoji:
                 builder.addText(flatten(node), styles)
                 break
@@ -212,6 +214,8 @@ class ParagraphCollector {
                 return '\n'
             case AstHtmlEntity:
                 return Jsoup.parse(node.chars.toString()).text()
+            case AstHtmlHtmlInline:
+                return node.chars.toString().trim()
             case AstEmoji:
                 def alias = (node as AstEmoji).getText().toString()
                 def emoji = EmojiManager.getForAlias(alias)

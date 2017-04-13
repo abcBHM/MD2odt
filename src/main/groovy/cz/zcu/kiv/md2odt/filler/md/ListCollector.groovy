@@ -15,7 +15,7 @@ import org.apache.log4j.Logger
 /**
  * Converts AST node into {@link ListContent}.
  *
- * @version 2017-04-02
+ * @version 2017-04-13
  * @author Patrik Harag
  */
 class ListCollector {
@@ -51,8 +51,11 @@ class ListCollector {
 
             default:
                 // TODO: headers? code blocks? quote blocks?
+
                 LOGGER.warn("Unknown node: " + node.class)
-                return ParagraphContentBuilder.builder().addRegular("").build()
+                return ParagraphContentBuilder.builder()
+                        .addRegular(node.chars.toString().trim())
+                        .build()
         }
     }
 

@@ -147,6 +147,7 @@ Smiles: :confused: :cry: :weary:
 
 Wrong: :rtrtrtrtrt:
 
+
 ## HTML
 
 ### Entities
@@ -163,11 +164,13 @@ Formatted: **&copy; &para; &euro; &ncaron;**
  -->
 regular text (1 of 2) <!-- comment (3 of 3) --> regular text (2 of 2)
 
-### HTML snippets (TODO)
+### HTML snippets (not supported)
 <div>
   <h4>London</h4>
   <p><strong>London</strong> is the capital city of England.</p>
 </div>
+
+Some **paragraph** with <b>HTML</b>.
 
 
 ## Horizontal Rules

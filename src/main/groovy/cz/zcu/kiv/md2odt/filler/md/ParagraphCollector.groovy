@@ -6,8 +6,8 @@ import com.vladsch.flexmark.ast.Code as AstCode
 import com.vladsch.flexmark.ast.Emphasis as AstEmphasis
 import com.vladsch.flexmark.ast.HardLineBreak as AstHardLineBreak
 import com.vladsch.flexmark.ast.HtmlEntity as AstHtmlEntity
-import com.vladsch.flexmark.ast.HtmlInlineComment as AstHtmlInlineComment
 import com.vladsch.flexmark.ast.HtmlInline as AstHtmlHtmlInline
+import com.vladsch.flexmark.ast.HtmlInlineComment as AstHtmlInlineComment
 import com.vladsch.flexmark.ast.Image as AstImage
 import com.vladsch.flexmark.ast.ImageRef as AstImageRef
 import com.vladsch.flexmark.ast.Link as AstLink
@@ -20,6 +20,7 @@ import com.vladsch.flexmark.ast.StrongEmphasis as AstStrongEmphasis
 import com.vladsch.flexmark.ast.Text as AstText
 import com.vladsch.flexmark.ast.TextBase as AstTextBase
 import com.vladsch.flexmark.ext.emoji.Emoji as AstEmoji
+import com.vladsch.flexmark.ext.escaped.character.EscapedCharacter as AstEscaped
 import com.vladsch.flexmark.ext.gfm.strikethrough.Strikethrough as AstStrike
 import com.vladsch.flexmark.ext.gfm.strikethrough.Subscript as AstSub
 import com.vladsch.flexmark.superscript.Superscript as AstSup
@@ -100,6 +101,7 @@ class ParagraphCollector {
             case AstText:
             case AstSoftLineBreak:
             case AstHardLineBreak:
+            case AstEscaped:
             case AstHtmlEntity:
             case AstHtmlHtmlInline:
             case AstEmoji:
@@ -212,6 +214,8 @@ class ParagraphCollector {
                 return ' '
             case AstHardLineBreak:
                 return '\n'
+            case AstEscaped:
+                return (node as AstEscaped).text.toString()
             case AstHtmlEntity:
                 return Jsoup.parse(node.chars.toString()).text()
             case AstHtmlHtmlInline:

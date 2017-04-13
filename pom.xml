@@ -54,6 +54,11 @@
             <artifactId>flexmark-ext-gfm-tables</artifactId>
             <version>0.18.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-ext-escaped-character</artifactId>
+            <version>0.18.5</version>
+        </dependency>
 
         <dependency>
             <groupId>com.vdurmont</groupId>

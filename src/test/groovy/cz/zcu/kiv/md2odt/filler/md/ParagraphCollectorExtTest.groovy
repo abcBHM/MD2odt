@@ -1,6 +1,7 @@
 package cz.zcu.kiv.md2odt.filler.md
 
 import com.vladsch.flexmark.ext.emoji.EmojiExtension
+import com.vladsch.flexmark.ext.escaped.character.EscapedCharacterExtension
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension
 import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension
 import com.vladsch.flexmark.superscript.SuperscriptExtension
@@ -12,7 +13,7 @@ import static cz.zcu.kiv.md2odt.filler.md.ParagraphCollectorTest.styles
 
 /**
  *
- * @version 2017-04-12
+ * @version 2017-04-13
  * @author Patrik Harag
  */
 class ParagraphCollectorExtTest {
@@ -21,6 +22,7 @@ class ParagraphCollectorExtTest {
     static def EXT_SUB = [SubscriptExtension.create()]
     static def EXT_SUP = [SuperscriptExtension.create()]
     static def EXT_EMOJI = [EmojiExtension.create()]
+    static def EXT_ESC = [EscapedCharacterExtension.create()]
 
     @Test
     void strike() {
@@ -59,6 +61,22 @@ class ParagraphCollectorExtTest {
         def paragraph = paragraph("_:smile:_", EXT_EMOJI)
 
         assert paragraph.list*.text == ["😄"]
+        assert paragraph.list*.styles == styles([ITALIC])
+    }
+
+    @Test
+    void escaping() {
+        def paragraph = paragraph("\\\\ \\` \\* \\_ \\{\\} \\[\\] \\(\\) \\#", EXT_ESC)
+
+        assert paragraph.list*.text == ["\\ ` * _ {} [] () #"]
+        assert paragraph.list*.styles == styles([])
+    }
+
+    @Test
+    void escapingStyled() {
+        def paragraph = paragraph("*\\\\ \\` \\**", EXT_ESC)
+
+        assert paragraph.list*.text == ["\\ ` *"]
         assert paragraph.list*.styles == styles([ITALIC])
     }
 

@@ -3,6 +3,7 @@ package cz.zcu.kiv.md2odt;
 import com.vladsch.flexmark.Extension;
 import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
 import com.vladsch.flexmark.ext.emoji.EmojiExtension;
+import com.vladsch.flexmark.ext.escaped.character.EscapedCharacterExtension;
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughSubscriptExtension;
 import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension;
@@ -142,6 +143,8 @@ public class Converter {
 
     private List<Extension> getExtensions() {
         List<Extension> extensions = new ArrayList<>();
+
+        extensions.add(EscapedCharacterExtension.create());
 
         if (enableAutolinks) extensions.add(AutolinkExtension.create());
         if (enableEmoji) extensions.add(EmojiExtension.create());

@@ -22,7 +22,7 @@ Subscript: H~2~O (extension)
 
 Superscript: x^2^, October 31^st^ (extension)
 
-Escaping: \*literal asterisks\*
+Escaping: \\ \` \* \_ \{\} \[\] \(\) \# \+ \- \. \!
 
 Diacritics: Příliš žluťoučký kůň úpěl ďábelské ódy.
 

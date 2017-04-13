@@ -6,6 +6,7 @@ import com.vladsch.flexmark.ext.emoji.EmojiExtension;
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughSubscriptExtension;
 import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.superscript.SuperscriptExtension;
 import cz.zcu.kiv.md2odt.document.Document;
@@ -22,7 +23,7 @@ import java.util.List;
 /**
  *
  * @author Patrik Harag
- * @version 2017-04-12
+ * @version 2017-04-13
  */
 public class Converter {
 
@@ -37,6 +38,7 @@ public class Converter {
     private boolean enableStrikethrough;
     private boolean enableSubscript;
     private boolean enableSuperscript;
+    private boolean enableTables;
 
     // source
 
@@ -104,12 +106,18 @@ public class Converter {
         return this;
     }
 
+    public Converter enableTables() {
+        this.enableTables = true;
+        return this;
+    }
+
     public Converter enableAllExtensions() {
         enableAutolinks();
         enableEmoji();
         enableStrikethrough();
         enableSubscript();
         enableSuperscript();
+        enableTables();
         return this;
     }
 
@@ -138,6 +146,7 @@ public class Converter {
         if (enableAutolinks) extensions.add(AutolinkExtension.create());
         if (enableEmoji) extensions.add(EmojiExtension.create());
         if (enableSuperscript) extensions.add(SuperscriptExtension.create());
+        if (enableTables) extensions.add(TablesExtension.create());
 
         if (enableStrikethrough && enableSubscript)
             extensions.add(StrikethroughSubscriptExtension.create());

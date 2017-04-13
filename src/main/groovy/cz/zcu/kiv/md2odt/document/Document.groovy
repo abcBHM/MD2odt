@@ -2,7 +2,7 @@ package cz.zcu.kiv.md2odt.document
 
 /**
  *
- * @version 2017-03-24
+ * @version 2017-04-13
  * @author Patrik Harag
  */
 interface Document {
@@ -12,6 +12,8 @@ interface Document {
     void addParagraph(ParagraphContent content)
 
     void addList(ListContent content)
+
+    void addTable(TableContent content)
 
     void addCodeBlock(String code)
 

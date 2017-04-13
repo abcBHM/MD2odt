@@ -5,7 +5,7 @@ import org.apache.log4j.Logger
 /**
  * Adapter for {@link Document}.
  *
- * @version 2017-04-01
+ * @version 2017-04-13
  * @author Patrik Harag
  */
 trait DocumentAdapter implements Document {
@@ -42,6 +42,11 @@ trait DocumentAdapter implements Document {
     @Override
     void addList(ListContent content) {
         LOGGER.error("Unsupported operation: addList")
+    }
+
+    @Override
+    void addTable(TableContent content) {
+        LOGGER.error("Unsupported operation: addTable")
     }
 
     @Override

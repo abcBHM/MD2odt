@@ -3,7 +3,7 @@ package cz.zcu.kiv.md2odt.document
 /**
  * Builder for {@link ParagraphContent}.
  *
- * @version 2017-04-11
+ * @version 2017-04-13
  * @author Patrik Harag
  */
 class ParagraphContentBuilder {
@@ -63,7 +63,11 @@ class ParagraphContentBuilder {
     }
 
     ParagraphContentBuilder addLink(String text, String url) {
-        add(new SpanContentLink(text, url))
+        add(new SpanContentLink(builder().addRegular(text).build(), url))
+    }
+
+    ParagraphContentBuilder addLink(ParagraphContent content, String url) {
+        add(new SpanContentLink(content, url))
     }
 
     ParagraphContentBuilder addImage(String text, String url, String alt) {

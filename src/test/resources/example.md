@@ -41,6 +41,9 @@ Normal link 2: [Yahoo](http://search.yahoo.com/)
 
 Normal link 3: [http://search.msn.com/]()
 
+Link with formatting 1: [**Google** `something`](http://google.com/)
+
+Link with formatting 2: *[Google](http://google.com/)*
 
 ### References
 

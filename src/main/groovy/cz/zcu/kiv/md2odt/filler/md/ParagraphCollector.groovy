@@ -14,7 +14,6 @@ import com.vladsch.flexmark.ast.LinkNode as AstLinkNode
 import com.vladsch.flexmark.ast.LinkRef as AstLinkRef
 import com.vladsch.flexmark.ast.MailLink as AstMailLink
 import com.vladsch.flexmark.ast.Node as AstNode
-import com.vladsch.flexmark.ast.Paragraph as AstParagraph
 import com.vladsch.flexmark.ast.SoftLineBreak as AstSoftLineBreak
 import com.vladsch.flexmark.ast.StrongEmphasis as AstStrongEmphasis
 import com.vladsch.flexmark.ast.Text as AstText
@@ -31,7 +30,7 @@ import org.jsoup.Jsoup
 
 /**
  *
- * @version 2017-04-12
+ * @version 2017-04-13
  * @author Patrik Harag
  */
 class ParagraphCollector {
@@ -44,10 +43,14 @@ class ParagraphCollector {
         this.context = context
     }
 
-    ParagraphContent processParagraph(AstParagraph node) {
+    ParagraphContent processParagraph(AstNode node) {
+        processParagraph(node, null)
+    }
+
+    ParagraphContent processParagraph(AstNode node, Set<TextStyle> styles) {
         def builder = Builder.builder()
 
-        process(node.children, null, builder)
+        process(node.children, styles, builder)
         builder.build()
     }
 
@@ -159,23 +162,26 @@ class ParagraphCollector {
         switch (node) {
             case AstLink:
                 String url = (node as AstLink).url
-                String text = flatten(node)
+                def collector = new ParagraphCollector(context)
+                def content = collector.processParagraph(node, styles)
 
-                if (url && text)
-                    builder.addLink(text, url)
-                else if (text)
-                    builder.addLink(text, text)
+                if (url && content.list)
+                    builder.addLink(content, url)
+                else if (content.list)
+                    builder.addLink(content, content.list*.text.join(''))
 
                 break
 
             case AstAutoLink:
                 String url = (node as AstAutoLink).text.toString()
-                builder.addLink(url, url)
+                def content = Builder.builder().addText(url, styles).build()
+                builder.addLink(content, url)
                 break
 
             case AstMailLink:
                 String address = (node as AstMailLink).text.toString()
-                builder.addLink(address, 'mailto:' + address)
+                def content = Builder.builder().addText(address, styles).build()
+                builder.addLink(content, 'mailto:' + address)
                 break
 
             case AstLinkRef:
@@ -186,8 +192,9 @@ class ParagraphCollector {
 
                 String url = ref ? ref.url.toString() : ""
                 String text = linkRef.text.blank ? linkName : linkText
+                def content = Builder.builder().addText(text, styles).build()
 
-                builder.addLink(text, url)
+                builder.addLink(content, url)
                 break
 
             default:

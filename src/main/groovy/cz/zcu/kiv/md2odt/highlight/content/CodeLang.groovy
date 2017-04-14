@@ -5,6 +5,7 @@ package cz.zcu.kiv.md2odt.highlight.content
  */
 enum CodeLang {
     NONE("TextLexer", "withoutname"),   //could use default if it is possible
+    ADA("AdaLexer", "ada"),
     JAVA("JavaLexer", "java"),
     GROOVY("GroovyLexer", "groovy"),
     C("CLexer", "c"),

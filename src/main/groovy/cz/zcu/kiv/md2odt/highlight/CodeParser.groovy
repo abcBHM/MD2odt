@@ -16,6 +16,7 @@ import org.python.util.PythonInterpreter
 class CodeParser implements Parser {
     private static final Logger LOGGER = Logger.getLogger(CodeParser)
     private CodeLang langForHighlight = null
+    private String lastLang = null
 
     @Override
     /** Returns a list of CodeSection, where is specified how to style a text segment.
@@ -27,7 +28,7 @@ class CodeParser implements Parser {
     List<CodeSection> parse(String code, String lang) {
         List<CodeSection> list = new ArrayList<>()
 
-        if(langForHighlight == null) {
+        if(lang != lastLang) {
             langForHighlight = switchLang(lang)
         }
 
@@ -119,6 +120,7 @@ class CodeParser implements Parser {
         langForHighlight = switchLang(lang)
 
         if (langForHighlight != null && langForHighlight != CodeLang.NONE) {
+            lastLang = lang
             return true
         }
 

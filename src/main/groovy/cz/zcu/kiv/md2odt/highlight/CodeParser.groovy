@@ -15,6 +15,7 @@ import org.python.util.PythonInterpreter
  */
 class CodeParser implements Parser {
     private static final Logger LOGGER = Logger.getLogger(CodeParser)
+    private CodeLang langForHighlight = null
 
     @Override
     /** Returns a list of CodeSection, where is specified how to style a text segment.
@@ -26,9 +27,11 @@ class CodeParser implements Parser {
     List<CodeSection> parse(String code, String lang) {
         List<CodeSection> list = new ArrayList<>()
 
-        CodeLang codeLang = switchLang(lang)
+        if(langForHighlight == null) {
+            langForHighlight = switchLang(lang)
+        }
 
-        String lexer = codeLang.getLexer()
+        String lexer = langForHighlight.getLexer()
 
         PythonInterpreter interpreter = new PythonInterpreter()
 
@@ -52,10 +55,10 @@ class CodeParser implements Parser {
         PyList result = interpreter.get("ret", PyList.class)
         for(int i = 0; i < result.size(); i++) {
             PyTuple tuple = (PyTuple)result.get(i)
-            PyTupleDerived tuple2 = (PyTupleDerived)tuple.get(0)
+            PyTupleDerived nestedTuple = (PyTupleDerived)tuple.get(0)
 
             String value = tuple.get(1)
-            String token = tuple2.get(0)
+            String token = nestedTuple.get(0)
             CodeSectionType type = switchType(token)
 
             list.add(new CodeSectionImpl(value, type))
@@ -64,7 +67,7 @@ class CodeParser implements Parser {
         return list
     }
 
-    static CodeLang switchLang(String lang) {
+    private static CodeLang switchLang(String lang) {
         CodeLang codeLang = null
 
         if(lang == null) {
@@ -74,14 +77,13 @@ class CodeParser implements Parser {
 
             for (int i = 0; i < CodeLang.values().size(); i++) {
                 CodeLang pickedLang = CodeLang.values()[i]
-                String codeLangName = pickedLang.getLangName()
-                Integer distance = levenshteinDistance(lowerLang, codeLangName)
 
-                if (distance == 0) {
-                    codeLang = pickedLang
-                    break
-                } else if (distance < 3) {
-                    codeLang = pickedLang
+                for(String name : pickedLang.getLangNames()) {
+                    if(name.equals(lowerLang)) {
+                        codeLang = pickedLang
+
+                        return codeLang
+                    }
                 }
             }
 
@@ -113,43 +115,15 @@ class CodeParser implements Parser {
         return codeSectionType
     }
 
-    private static int levenshteinDistance (CharSequence lhs, CharSequence rhs) {
-        int len0 = lhs.length() + 1
-        int len1 = rhs.length() + 1
+    boolean isKnownLanguage(String lang) {
+        langForHighlight = switchLang(lang)
 
-        // the array of distances
-        int[] cost = new int[len0]
-        int[] newcost = new int[len0]
-
-        // initial cost of skipping prefix in String s0
-        for (int i = 0; i < len0; i++) cost[i] = i
-
-        // dynamically computing the array of distances
-
-        // transformation cost for each letter in s1
-        for (int j = 1; j < len1; j++) {
-            // initial cost of skipping prefix in String s1
-            newcost[0] = j
-
-            // transformation cost for each letter in s0
-            for(int i = 1; i < len0; i++) {
-                // matching current letters in both strings
-                int match = (lhs.charAt(i - 1) == rhs.charAt(j - 1)) ? 0 : 1
-
-                // computing cost for each transformation
-                int cost_replace = cost[i - 1] + match
-                int cost_insert  = cost[i] + 1
-                int cost_delete  = newcost[i - 1] + 1
-
-                // keep minimum cost
-                newcost[i] = Math.min(Math.min(cost_insert, cost_delete), cost_replace)
-            }
-
-            // swap cost/newcost arrays
-            int[] swap = cost; cost = newcost; newcost = swap
+        if (langForHighlight != null && langForHighlight != CodeLang.NONE) {
+            return true
         }
 
-        // the distance is the cost for transforming all letters in both strings
-        return cost[len0 - 1]
+        else {
+            return false
+        }
     }
 }

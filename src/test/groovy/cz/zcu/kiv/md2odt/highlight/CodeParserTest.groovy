@@ -112,7 +112,19 @@ class CodeParserTest {
     }
 
     @Test
-    void JavaLangTest() {
-        assert parser.switchLang("Java") == CodeLang.JAVA
+    void JavaKnownLangTest() {
+        def langs = ["Java", "Groovy", "C", "C++", "PHP", "C#"]
+        langs.forEach({
+            assert parser.isKnownLanguage(it)
+        })
+    }
+
+    @Ignore
+    @Test
+    void JavaUnknownLangTest() {
+        def langs = ["Ada", "Fortran"]
+        langs.forEach({
+            assert !parser.isKnownLanguage(it)
+        })
     }
 }

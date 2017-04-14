@@ -4,25 +4,25 @@ package cz.zcu.kiv.md2odt.highlight.content
  * Created by pepe on 6. 4. 2017.
  */
 enum CodeLang {
-    NONE("withoutname", "TextLexer"),   //could use default if it is possible
-    JAVA("java", "JavaLexer"),
-    GROOVY("groovy", "GroovyLexer"),
-    C("c", "CLexer"),
-    C_PLUS_PLUS("cpp", "CppLexer"),
-    PHP("php", "PhpLexer"),
-    C_SHARP("csharp", "CSharpLexer")
+    NONE("TextLexer", "withoutname"),   //could use default if it is possible
+    JAVA("JavaLexer", "java"),
+    GROOVY("GroovyLexer", "groovy"),
+    C("CLexer", "c"),
+    C_PLUS_PLUS("CppLexer", "cpp", "c++"),
+    PHP("PhpLexer", "php"),
+    C_SHARP("CSharpLexer", "csharp", "c#")
 
 
-    private String name
+    private String[] names
     private String lexer
 
-    CodeLang(String name, String lexer) {
-        this.name = name
+    CodeLang(String lexer, String... names) {
+        this.names = names
         this.lexer = lexer
     }
 
-    String getLangName() {
-        return name
+    String[] getLangNames() {
+        return names
     }
 
     String getLexer() {

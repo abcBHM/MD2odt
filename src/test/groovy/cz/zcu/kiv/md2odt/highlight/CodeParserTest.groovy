@@ -40,7 +40,7 @@ class CodeParserTest {
                             }
                         
                         }""".stripIndent()
-        String lang = "Groovy"
+        String lang = "brainfuck"
 
         List<CodeSection> list = parser.parse(code, lang)
 

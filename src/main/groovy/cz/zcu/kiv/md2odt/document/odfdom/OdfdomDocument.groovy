@@ -2,6 +2,7 @@ package cz.zcu.kiv.md2odt.document.odfdom
 
 import cz.zcu.kiv.md2odt.document.*
 import cz.zcu.kiv.md2odt.highlight.CodeParser
+import cz.zcu.kiv.md2odt.highlight.CodeSectionTypeColorHandler
 import cz.zcu.kiv.md2odt.highlight.Parser
 import cz.zcu.kiv.md2odt.highlight.content.CodeSection
 import org.apache.log4j.Logger
@@ -57,30 +58,63 @@ class OdfdomDocument implements DocumentAdapter{
     protected final TextDocument odt
     private static final Logger LOGGER = Logger.getLogger(OdfdomDocument)
     protected String strikeStyleName, subScriptStyleName, superScriptStyleName
-
+    java.awt.Color codeBlockBackgroundColor;
     OdfdomDocument() {
         odt = TextDocument.newTextDocument()
         odt.getParagraphByIndex(0,false) .remove()     //removes an empty paragraph
-        addTextStyles()
+        prepareConstructor()
     }
 
     OdfdomDocument(File file) {
         this.odt = TextDocument.loadDocument(file)
         fillDefaultStyles()
-        addTextStyles()
+        prepareConstructor()
     }
 
     OdfdomDocument(String documentPath) {
         this.odt = TextDocument.loadDocument(documentPath)
         fillDefaultStyles()
-        addTextStyles()
-
+        prepareConstructor()
     }
 
     OdfdomDocument(InputStream inputStream) {
         this.odt = TextDocument.loadDocument(inputStream)
         fillDefaultStyles()
+        prepareConstructor()
+    }
+
+    protected void prepareConstructor() {
         addTextStyles()
+        try {
+            codeBlockBackgroundColor = getCodeBlockBackgroundColor()
+        }
+        catch (Exception e) {
+            codeBlockBackgroundColor = java.awt.Color.WHITE
+            LOGGER.error("getCodeBlockBackgroundColor failed: "+e)
+        }
+    }
+
+    java.awt.Color getCodeBlockBackgroundColor() {
+        NodeList nl = odt.stylesDom.officeStyles.getElementsByTagName("style:style")
+        for (int i = 0; i < nl.length; i++) {
+            Node n = nl.item(i).getAttributes().getNamedItem("style:name")
+            if(n != null && n.textContent.equals(StyleNames.CODE.getValue())) {
+                //style:paragraph-properties fo:background-color="#888a85"
+                for (Node spp : nl.item(i).childNodes) {
+                    if (spp != null && spp.nodeName.equals("style:paragraph-properties")) {
+                        Node fbc = spp.attributes.getNamedItem("fo:background-color")
+                        if (fbc != null) {
+                            String s = fbc.textContent.replaceAll("[^a-fA-F0-9]","")
+                            int rgb = Integer.parseInt(s, 16)
+                            return new java.awt.Color(rgb)
+                        }
+                        return java.awt.Color.WHITE
+                    }
+                }
+                return java.awt.Color.WHITE
+            }
+        }
+        return java.awt.Color.WHITE
     }
 
     protected StyleTextPropertiesElement addStyleStyleElementForSpan(String styleName) {
@@ -435,11 +469,18 @@ class OdfdomDocument implements DocumentAdapter{
             addCodeBlock(code)
             return
         }
+        CodeParser codeParser = new CodeParser()
+        if (!codeParser.isKnownLanguage(lang)) {
+            LOGGER.info("addCodeBlock(String code, String lang): lang '"+lang+"' is not known, code is not formatted")
+            addCodeBlock(code)
+            return
+        }
+
+        CodeSectionTypeColorHandler colorHandler = new CodeSectionTypeColorHandler(codeBlockBackgroundColor)
         def parElement = addParagraph(StyleNames.CODE.getValue()).getOdfElement()
-        Parser codeParser = new CodeParser()
         List<CodeSection> codeSections = codeParser.parse(code, lang)
         for (CodeSection cs : codeSections) {
-            appendColorSpan(parElement, cs.getText(), cs.getType().getColor())
+            appendColorSpan(parElement, cs.getText(), colorHandler.handle(cs.getType()))
         }
     }
 

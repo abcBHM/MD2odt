@@ -1,4 +1,4 @@
-﻿# Markdown
+# Markdown
 
 ## Basics
 

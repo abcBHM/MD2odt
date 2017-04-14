@@ -161,13 +161,16 @@ class OdfdomDocument implements DocumentAdapter{
     }
 
     protected void appendText(OdfElement element, String text) {
-        if (text.equals("\n")) {
-            TextLineBreakElement tlbe = new TextLineBreakElement(odt.contentDom)
-            element.appendChild(tlbe)
-            return
-        }
 
         String[] s = text.split("\n")
+
+        if (s == null || s.length < 1) {
+            for (int i = 0; i < text.length(); i++) {
+                TextLineBreakElement tlbe = new TextLineBreakElement(odt.contentDom)
+                element.appendChild(tlbe)
+            }
+            return
+        }
 
         Text textNode = odt.getContentDom().createTextNode(s[0])
         element.appendChild(textNode)

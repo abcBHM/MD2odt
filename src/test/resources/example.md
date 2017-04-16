@@ -55,6 +55,8 @@ Ref. link 2: [1]
 
 Ref. link 3: [Yahoo][yahoo]
 
+Ref. link broken: [Text][xxx]
+
 [1]:      http://google.com/       "Google"
 [yahoo]:  http://search.yahoo.com/ "Yahoo Search"
 
@@ -141,6 +143,8 @@ Reference-style:
 
 [dog]: https://www.seznam.cz/media/img/dogs/krasty_07.png
 
+Broken reference:
+![alt text][xxx]
 
 ### Emoji (extension)
 Some animals: :octopus: :pig2: :crocodile:

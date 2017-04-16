@@ -32,7 +32,7 @@ import org.jsoup.Jsoup
 
 /**
  *
- * @version 2017-04-13
+ * @version 2017-04-16
  * @author Patrik Harag
  */
 class ParagraphCollector {
@@ -111,7 +111,7 @@ class ParagraphCollector {
             // images (image nodes extends link node!)
             case AstImage:
             case AstImageRef:
-                processImage(node, builder)
+                processImage(node, styles, builder)
                 break
 
             // links
@@ -132,7 +132,7 @@ class ParagraphCollector {
         }
     }
 
-    private void processImage(AstNode node, Builder builder) {
+    private void processImage(AstNode node, Set<TextStyle> styles, Builder builder) {
         if (node instanceof AstImage) {
             (node as AstImage).with {
                 processImage(*[title, url, text]*.toString(), builder)
@@ -140,13 +140,19 @@ class ParagraphCollector {
 
         } else if (node instanceof AstImageRef) {
             def imageRef = node as AstImageRef
-            def ref = context.getReference(imageRef.reference.toString())
+            def refName = imageRef.reference.toString()
+            def ref = context.getReference(refName)
 
-            String alt = imageRef.text.toString()
-            String url = ref.url.toString()
-            String title = ref.title.toString()
+            if (ref) {
+                String alt = imageRef.text.toString()
+                String url = ref.url.toString()
+                String title = ref.title.toString()
 
-            processImage(title, url, alt, builder)
+                processImage(title, url, alt, builder)
+            } else {
+                LOGGER.warn("Reference not found: \"$refName\"")
+                builder.addText(node.chars.toString(), styles)
+            }
 
         } else {
             assert false
@@ -190,15 +196,18 @@ class ParagraphCollector {
 
             case AstLinkRef:
                 def linkRef = node as AstLinkRef
-                String linkName = linkRef.reference.toString()
+                String refName = linkRef.reference.toString()
                 String linkText = linkRef.text.toString()
-                def ref = context.getReference(linkName)
+                def ref = context.getReference(refName)
 
-                String url = ref ? ref.url.toString() : ""
-                String text = linkRef.text.blank ? linkName : linkText
-                def content = Builder.builder().addText(text, styles).build()
-
-                builder.addLink(content, url)
+                if (ref) {
+                    String text = linkRef.text.blank ? refName : linkText
+                    def content = Builder.builder().addText(text, styles).build()
+                    builder.addLink(content, ref.url.toString())
+                } else {
+                    LOGGER.warn("Reference not found: \"$refName\"")
+                    builder.addText(linkRef.chars.toString(), styles)
+                }
                 break
 
             default:

@@ -30,7 +30,8 @@ class OdfdomDocumentGetImagePathTest {
                 ["/x/x", "x/x"],
                 ["x/x", "x/x"],
                 ["x/x/x/x/x", "x/x/x/x/x"],
-                ["/x/", "x"]
+                ["/x/", "x"],
+                ["https://travis-ci.org/abcBHM/MD2odt.svg?branch=master", "travis-ci.org/abcBHM/MD2odt.svg"]
         ]*.toArray()
     }
 

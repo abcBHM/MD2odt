@@ -309,21 +309,31 @@ class OdfdomDocument implements DocumentAdapter{
     }
 
     protected String getImagePath(OdfSchemaDocument mOdfSchemaDoc, String imageRef) {
-        if(imageRef.contains("//")) {
-            imageRef = imageRef.substring(imageRef.lastIndexOf("//") + 2, imageRef.length())
+        def fullPath
+
+        try {
+            URL url = new URL(imageRef)
+            fullPath = url.getHost() + url.getPath()
         }
-        if(imageRef.startsWith("/")) {
-            imageRef = imageRef.substring(1, imageRef.length())
-        }
-        if(imageRef.endsWith("/")) {
-            imageRef = imageRef.substring(0, imageRef.length()-1)
+        catch (Exception e) {
+            fullPath = imageRef
         }
 
+        if(fullPath.contains("//")) {
+            fullPath = fullPath.substring(fullPath.lastIndexOf("//") + 2, fullPath.length())
+        }
+        if(fullPath.startsWith("/")) {
+            fullPath = fullPath.substring(1, fullPath.length())
+        }
+        if(fullPath.endsWith("/")) {
+            fullPath = fullPath.substring(0, fullPath.length()-1)
+        }
+
+        String name = fullPath
         String path = ""
-        String name = imageRef
-        if(imageRef.contains("/")) {
-            path = imageRef.substring(0, imageRef.lastIndexOf("/")).replaceAll("[^a-zA-Z0-9/.-]", "_")
-            name = imageRef.substring(imageRef.lastIndexOf("/"), imageRef.length())
+        if(fullPath.contains("/")) {
+            name = fullPath.substring(fullPath.lastIndexOf("/"), fullPath.length())
+            path = fullPath.substring(0, fullPath.lastIndexOf("/")).replaceAll("[^a-zA-Z0-9/.-]", "_")
         }
 
         String packagePath = OdfPackage.OdfFile.IMAGE_DIRECTORY.getPath() + "/" + path + name

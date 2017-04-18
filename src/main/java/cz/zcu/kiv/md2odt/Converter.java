@@ -24,11 +24,12 @@ import java.util.List;
 /**
  *
  * @author Patrik Harag
- * @version 2017-04-13
+ * @version 2017-04-18
  */
 public class Converter {
 
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+    private static final String DEFAULT_TEMPLATE = "/default-template.odt";
 
     private Source input;
     private InputStream template;
@@ -131,14 +132,19 @@ public class Converter {
         if (output == null)
             throw new IllegalArgumentException("Output not set");
 
-        Document document = (template == null)
-                ? new OdfdomDocument()
-                : new OdfdomDocument(template);
+        Document document = new OdfdomDocument(getTemplate());
 
         Parser parser = Parser.builder().extensions(getExtensions()).build();
         Filler filler = new FlexMarkFiller(parser);
         filler.fill(input.getSource(), input.getResources(), document);
         document.save(output);
+    }
+
+    private InputStream getTemplate() {
+        if (template != null)
+            return template;
+        else
+            return System.class.getResourceAsStream(DEFAULT_TEMPLATE);
     }
 
     private List<Extension> getExtensions() {

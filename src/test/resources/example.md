@@ -65,15 +65,15 @@ Ref. link broken: [Text][xxx]
 
 1. First ordered list item
 2. Another item
-   * Unordered sub-list. 
+    * Unordered sub-list. 
 1. Actual numbers don't matter, just that it's a number
-   1. Ordered sub-list
+    1. Ordered sub-list
 4. And another item.
 
-   You can have properly indented paragraphs within list items.
+    This is a paragraph.
+    Soft linebreak.
 
-   To have a line break without a paragraph, you will need to use two trailing spaces.
-   Note that this line is separate, but within the same paragraph.
+    Regular, `code`, *italic* **bold *bold italic***.
 
 * Unordered list can use asterisks
 - Or minuses
@@ -119,6 +119,14 @@ var foo = function (bar) {
 console.log(foo(5));
 ```
 
+After each other...
+
+```
+Block #1
+```
+```
+Block #2
+```
 
 ## Quote Blocks
 

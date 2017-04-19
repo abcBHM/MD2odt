@@ -5,6 +5,9 @@ import cz.zcu.kiv.md2odt.highlight.CodeParser
 import cz.zcu.kiv.md2odt.highlight.CodeSectionTypeColorHandler
 import cz.zcu.kiv.md2odt.highlight.Parser
 import cz.zcu.kiv.md2odt.highlight.content.CodeSection
+import org.apache.batik.transcoder.TranscoderInput
+import org.apache.batik.transcoder.TranscoderOutput
+import org.apache.batik.transcoder.image.PNGTranscoder
 import org.apache.log4j.Logger
 import org.odftoolkit.odfdom.dom.OdfContentDom
 import org.odftoolkit.odfdom.dom.OdfSchemaDocument
@@ -273,6 +276,22 @@ class OdfdomDocument implements DocumentAdapter{
         element.appendChild(aElement)
     }
 
+    protected void convertSvgToPng(InputStream input, OutputStream output) {
+
+        TranscoderInput input_svg_image = new TranscoderInput(input)
+        //Step-2: Define OutputStream to PNG Image and attach to TranscoderOutput
+        TranscoderOutput output_png_image = new TranscoderOutput(output)
+        // Step-3: Create PNGTranscoder and define hints if required
+        PNGTranscoder my_converter = new PNGTranscoder();
+        // Step-4: Convert and Write output
+        my_converter.transcode(input_svg_image, output_png_image);
+        // Step 5- close / flush Output Stream
+        output.flush()
+        output.close()
+
+        input.close()
+    }
+
     protected void appendImage(OdfElement element, String url) {
         DrawFrameElement frame = new DrawFrameElement(odt.getContentDom())
         DrawImageElement e1 = frame.newDrawImageElement()
@@ -283,6 +302,15 @@ class OdfdomDocument implements DocumentAdapter{
         OdfSchemaDocument mOdfSchemaDoc1 = (OdfSchemaDocument) odt.getContentDom().getDocument()
         String packagePath = getImagePath(mOdfSchemaDoc1, imageRef1)
         mOdfSchemaDoc1.getPackage().insert(imageUri, packagePath, mediaType1)
+
+        if (packagePath.endsWith("svg")) {
+            def inp = mOdfSchemaDoc1.getPackage().getInputStream(packagePath)
+            packagePath = packagePath.substring(0, packagePath.length() - 3) + "png"
+
+            def out = mOdfSchemaDoc1.getPackage().insertOutputStream(packagePath, "image/png")
+            convertSvgToPng(inp, out)
+        }
+
         packagePath = packagePath.replaceFirst(odt.getContentDom().getDocument().getDocumentPath(), "")
         Image.configureInsertedImage((OdfSchemaDocument) odt.getContentDom().getDocument(), e1, packagePath, false)
         Image mImage = Image.getInstanceof(e1)
@@ -300,6 +328,15 @@ class OdfdomDocument implements DocumentAdapter{
         OdfSchemaDocument mOdfSchemaDoc1 = (OdfSchemaDocument) odt.getContentDom().getDocument()
         String packagePath = getImagePath(mOdfSchemaDoc1, imageRef1)
         mOdfSchemaDoc1.getPackage().insert(inputStream, packagePath, mediaType1)
+
+        if (packagePath.endsWith("svg")) {
+            def inp = mOdfSchemaDoc1.getPackage().getInputStream(packagePath)
+            packagePath = packagePath.substring(0, packagePath.length() - 3) + "png"
+
+            def out = mOdfSchemaDoc1.getPackage().insertOutputStream(packagePath, "image/png")
+            convertSvgToPng(inp, out)
+        }
+
         packagePath = packagePath.replaceFirst(odt.getContentDom().getDocument().getDocumentPath(), "")
         Image.configureInsertedImage((OdfSchemaDocument) odt.getContentDom().getDocument(), e1, packagePath, false)
         Image mImage = Image.getInstanceof(e1)
@@ -414,6 +451,10 @@ class OdfdomDocument implements DocumentAdapter{
                         catch (Exception e) {
                             LOGGER.info("Exception while inserting image from stream in OdfdomDocument: " + e.toString())
                             appendText(element, sc.getAlt())
+                        }
+                        finally{
+                            if (sc.getStream())
+                                sc.getStream().close()
                         }
                     } else if (sc instanceof SpanContentImage) {
                         try {

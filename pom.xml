@@ -79,6 +79,13 @@
             <version>0.8.1-incubating</version>
         </dependency>
 
+        <!-- batik -->
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-codec</artifactId>
+            <version>1.7</version>
+        </dependency>
+
         <!-- HIGHLIGHTER -->
         <dependency>
             <groupId>org.python</groupId>

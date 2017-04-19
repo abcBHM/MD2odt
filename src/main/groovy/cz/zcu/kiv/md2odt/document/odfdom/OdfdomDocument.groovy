@@ -277,7 +277,7 @@ class OdfdomDocument implements DocumentAdapter{
     }
 
     protected void convertSvgToPng(InputStream input, OutputStream output) {
-
+        LOGGER.debug("IMAGE converting SVG to PNG START")
         TranscoderInput input_svg_image = new TranscoderInput(input)
         //Step-2: Define OutputStream to PNG Image and attach to TranscoderOutput
         TranscoderOutput output_png_image = new TranscoderOutput(output)
@@ -290,9 +290,27 @@ class OdfdomDocument implements DocumentAdapter{
         output.close()
 
         input.close()
+        LOGGER.debug("IMAGE converting SVG to PNG DONE")
+    }
+
+    protected String appendImageHandleSvg(String packagePath, OdfSchemaDocument mOdfSchemaDoc1) {
+        LOGGER.debug("IMAGE handling SVG START")
+
+        def inp = mOdfSchemaDoc1.getPackage().getInputStream(packagePath)
+        packagePath = packagePath.substring(0, packagePath.length() - 3) + "png"
+
+        LOGGER.debug("IMAGE recognized as SVG will be converted to: "+packagePath)
+
+        def out = mOdfSchemaDoc1.getPackage().insertOutputStream(packagePath, "image/png")
+        convertSvgToPng(inp, out)
+
+        LOGGER.debug("IMAGE handling SVG DONE")
+        return packagePath
     }
 
     protected void appendImage(OdfElement element, String url) {
+        LOGGER.debug("IMAGE START apending from URL: " + url)
+
         DrawFrameElement frame = new DrawFrameElement(odt.getContentDom())
         DrawImageElement e1 = frame.newDrawImageElement()
 
@@ -304,11 +322,7 @@ class OdfdomDocument implements DocumentAdapter{
         mOdfSchemaDoc1.getPackage().insert(imageUri, packagePath, mediaType1)
 
         if (packagePath.endsWith("svg")) {
-            def inp = mOdfSchemaDoc1.getPackage().getInputStream(packagePath)
-            packagePath = packagePath.substring(0, packagePath.length() - 3) + "png"
-
-            def out = mOdfSchemaDoc1.getPackage().insertOutputStream(packagePath, "image/png")
-            convertSvgToPng(inp, out)
+            packagePath = appendImageHandleSvg(packagePath, mOdfSchemaDoc1)
         }
 
         packagePath = packagePath.replaceFirst(odt.getContentDom().getDocument().getDocumentPath(), "")
@@ -317,9 +331,13 @@ class OdfdomDocument implements DocumentAdapter{
         mImage.getStyleHandler().setAchorType(StyleTypeDefinitions.AnchorType.AS_CHARACTER)
 
         element.appendChild(frame)
+        LOGGER.debug("IMAGE DONE apending from URL")
     }
 
     protected void appendImageFromStream(OdfElement element, String url, InputStream inputStream) {
+
+        LOGGER.debug("IMAGE START apending from STREAM, url: " + url)
+
         DrawFrameElement frame = new DrawFrameElement(odt.getContentDom())
         DrawImageElement e1 = frame.newDrawImageElement()
 
@@ -330,11 +348,7 @@ class OdfdomDocument implements DocumentAdapter{
         mOdfSchemaDoc1.getPackage().insert(inputStream, packagePath, mediaType1)
 
         if (packagePath.endsWith("svg")) {
-            def inp = mOdfSchemaDoc1.getPackage().getInputStream(packagePath)
-            packagePath = packagePath.substring(0, packagePath.length() - 3) + "png"
-
-            def out = mOdfSchemaDoc1.getPackage().insertOutputStream(packagePath, "image/png")
-            convertSvgToPng(inp, out)
+            packagePath = appendImageHandleSvg(packagePath, mOdfSchemaDoc1)
         }
 
         packagePath = packagePath.replaceFirst(odt.getContentDom().getDocument().getDocumentPath(), "")
@@ -343,6 +357,7 @@ class OdfdomDocument implements DocumentAdapter{
         mImage.getStyleHandler().setAchorType(StyleTypeDefinitions.AnchorType.AS_CHARACTER)
 
         element.appendChild(frame)
+        LOGGER.debug("IMAGE DONE apending from STREAM")
     }
 
     protected String getImagePath(OdfSchemaDocument mOdfSchemaDoc, String imageRef) {
@@ -351,9 +366,11 @@ class OdfdomDocument implements DocumentAdapter{
         try {
             URL url = new URL(imageRef)
             fullPath = url.getHost() + url.getPath()
+            LOGGER.debug("IMAGE_PATH path is url: " + fullPath)
         }
         catch (Exception e) {
             fullPath = imageRef
+            LOGGER.debug("IMAGE_PATH path is not url: " + fullPath)
         }
 
         if(fullPath.contains("//")) {
@@ -373,8 +390,11 @@ class OdfdomDocument implements DocumentAdapter{
             path = fullPath.substring(0, fullPath.lastIndexOf("/")).replaceAll("[^a-zA-Z0-9/.-]", "_")
         }
 
-        String packagePath = OdfPackage.OdfFile.IMAGE_DIRECTORY.getPath() + "/" + path + name
-        return mOdfSchemaDoc.getDocumentPath() + packagePath;
+        String packagePath = mOdfSchemaDoc.getDocumentPath() + OdfPackage.OdfFile.IMAGE_DIRECTORY.getPath() + "/" + path + name
+
+        LOGGER.debug("IMAGE_PATH: '" + imageRef + "' converted to '" + packagePath + "'")
+
+        return packagePath
     }
 
     protected void fillWithParagraphContent(OdfElement element, ParagraphContent paragraphContent) {
@@ -444,6 +464,7 @@ class OdfdomDocument implements DocumentAdapter{
                     break
 
                 case SpanType.IMAGE:
+                    LOGGER.debug("IMAGE: START handling SpanType.IMAGE")
                     if (sc instanceof SpanContentImageLocal) {
                         try {
                             appendImageFromStream(element, sc.getUrl(), sc.getStream())
@@ -467,6 +488,7 @@ class OdfdomDocument implements DocumentAdapter{
                     } else {
                         LOGGER.error("SpanContent with a '" + sc.getType() + "' type and instance of '" + sc.class + "'")
                     }
+                    LOGGER.debug("IMAGE: DONE handling SpanType.IMAGE")
                     break
                 default:
                     LOGGER.warn("SpanType not implemented: " + sc.getType() + " in class " + sc.class)

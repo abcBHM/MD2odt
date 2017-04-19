@@ -60,21 +60,4 @@ class MD2odtTest {
                 .convert()
     }
 
-    @Test
-    @Ignore
-    void testFromString() {
-        def s = "# MD2odt\n" +
-                "\n" +
-                "[![Build Status](https://travis-ci.org/abcBHM/MD2odt.svg?branch=master)](https://travis-ci.org/abcBHM/MD2odt)\n" +
-                "[![codecov](https://codecov.io/gh/abcBHM/MD2odt/branch/master/graph/badge.svg)](https://codecov.io/gh/abcBHM/MD2odt)\n" +
-                "[![](https://jitpack.io/v/abcBHM/MD2odt.svg)](https://jitpack.io/#abcBHM/MD2odt)"
-
-        def out = Files.newOutputStream(Paths.get(OUTPUT))
-
-        MD2odt.converter()
-                .setInputString(s)
-                .setOutput(out)
-                .enableAllExtensions()
-                .convert()
-    }
 }

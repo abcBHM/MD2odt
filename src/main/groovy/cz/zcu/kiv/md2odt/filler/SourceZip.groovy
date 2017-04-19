@@ -1,5 +1,7 @@
 package cz.zcu.kiv.md2odt.filler
 
+import groovy.transform.CompileStatic
+
 import java.nio.charset.Charset
 import java.util.regex.Pattern
 import java.util.zip.ZipEntry
@@ -38,10 +40,11 @@ class SourceZip implements Source {
                     // directory
 
                 } else {
+                    // file
                     byte[] array = asArray(zis, entry.size)
 
                     if (entry.name.matches(SOURCE_FILE_PATTERN)) {
-                        // md
+                        // source file
                         if (cachedSource)
                             throw new RuntimeException('More source files found!')
 
@@ -60,13 +63,15 @@ class SourceZip implements Source {
             throw new RuntimeException('Source file not found!')
     }
 
+    @CompileStatic
     private static byte[] asArray(InputStream is, long size) {
         byte[] array = new byte[size]
+        // read(byte b[]) is broken
 
-        byte b
+        int b
         int index = 0
         while ((b = is.read()) != -1)
-            array[index++] = b
+            array[index++] = (byte) b
 
         return array
     }

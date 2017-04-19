@@ -45,7 +45,7 @@ Link with formatting 1: [**Google** `something`](http://google.com/)
 
 Link with formatting 2: *[Google](http://google.com/)*
 
-Image inside link: [Image inside ![Foo](http://www.google.com.au/images/nav_logo7.png) link](http://google.com.au/)
+Image inside link: [Image inside ![smile](https://cloud.githubusercontent.com/assets/6131815/25194925/4afb48cc-253c-11e7-8ac9-cfb8d501eb61.png) link](http://google.com.au/)
 
 ### References
 
@@ -142,14 +142,14 @@ Some regular text.
 
 ## Images
 
-![Dog](https://www.seznam.cz/media/img/dogs/krasty_04.png)
-![Dog](https://www.seznam.cz/media/img/dogs/krasty_06.png)
+![png](https://cloud.githubusercontent.com/assets/6131815/25194659/73406066-253b-11e7-83ba-5fb3c527c2d0.png)
+![jpg](https://cloud.githubusercontent.com/assets/6131815/25194657/733d4eda-253b-11e7-8ec0-8f6aa46cfe16.jpg)
 
 Reference-style:
 
-![alt text][dog]
+![alt text][gif]
 
-[dog]: https://www.seznam.cz/media/img/dogs/krasty_07.png
+[gif]: https://cloud.githubusercontent.com/assets/6131815/25194658/733fb95e-253b-11e7-98e0-31aa33704799.gif
 
 Broken reference:
 ![alt text][xxx]

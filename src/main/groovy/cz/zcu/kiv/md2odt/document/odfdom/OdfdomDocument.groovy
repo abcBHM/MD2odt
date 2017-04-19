@@ -309,7 +309,8 @@ class OdfdomDocument implements DocumentAdapter{
     }
 
     protected void appendImage(OdfElement element, String url) {
-        LOGGER.debug("IMAGE START apending from URL: " + url)
+        LOGGER.info("IMAGE START apending from URL")
+        LOGGER.debug("URL: " + url)
 
         DrawFrameElement frame = new DrawFrameElement(odt.getContentDom())
         DrawImageElement e1 = frame.newDrawImageElement()
@@ -331,12 +332,12 @@ class OdfdomDocument implements DocumentAdapter{
         mImage.getStyleHandler().setAchorType(StyleTypeDefinitions.AnchorType.AS_CHARACTER)
 
         element.appendChild(frame)
-        LOGGER.debug("IMAGE DONE apending from URL")
+        LOGGER.info("IMAGE DONE apending from URL")
     }
 
     protected void appendImageFromStream(OdfElement element, String url, InputStream inputStream) {
-
-        LOGGER.debug("IMAGE START apending from STREAM, url: " + url)
+        LOGGER.info("IMAGE START apending from STREAM")
+        LOGGER.debug("URL: " + url)
 
         DrawFrameElement frame = new DrawFrameElement(odt.getContentDom())
         DrawImageElement e1 = frame.newDrawImageElement()
@@ -357,7 +358,7 @@ class OdfdomDocument implements DocumentAdapter{
         mImage.getStyleHandler().setAchorType(StyleTypeDefinitions.AnchorType.AS_CHARACTER)
 
         element.appendChild(frame)
-        LOGGER.debug("IMAGE DONE apending from STREAM")
+        LOGGER.info("IMAGE DONE apending from STREAM")
     }
 
     protected String getImagePath(OdfSchemaDocument mOdfSchemaDoc, String imageRef) {
@@ -399,12 +400,12 @@ class OdfdomDocument implements DocumentAdapter{
 
     protected void fillWithParagraphContent(OdfElement element, ParagraphContent paragraphContent) {
         if (paragraphContent == null) {
-            LOGGER.info("ParagraphContent is null in fillWithParagraphContent() method.")
+            LOGGER.debug("ParagraphContent is null in fillWithParagraphContent() method.")
             return
         }
         for(SpanContent sc : paragraphContent.list) {
             if(sc == null) {
-                LOGGER.info("SpanContent is null in fillWithParagraphContent() method.")
+                LOGGER.debug("SpanContent is null in fillWithParagraphContent() method.")
                 continue
             }
 
@@ -470,7 +471,7 @@ class OdfdomDocument implements DocumentAdapter{
                             appendImageFromStream(element, sc.getUrl(), sc.getStream())
                         }
                         catch (Exception e) {
-                            LOGGER.info("Exception while inserting image from stream in OdfdomDocument: " + e.toString())
+                            LOGGER.warn("Exception while inserting image from stream: " + e.toString())
                             appendText(element, sc.getAlt())
                         }
                         finally{
@@ -482,7 +483,7 @@ class OdfdomDocument implements DocumentAdapter{
                             appendImage(element, sc.getUrl())
                         }
                         catch (Exception e) {
-                            LOGGER.info("Exception while inserting image in OdfdomDocument: " + e.toString())
+                            LOGGER.warn("Exception while inserting image: " + e.toString())
                             appendText(element, sc.getAlt())
                         }
                     } else {
@@ -544,11 +545,12 @@ class OdfdomDocument implements DocumentAdapter{
         }
         CodeParser codeParser = new CodeParser()
         if (!codeParser.isKnownLanguage(lang)) {
-            LOGGER.info("addCodeBlock(String code, String lang): lang '"+lang+"' is not known, code is not formatted")
+            LOGGER.warn("Language '$lang' is not known, code is not formatted")
             addCodeBlock(code)
             return
         }
 
+        LOGGER.info("Adding highlighted code block: $lang")
         CodeSectionTypeColorHandler colorHandler = new CodeSectionTypeColorHandler(codeBlockBackgroundColor)
         def parElement = addParagraph(StyleNames.CODE.getValue()).getOdfElement()
         List<CodeSection> codeSections = codeParser.parse(code, lang)

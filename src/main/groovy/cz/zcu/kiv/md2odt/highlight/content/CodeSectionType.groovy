@@ -8,16 +8,16 @@ import java.awt.Color
  */
 enum CodeSectionType {
     NONE("None", Color.BLACK),
-    KEYWORD("Keyword", Color.ORANGE),
+    KEYWORD("Keyword", new Color(196, 29, 93)),
     TEXT("Text", Color.BLACK),
     WHITESPACCE("Whitespace", Color.WHITE),
-    NAME("Name", Color.CYAN),
+    NAME("Name", new Color(0, 0, 102)),
     LITERAL("Literal", Color.BLACK),
     STRING("String", Color.BLUE),
     NUMBER("Number", Color.CYAN),
     OPERATOR("Operator", Color.RED),
     PUNCTUATION("Punctuation", Color.BLACK),
-    COMMENT("Comment", Color.DARK_GRAY),
+    COMMENT("Comment", new Color(51, 102, 0)),
     GENERIC("Generic", Color.BLACK)
 
     private Color color

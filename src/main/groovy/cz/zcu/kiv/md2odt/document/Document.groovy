@@ -28,4 +28,6 @@ interface Document {
     void save(String documentPath)
 
     void save(OutputStream outputStream)
+
+    void addTableOfContent()
 }

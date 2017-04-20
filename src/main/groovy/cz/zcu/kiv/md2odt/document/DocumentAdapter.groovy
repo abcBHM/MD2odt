@@ -64,4 +64,9 @@ trait DocumentAdapter implements Document {
     void save(OutputStream outputStream){
         throw new UnsupportedOperationException()
     }
+
+    @Override
+    void addTableOfContent() {
+        LOGGER.error("Unsupported operation: addTableOfContent")
+    }
 }

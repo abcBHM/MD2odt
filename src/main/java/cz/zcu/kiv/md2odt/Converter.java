@@ -11,6 +11,7 @@ import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.superscript.SuperscriptExtension;
 import cz.zcu.kiv.md2odt.document.Document;
+import cz.zcu.kiv.md2odt.document.TableOfContentPosition;
 import cz.zcu.kiv.md2odt.document.odfdom.OdfdomDocument;
 import cz.zcu.kiv.md2odt.filler.*;
 import cz.zcu.kiv.md2odt.filler.md.FlexMarkFiller;
@@ -41,6 +42,8 @@ public class Converter {
     private boolean enableSubscript;
     private boolean enableSuperscript;
     private boolean enableTables;
+    private boolean enableTableOfContent;
+    private TableOfContentPosition tableOfContentPosition;
 
     // source
 
@@ -123,6 +126,12 @@ public class Converter {
         return this;
     }
 
+    public Converter enableTableOfContent(TableOfContentPosition tableOfContentPosition) {
+        this.enableTableOfContent = true;
+        this.tableOfContentPosition = tableOfContentPosition;
+        return this;
+    }
+
     // ---
 
     public void convert() throws IOException {
@@ -133,6 +142,9 @@ public class Converter {
             throw new IllegalArgumentException("Output not set");
 
         Document document = new OdfdomDocument(getTemplate());
+
+        if (enableTableOfContent)
+            document.enableTableOfContent(tableOfContentPosition);
 
         Parser parser = Parser.builder().extensions(getExtensions()).build();
         Filler filler = new FlexMarkFiller(parser);

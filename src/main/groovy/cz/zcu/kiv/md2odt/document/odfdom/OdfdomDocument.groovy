@@ -557,7 +557,7 @@ class OdfdomDocument implements DocumentAdapter{
     }
 
     @Override
-    void addTableOfContent() {
+    void addTableOfContents() {
         def par = odt.addParagraph("")
         odt.createDefaultTOC(par, false)
         par.remove()

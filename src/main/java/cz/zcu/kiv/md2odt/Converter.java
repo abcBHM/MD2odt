@@ -8,6 +8,8 @@ import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughSubscriptExtension;
 import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.ext.toc.SimTocExtension;
+import com.vladsch.flexmark.ext.toc.TocExtension;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.superscript.SuperscriptExtension;
 import cz.zcu.kiv.md2odt.document.Document;
@@ -24,7 +26,7 @@ import java.util.List;
 /**
  *
  * @author Patrik Harag
- * @version 2017-04-18
+ * @version 2017-04-20
  */
 public class Converter {
 
@@ -41,6 +43,7 @@ public class Converter {
     private boolean enableSubscript;
     private boolean enableSuperscript;
     private boolean enableTables;
+    private boolean enableTableOfContents;
 
     // source
 
@@ -113,6 +116,11 @@ public class Converter {
         return this;
     }
 
+    public Converter enableTableOfContents() {
+        this.enableTableOfContents = true;
+        return this;
+    }
+
     public Converter enableAllExtensions() {
         enableAutolinks();
         enableEmoji();
@@ -120,6 +128,7 @@ public class Converter {
         enableSubscript();
         enableSuperscript();
         enableTables();
+        enableTableOfContents();
         return this;
     }
 
@@ -163,6 +172,11 @@ public class Converter {
             extensions.add(StrikethroughExtension.create());
         else if (enableSubscript)
             extensions.add(SubscriptExtension.create());
+
+        if (enableTableOfContents) {
+            extensions.add(TocExtension.create());
+            extensions.add(SimTocExtension.create());
+        }
 
         return extensions;
     }

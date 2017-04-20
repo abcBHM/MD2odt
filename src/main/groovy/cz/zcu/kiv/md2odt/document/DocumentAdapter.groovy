@@ -66,7 +66,7 @@ trait DocumentAdapter implements Document {
     }
 
     @Override
-    void addTableOfContent() {
-        LOGGER.error("Unsupported operation: addTableOfContent")
+    void addTableOfContents() {
+        LOGGER.error("Unsupported operation: addTableOfContents")
     }
 }

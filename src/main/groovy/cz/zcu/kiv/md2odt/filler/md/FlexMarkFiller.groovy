@@ -14,7 +14,7 @@ import org.apache.log4j.Logger
 
 /**
  *
- * @version 2017-04-13
+ * @version 2017-04-20
  * @author Patrik Harag
  */
 class FlexMarkFiller implements Filler {
@@ -30,6 +30,7 @@ class FlexMarkFiller implements Filler {
             new HeadingHandler(),
             new ListHandler(),
             new TableHandler(),
+            new TableOfContentsHandler(),
             BasicHandlers.ignore(AstReference),
             BasicHandlers.ignore(AstHtmlCommentBlock)
     ]

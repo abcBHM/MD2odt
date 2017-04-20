@@ -2,7 +2,7 @@ package cz.zcu.kiv.md2odt.document
 
 /**
  *
- * @version 2017-04-13
+ * @version 2017-04-20
  * @author Patrik Harag
  */
 interface Document {
@@ -25,9 +25,10 @@ interface Document {
 
     void addHorizontalRule()
 
+    void addTableOfContents()
+
     void save(String documentPath)
 
     void save(OutputStream outputStream)
 
-    void addTableOfContent()
 }

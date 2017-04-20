@@ -83,6 +83,8 @@ class CodeParser implements Parser {
                     if(name.equals(lowerLang)) {
                         codeLang = pickedLang
 
+                        LOGGER.info("usinge lexer for \"" + pickedLang.getLangNames()[0] + "\"")
+
                         return codeLang
                     }
                 }

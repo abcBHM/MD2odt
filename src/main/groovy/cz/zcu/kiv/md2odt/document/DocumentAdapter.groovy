@@ -36,8 +36,14 @@ trait DocumentAdapter implements Document {
 
     @Override
     void addHeading(String text, int level) {
+        addHeading(ParagraphContentBuilder.builder().addRegular(text).build(), level)
+    }
+
+    @Override
+    void addHeading(ParagraphContent content, int level) {
         LOGGER.error("Unsupported operation: addHeading")
     }
+
 
     @Override
     void addList(ListContent content) {

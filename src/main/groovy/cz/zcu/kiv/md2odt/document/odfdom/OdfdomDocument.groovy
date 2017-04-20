@@ -405,6 +405,13 @@ class OdfdomDocument implements DocumentAdapter{
     }
 
     @Override
+    void addHeading(ParagraphContent content, int level) {
+        Paragraph paragraph = addParagraph(StyleNames.HEADING.getLevel(level))
+        fillWithParagraphContent(paragraph.getOdfElement(), content)
+        paragraph.applyHeading(true, level)
+    }
+
+    @Override
     void addParagraph(ParagraphContent content) {
         Paragraph paragraph = addParagraph(StyleNames.BODY_TEXT.getValue())
         fillWithParagraphContent(paragraph.getOdfElement(), content)

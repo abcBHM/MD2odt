@@ -68,6 +68,17 @@ class OdfdomDocumentTest {
     }
 
     @Test
+    void addHeadingItalicTest() throws Exception {
+        def pc = ParagraphContentBuilder.builder().addItalic("italic").build()
+        doc.addHeading(pc, 1)
+        assert last.nodeName.equals("text:h")
+        last.switchToLastChild()
+        assert last.nodeName.equals("text:span")
+        assert !last.textStyleName.equals("")
+        assert last.textContent.equals("italic")
+    }
+
+    @Test
     void addParagraphLinkWrongTest() throws Exception {
         def pc = ParagraphContentBuilder.builder().addLink("pokus", "www.sez#nam.cz").build()
         doc.addParagraph(pc)

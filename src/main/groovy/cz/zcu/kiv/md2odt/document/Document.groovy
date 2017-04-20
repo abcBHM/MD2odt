@@ -9,6 +9,8 @@ interface Document {
 
     void addHeading(String text, int level)
 
+    void addHeading(ParagraphContent content, int level)
+
     void addParagraph(ParagraphContent content)
 
     void addList(ListContent content)

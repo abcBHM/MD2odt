@@ -10,10 +10,10 @@ enum StyleNames {
     CODE("Preformatted_20_Text"),
     HORIZONTAL_RULE("Horizontal_20_Line"),
     TABLE_HEADING("Table_20_Heading"),
-    TABLE_CONTENTS("Table_20_Contents")
-
-
-
+    TABLE_CONTENTS("Table_20_Contents"),
+    STRIKE("BHM_MD2odt_Strike"),
+    SUB_SCRIPT("BHM_MD2odt_SubScript"),
+    SUPER_SCRIPT("BHM_MD2odt_SuperScript")
 
     private String[] vals
 

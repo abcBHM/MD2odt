@@ -58,143 +58,28 @@ import java.util.function.ToIntFunction
  */
 class OdfdomDocument implements DocumentAdapter{
 
-    protected final TextDocument odt
     private static final Logger LOGGER = Logger.getLogger(OdfdomDocument)
-    protected String strikeStyleName, subScriptStyleName, superScriptStyleName
-    java.awt.Color codeBlockBackgroundColor;
+    protected final TextDocument odt
+    protected java.awt.Color codeBlockBackgroundColor
+
     OdfdomDocument() {
-        odt = TextDocument.newTextDocument()
-        odt.getParagraphByIndex(0,false) .remove()     //removes an empty paragraph
-        prepareConstructor()
+        this.odt = TextDocumentHandler.handler().newTextDocument()
+        codeBlockBackgroundColor = TextDocumentHandler.getCodeBlockBackgroundColor(odt)
     }
 
     OdfdomDocument(File file) {
-        this.odt = TextDocument.loadDocument(file)
-        fillDefaultStyles()
-        prepareConstructor()
+        this.odt = TextDocumentHandler.handler().newTextDocumentFromTemplate(file)
+        codeBlockBackgroundColor = TextDocumentHandler.getCodeBlockBackgroundColor(odt)
     }
 
     OdfdomDocument(String documentPath) {
-        this.odt = TextDocument.loadDocument(documentPath)
-        fillDefaultStyles()
-        prepareConstructor()
+        this.odt = TextDocumentHandler.handler().newTextDocumentFromTemplate(documentPath)
+        codeBlockBackgroundColor = TextDocumentHandler.getCodeBlockBackgroundColor(odt)
     }
 
     OdfdomDocument(InputStream inputStream) {
-        this.odt = TextDocument.loadDocument(inputStream)
-        fillDefaultStyles()
-        prepareConstructor()
-    }
-
-    protected void prepareConstructor() {
-        addTextStyles()
-        try {
-            codeBlockBackgroundColor = getCodeBlockBackgroundColor()
-        }
-        catch (Exception e) {
-            codeBlockBackgroundColor = java.awt.Color.WHITE
-            LOGGER.error("getCodeBlockBackgroundColor failed: "+e)
-        }
-    }
-
-    java.awt.Color getCodeBlockBackgroundColor() {
-        NodeList nl = odt.stylesDom.officeStyles.getElementsByTagName("style:style")
-        for (int i = 0; i < nl.length; i++) {
-            Node n = nl.item(i).getAttributes().getNamedItem("style:name")
-            if(n != null && n.textContent.equals(StyleNames.CODE.getValue())) {
-                //style:paragraph-properties fo:background-color="#888a85"
-                for (Node spp : nl.item(i).childNodes) {
-                    if (spp != null && spp.nodeName.equals("style:paragraph-properties")) {
-                        Node fbc = spp.attributes.getNamedItem("fo:background-color")
-                        if (fbc != null) {
-                            String s = fbc.textContent.replaceAll("[^a-fA-F0-9]","")
-                            int rgb = Integer.parseInt(s, 16)
-                            return new java.awt.Color(rgb)
-                        }
-                        return java.awt.Color.WHITE
-                    }
-                }
-                return java.awt.Color.WHITE
-            }
-        }
-        return java.awt.Color.WHITE
-    }
-
-    protected StyleTextPropertiesElement addStyleStyleElementForSpan(String styleName) {
-        def oas = odt.contentDom.getOrCreateAutomaticStyles()
-        StyleStyleElement sse = new StyleStyleElement(odt.getContentDom())
-        oas.appendChild(sse)
-        sse.setStyleNameAttribute(styleName)
-        sse.setStyleFamilyAttribute("text")
-
-        StyleTextPropertiesElement stpe = new StyleTextPropertiesElement(odt.getContentDom())
-        sse.appendChild(stpe)
-        return stpe
-    }
-
-    protected void addStrikeStyle() {
-        strikeStyleName = "BHM_MD2odt_Strike"
-        def stpe = addStyleStyleElementForSpan(strikeStyleName)
-        stpe.setStyleTextLineThroughTypeAttribute("single")
-        stpe.setStyleTextLineThroughStyleAttribute("solid")
-    }
-
-    protected void addSubScriptStyle() {
-        subScriptStyleName = "BHM_MD2odt_SubScript"
-        def stpe = addStyleStyleElementForSpan(subScriptStyleName)
-        stpe.setStyleTextPositionAttribute("sub 58%")
-    }
-
-    protected void addSuperScriptStyle() {
-        superScriptStyleName = "BHM_MD2odt_SuperScript"
-        def stpe = addStyleStyleElementForSpan(superScriptStyleName)
-        stpe.setStyleTextPositionAttribute("super 58%")
-    }
-
-    protected void addTextStyles() {
-        addStrikeStyle()
-        addSubScriptStyle()
-        addSuperScriptStyle()
-        addInlineCodeFont()
-    }
-
-    protected void addInlineCodeFont() {
-        Span s = new Span(new TextSpanElement(odt.getContentDom()))
-        s.getStyleHandler().getTextPropertiesForWrite().setFont(new Font("Courier New", StyleTypeDefinitions.FontStyle.REGULAR, 12))
-        // span is not added to document it only fills the style and set FONT NAME
-    }
-
-    protected Set<String> getNamedItemValues(NodeList nl, String name) {
-        Set<String> set = new TreeSet<>()
-
-        for (int i = 0; i < nl.length; i++) {
-            Node n = nl.item(i).getAttributes().getNamedItem(name)
-            if(n != null)
-                set.add(n.getNodeValue())
-        }
-        return set
-    }
-
-    protected Set<String> getStylesStyleNames(OdfStylesDom stylesDom) {
-        NodeList nl = stylesDom.getOfficeStyles().getElementsByTagName("style:style")
-        return getNamedItemValues(nl, "style:name")
-    }
-
-    protected void fillDefaultStyles() {
-        Set<String> odtStyleNames = getStylesStyleNames(odt.getStylesDom())
-
-        TextDocument defaultTextDocument = TextDocument.newTextDocument()
-
-        NodeList nl = defaultTextDocument.getStylesDom().getOfficeStyles().getElementsByTagName("style:style")
-        for (int i = 0; i < nl.length; i++) {
-            Node node = nl.item(i)
-            String styleName = node.getAttributes().getNamedItem("style:name").getNodeValue()
-
-            if(!odtStyleNames.contains(styleName)) {
-                Node n = odt.getStylesDom().importNode(node, true)
-                odt.getStylesDom().getOfficeStyles().appendChild(n)
-            }
-        }
+        this.odt = TextDocumentHandler.handler().newTextDocumentFromTemplate(inputStream)
+        codeBlockBackgroundColor = TextDocumentHandler.getCodeBlockBackgroundColor(odt)
     }
 
     protected void appendText(OdfElement element, String text) {
@@ -252,19 +137,19 @@ class OdfdomDocument implements DocumentAdapter{
 
     protected Span appendStrikeSpan(OdfElement element) {
         Span s = appendSpan(element)
-        setTextStyleNameAttr(s.odfElement, strikeStyleName)
+        setTextStyleNameAttr(s.odfElement, StyleNames.STRIKE.getValue())
         return s
     }
 
     protected Span appendSubScriptSpan(OdfElement element) {
         Span s = appendSpan(element)
-        setTextStyleNameAttr(s.odfElement, subScriptStyleName)
+        setTextStyleNameAttr(s.odfElement, StyleNames.SUB_SCRIPT.getValue())
         return s
     }
 
     protected Span appendSuperScriptSpan(OdfElement element) {
         Span s = appendSpan(element)
-        setTextStyleNameAttr(s.odfElement, superScriptStyleName)
+        setTextStyleNameAttr(s.odfElement, StyleNames.SUPER_SCRIPT.getValue())
         return s
     }
 
@@ -545,12 +430,12 @@ class OdfdomDocument implements DocumentAdapter{
         }
         CodeParser codeParser = new CodeParser()
         if (!codeParser.isKnownLanguage(lang)) {
-            LOGGER.warn("Language '$lang' is not known, code is not formatted")
+            LOGGER.debug("Language '$lang' is not known, code is not formatted")
             addCodeBlock(code)
             return
         }
 
-        LOGGER.info("Adding highlighted code block: $lang")
+        LOGGER.debug("Adding highlighted code block: $lang")
         CodeSectionTypeColorHandler colorHandler = new CodeSectionTypeColorHandler(codeBlockBackgroundColor)
         def parElement = addParagraph(StyleNames.CODE.getValue()).getOdfElement()
         List<CodeSection> codeSections = codeParser.parse(code, lang)

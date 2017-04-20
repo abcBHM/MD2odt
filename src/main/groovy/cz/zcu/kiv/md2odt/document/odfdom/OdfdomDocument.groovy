@@ -3,42 +3,24 @@ package cz.zcu.kiv.md2odt.document.odfdom
 import cz.zcu.kiv.md2odt.document.*
 import cz.zcu.kiv.md2odt.highlight.CodeParser
 import cz.zcu.kiv.md2odt.highlight.CodeSectionTypeColorHandler
-import cz.zcu.kiv.md2odt.highlight.Parser
 import cz.zcu.kiv.md2odt.highlight.content.CodeSection
 import org.apache.batik.transcoder.TranscoderInput
 import org.apache.batik.transcoder.TranscoderOutput
 import org.apache.batik.transcoder.image.PNGTranscoder
 import org.apache.log4j.Logger
-import org.odftoolkit.odfdom.dom.OdfContentDom
 import org.odftoolkit.odfdom.dom.OdfSchemaDocument
-import org.odftoolkit.odfdom.dom.OdfStylesDom
-import org.odftoolkit.odfdom.dom.attribute.style.StyleFamilyAttribute
-import org.odftoolkit.odfdom.dom.attribute.style.StyleFontNameAttribute
-import org.odftoolkit.odfdom.dom.attribute.style.StyleNameAttribute
-import org.odftoolkit.odfdom.dom.attribute.style.StyleParentStyleNameAttribute
-import org.odftoolkit.odfdom.dom.attribute.style.StyleTextLineThroughStyleAttribute
-import org.odftoolkit.odfdom.dom.attribute.style.StyleTextLineThroughTypeAttribute
 import org.odftoolkit.odfdom.dom.attribute.table.TableStyleNameAttribute
 import org.odftoolkit.odfdom.dom.attribute.text.TextStyleNameAttribute
 import org.odftoolkit.odfdom.dom.element.draw.DrawFrameElement
 import org.odftoolkit.odfdom.dom.element.draw.DrawImageElement
-import org.odftoolkit.odfdom.dom.element.style.StyleStyleElement
-import org.odftoolkit.odfdom.dom.element.style.StyleTextPropertiesElement
-import org.odftoolkit.odfdom.dom.element.text.TextAElement
-import org.odftoolkit.odfdom.dom.element.text.TextLineBreakElement
-import org.odftoolkit.odfdom.dom.element.text.TextListItemElement
-import org.odftoolkit.odfdom.dom.element.text.TextPElement
-import org.odftoolkit.odfdom.dom.element.text.TextSpanElement
+import org.odftoolkit.odfdom.dom.element.text.*
 import org.odftoolkit.odfdom.pkg.OdfElement
 import org.odftoolkit.odfdom.pkg.OdfPackage
 import org.odftoolkit.odfdom.pkg.manifest.OdfFileEntry
 import org.odftoolkit.odfdom.type.Color
-import org.odftoolkit.odfdom.type.StyleName
 import org.odftoolkit.simple.TextDocument
 import org.odftoolkit.simple.draw.Image
-import org.odftoolkit.simple.style.Font
 import org.odftoolkit.simple.style.StyleTypeDefinitions
-import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle
 import org.odftoolkit.simple.table.Cell
 import org.odftoolkit.simple.table.Table
 import org.odftoolkit.simple.text.Paragraph
@@ -47,11 +29,7 @@ import org.odftoolkit.simple.text.list.BulletDecorator
 import org.odftoolkit.simple.text.list.List as OdfList
 import org.odftoolkit.simple.text.list.ListDecorator
 import org.odftoolkit.simple.text.list.NumberDecorator
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
 import org.w3c.dom.Text
-
-import java.util.function.ToIntFunction
 
 /**
  * Created by pepe on 5. 4. 2017.
@@ -62,24 +40,32 @@ class OdfdomDocument implements DocumentAdapter{
     protected final TextDocument odt
     protected java.awt.Color codeBlockBackgroundColor
 
+    private boolean enableTableOfContent
+    private TableOfContentPosition tableOfContentPosition
+    private Paragraph firstParagraphAnchor
+
     OdfdomDocument() {
         this.odt = TextDocumentHandler.handler().newTextDocument()
         codeBlockBackgroundColor = TextDocumentHandler.getCodeBlockBackgroundColor(odt)
+        firstParagraphAnchor = odt.addParagraph("")
     }
 
     OdfdomDocument(File file) {
         this.odt = TextDocumentHandler.handler().newTextDocumentFromTemplate(file)
         codeBlockBackgroundColor = TextDocumentHandler.getCodeBlockBackgroundColor(odt)
+        firstParagraphAnchor = odt.addParagraph("")
     }
 
     OdfdomDocument(String documentPath) {
         this.odt = TextDocumentHandler.handler().newTextDocumentFromTemplate(documentPath)
         codeBlockBackgroundColor = TextDocumentHandler.getCodeBlockBackgroundColor(odt)
+        firstParagraphAnchor = odt.addParagraph("")
     }
 
     OdfdomDocument(InputStream inputStream) {
         this.odt = TextDocumentHandler.handler().newTextDocumentFromTemplate(inputStream)
         codeBlockBackgroundColor = TextDocumentHandler.getCodeBlockBackgroundColor(odt)
+        firstParagraphAnchor = odt.addParagraph("")
     }
 
     protected void appendText(OdfElement element, String text) {
@@ -570,12 +556,39 @@ class OdfdomDocument implements DocumentAdapter{
 
     @Override
     void save(String documentPath) {
+        addTableOfContentIfEnabled()
         odt.save(documentPath)
     }
 
     @Override
     void save(OutputStream outputStream) {
+        addTableOfContentIfEnabled()
         odt.save(outputStream)
-        println()
     }
+
+    @Override
+    void enableTableOfContent(TableOfContentPosition tableOfContentPosition) {
+        this.enableTableOfContent = true
+        this.tableOfContentPosition = tableOfContentPosition
+    }
+
+    protected void addTableOfContentIfEnabled() {
+        if (this.enableTableOfContent) {
+            switch (tableOfContentPosition) {
+                case TableOfContentPosition.FIRST:
+                    odt.createDefaultTOC(firstParagraphAnchor, false)
+                    break
+                case TableOfContentPosition.LAST:
+                    def par = odt.addParagraph("")
+                    odt.createDefaultTOC(par, false)
+                    par.remove()
+                    break
+                default:
+                    LOGGER.error("TableOfContentPosition unknown: " + tableOfContentPosition)
+
+            }
+        }
+        firstParagraphAnchor.remove()
+    }
+
 }

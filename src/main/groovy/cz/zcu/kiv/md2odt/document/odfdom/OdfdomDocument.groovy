@@ -430,12 +430,12 @@ class OdfdomDocument implements DocumentAdapter{
         }
         CodeParser codeParser = new CodeParser()
         if (!codeParser.isKnownLanguage(lang)) {
-            LOGGER.warn("Language '$lang' is not known, code is not formatted")
+            LOGGER.debug("Language '$lang' is not known, code is not formatted")
             addCodeBlock(code)
             return
         }
 
-        LOGGER.info("Adding highlighted code block: $lang")
+        LOGGER.debug("Adding highlighted code block: $lang")
         CodeSectionTypeColorHandler colorHandler = new CodeSectionTypeColorHandler(codeBlockBackgroundColor)
         def parElement = addParagraph(StyleNames.CODE.getValue()).getOdfElement()
         List<CodeSection> codeSections = codeParser.parse(code, lang)

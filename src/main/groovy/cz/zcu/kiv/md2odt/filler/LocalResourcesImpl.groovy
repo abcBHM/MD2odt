@@ -3,7 +3,7 @@ package cz.zcu.kiv.md2odt.filler
 /**
  * Implementation of LocalResources using map.
  *
- * @version 2017-04-08
+ * @version 2017-04-21
  * @author Patrik Harag
  */
 class LocalResourcesImpl implements LocalResources {
@@ -25,5 +25,12 @@ class LocalResourcesImpl implements LocalResources {
             return new ByteArrayInputStream(value)
 
         return null
+    }
+
+    @Override
+    long getSize(String name) {
+        def value = resources.getOrDefault(name, null)
+
+        return value ? value.length : 0
     }
 }

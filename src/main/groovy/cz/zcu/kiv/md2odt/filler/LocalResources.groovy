@@ -16,4 +16,12 @@ interface LocalResources {
      */
     InputStream get(String name)
 
+    /**
+     * Returns size of a resource.
+     *
+     * @param name name of resource (eg. file name)
+     * @return size or 0
+     */
+    long getSize(String name)
+
 }

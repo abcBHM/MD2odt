@@ -10,32 +10,73 @@ import java.util.function.Predicate
 class ResourceManagerImpl implements ResourceManager {
 
     public static final ResourceManager NO_RESOURCES = new ResourceManagerImpl(
-            LocalResourcesImpl.EMPTY, { url -> false })
+            LocalResourcesImpl.EMPTY, { url -> false }, Long.MAX_VALUE)
 
     private final LocalResources localResources
     private final Predicate<URL> filter
+    private final long totalSizeLimit
 
-    ResourceManagerImpl(LocalResources localResources, Predicate<URL> filter) {
+    private long totalSize = 0
+
+    ResourceManagerImpl(LocalResources local, Predicate<URL> filter, long totalSizeLimit) {
+        this.totalSizeLimit = totalSizeLimit
         this.filter = filter
-        this.localResources = localResources
+        this.localResources = local
     }
 
     @Override
     InputStream getResourceAsStream(String uri) throws IOException {
-        def localResourceStream = localResources ? localResources.get(uri) : null
+        if (totalSize > totalSizeLimit)
+            return null
 
-        if (localResourceStream) {
-            return localResourceStream
+        def resource = loadLocal(uri)
 
-        } else {
-            URL resourceUrl = new URL(uri)
+        if (!resource)
+            return loadFromURL(uri)
 
-            if (filter.test(resourceUrl)) {
-                return resourceUrl.openStream()
+        return resource
+    }
 
-            } else {
-                throw new SecurityException("Cannot access resource")
+    private void checkLimit() {
+        if (totalSize > totalSizeLimit)
+            throw new RuntimeException('Resource limit is reached!')
+    }
+
+    private InputStream loadLocal(String uri) {
+        if (localResources) {
+            def stream = localResources.get(uri)
+            def size = localResources.getSize(uri)
+
+            if (stream) {
+                totalSize += size
+                checkLimit()
             }
+
+            return stream
         }
     }
+
+    private InputStream loadFromURL(String uri) {
+        URL resourceUrl = new URL(uri)
+
+        if (filter.test(resourceUrl)) {
+            // TODO: something faster
+
+            def buffer = new ByteArrayOutputStream()
+            def inputStream = resourceUrl.openStream()
+
+            int b
+            while ((b = inputStream.read()) != -1) {
+                buffer.write(b)
+                totalSize++
+                checkLimit()
+            }
+
+            return new ByteArrayInputStream(buffer.toByteArray())
+
+        } else {
+            throw new SecurityException("Cannot access resource")
+        }
+    }
+
 }

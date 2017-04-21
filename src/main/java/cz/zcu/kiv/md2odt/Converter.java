@@ -35,11 +35,13 @@ public class Converter {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final String DEFAULT_TEMPLATE = "/default-template.odt";
     private static final Predicate<URL> DEFAULT_RESOURCE_POLICY = (url) -> true;
+    private static final long DEFAULT_RESOURCES_LIMIT = Long.MAX_VALUE;
 
     private Source input;
     private InputStream template;
     private OutputStream output;
 
+    private long resourcesLimit = DEFAULT_RESOURCES_LIMIT;
     private Predicate<URL> resourcesPolicy;
 
     private boolean enableAutolinks;
@@ -90,6 +92,11 @@ public class Converter {
     }
 
     // resources
+
+    public Converter setResourcesLimit(long resourcesLimit) {
+        this.resourcesLimit = resourcesLimit;
+        return this;
+    }
 
     public Converter setResourcesPolicy(Predicate<URL> predicate) {
         this.resourcesPolicy = predicate;
@@ -166,7 +173,11 @@ public class Converter {
                 ? resourcesPolicy
                 : DEFAULT_RESOURCE_POLICY;
 
-        return new ResourceManagerImpl(input.getResources(), predicate);
+        long limit = (resourcesLimit >= 0)
+                ? resourcesLimit
+                : DEFAULT_RESOURCES_LIMIT;
+
+        return new ResourceManagerImpl(input.getResources(), predicate, limit);
     }
 
     private InputStream getTemplate() {

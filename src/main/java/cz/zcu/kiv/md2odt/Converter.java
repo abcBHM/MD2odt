@@ -18,24 +18,29 @@ import cz.zcu.kiv.md2odt.filler.*;
 import cz.zcu.kiv.md2odt.filler.md.FlexMarkFiller;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  *
  * @author Patrik Harag
- * @version 2017-04-20
+ * @version 2017-04-21
  */
 public class Converter {
 
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final String DEFAULT_TEMPLATE = "/default-template.odt";
+    private static final Predicate<URL> DEFAULT_RESOURCE_POLICY = (url) -> true;
 
     private Source input;
     private InputStream template;
     private OutputStream output;
+
+    private Predicate<URL> resourcesPolicy;
 
     private boolean enableAutolinks;
     private boolean enableEmoji;
@@ -81,6 +86,13 @@ public class Converter {
 
     public Converter setOutput(OutputStream out) {
         this.output = out;
+        return this;
+    }
+
+    // resources
+
+    public Converter setResourcesPolicy(Predicate<URL> predicate) {
+        this.resourcesPolicy = predicate;
         return this;
     }
 
@@ -145,8 +157,16 @@ public class Converter {
 
         Parser parser = Parser.builder().extensions(getExtensions()).build();
         Filler filler = new FlexMarkFiller(parser);
-        filler.fill(input.getSource(), input.getResources(), document);
+        filler.fill(input.getSource(), getResourceManager(), document);
         document.save(output);
+    }
+
+    private ResourceManager getResourceManager() {
+        Predicate<URL> predicate = (resourcesPolicy != null)
+                ? resourcesPolicy
+                : DEFAULT_RESOURCE_POLICY;
+
+        return new ResourceManagerImpl(input.getResources(), predicate);
     }
 
     private InputStream getTemplate() {

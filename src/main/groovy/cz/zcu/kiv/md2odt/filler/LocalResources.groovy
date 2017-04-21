@@ -3,7 +3,7 @@ package cz.zcu.kiv.md2odt.filler
 /**
  * Interface for object that manages local resources.
  *
- * @version 2017-04-08
+ * @version 2017-04-21
  * @author Patrik Harag
  */
 interface LocalResources {

@@ -32,7 +32,7 @@ import org.jsoup.Jsoup
 
 /**
  *
- * @version 2017-04-16
+ * @version 2017-04-21
  * @author Patrik Harag
  */
 class ParagraphCollector {
@@ -160,12 +160,18 @@ class ParagraphCollector {
     }
 
     private void processImage(String text, String url, String alt, Builder builder) {
-        def stream = context.getResourceAsStream(url)
+        InputStream stream
+        try {
+            stream = context.getResourceAsStream(url)
+
+        } catch (ex) {
+            LOGGER.error("Exception when accessing resource: $ex")
+        }
 
         if (stream)
             builder.addImage(text, url, alt, stream)
         else
-            builder.addImage(text, url, alt)
+            builder.addRegular(alt)
     }
 
     private void processLink(AstLinkNode node, Set<TextStyle> styles, Builder builder) {

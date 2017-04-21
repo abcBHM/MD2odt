@@ -6,6 +6,7 @@ import com.vladsch.flexmark.ast.Paragraph
 import com.vladsch.flexmark.parser.Parser
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.TextStyle
+import cz.zcu.kiv.md2odt.filler.ResourceManager
 import org.junit.Test
 
 import static cz.zcu.kiv.md2odt.document.TextStyle.*
@@ -13,7 +14,7 @@ import static cz.zcu.kiv.md2odt.document.SpanType.*
 
 /**
  *
- * @version 2017-04-12
+ * @version 2017-04-21
  * @author Patrik Harag
  */
 class ParagraphCollectorTest {
@@ -23,7 +24,11 @@ class ParagraphCollectorTest {
         def document = parser.parse(md)
         def astParagraph = document.children[0] as Paragraph
 
-        def context = Context.of(document as Document)
+        def resourceManagerMock = [
+                getResourceAsStream: { new ByteArrayInputStream([42] as byte[]) }
+        ] as ResourceManager
+
+        def context = Context.of(document as Document, resourceManagerMock)
         def collector = new ParagraphCollector(context)
         return collector.processParagraph(astParagraph)
     }
@@ -130,7 +135,6 @@ class ParagraphCollectorTest {
     void linkFormatted() {
         def paragraph = paragraph("[**link**](www.example.com)")
 
-        // TODO: link format is ignored
         assert paragraph.list*.text == ["link"]
         assert paragraph.list*.type == [LINK]
         assert paragraph.list*.url  == ["www.example.com"]

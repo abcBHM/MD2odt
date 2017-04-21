@@ -8,8 +8,8 @@ import com.vladsch.flexmark.parser.Parser
 import cz.zcu.kiv.md2odt.document.Document
 import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
 import cz.zcu.kiv.md2odt.filler.Filler
-import cz.zcu.kiv.md2odt.filler.LocalResources
-import cz.zcu.kiv.md2odt.filler.LocalResourcesImpl
+import cz.zcu.kiv.md2odt.filler.ResourceManager
+import cz.zcu.kiv.md2odt.filler.ResourceManagerImpl
 import org.apache.log4j.Logger
 
 /**
@@ -47,7 +47,7 @@ class FlexMarkFiller implements Filler {
     }
 
     @Override
-    void fill(String md, LocalResources resources, Document document) {
+    void fill(String md, ResourceManager resources, Document document) {
         def ast = parser.parse(md) as AstDocument
         def context = Context.of(ast, resources)
 
@@ -55,7 +55,7 @@ class FlexMarkFiller implements Filler {
     }
 
     void fill(String md, Document document) {
-        fill(md, LocalResourcesImpl.EMPTY, document)
+        fill(md, ResourceManagerImpl.NO_RESOURCES, document)
     }
 
     private void convert(AstNode node, Context context, Document document) {

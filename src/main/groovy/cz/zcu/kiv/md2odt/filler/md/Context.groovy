@@ -2,21 +2,21 @@ package cz.zcu.kiv.md2odt.filler.md
 
 import com.vladsch.flexmark.ast.Document as AstDocument
 import com.vladsch.flexmark.ast.Reference as AstReference
-import cz.zcu.kiv.md2odt.filler.LocalResources
-import cz.zcu.kiv.md2odt.filler.LocalResourcesImpl
+import cz.zcu.kiv.md2odt.filler.ResourceManager
+import cz.zcu.kiv.md2odt.filler.ResourceManagerImpl
 import groovy.transform.Immutable
 
 /**
  * Holds information about processed input.
  *
- * @version 2017-04-08
+ * @version 2017-04-21
  * @author Patrik Harag
  */
 @Immutable
 class Context {
 
     private Map<String, AstReference> references
-    private LocalResources resources
+    private ResourceManager resourceManager
 
     /**
      * Returns reference node by name.
@@ -28,18 +28,18 @@ class Context {
         references.getOrDefault(name, null)
     }
 
-    InputStream getResourceAsStream(String name) {
-        resources ? resources.get(name) : null
+    InputStream getResourceAsStream(String uri) throws IOException {
+        resourceManager.getResourceAsStream(uri)
     }
 
 
     static Context of(AstDocument node) {
-        return of(node, LocalResourcesImpl.EMPTY)
+        return of(node, ResourceManagerImpl.NO_RESOURCES)
     }
 
-    static Context of(AstDocument node, LocalResources resources) {
+    static Context of(AstDocument node, ResourceManager resourceManager) {
         def refs = collectRefs(node)
-        return new Context(references: refs, resources: resources)
+        return new Context(references: refs, resourceManager: resourceManager)
     }
 
     private static Map<String, AstReference> collectRefs(AstDocument node) {

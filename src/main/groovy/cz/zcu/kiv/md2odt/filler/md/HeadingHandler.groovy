@@ -7,7 +7,7 @@ import cz.zcu.kiv.md2odt.document.Document
 /**
  * Handles {@link com.vladsch.flexmark.ast.Heading} AST node.
  *
- * @version 2017-03-21
+ * @version 2017-04-21
  * @author Patrik Harag
  */
 class HeadingHandler implements AstNodeHandler {
@@ -23,9 +23,11 @@ class HeadingHandler implements AstNodeHandler {
 
         def heading = node as AstHeading
         int level = heading.level
-        String text = ParagraphCollector.flatten(node)
 
-        document.addHeading(text, level)
+        def collector = new ParagraphCollector(context)
+        def paragraph = collector.processParagraph(node)
+
+        document.addHeading(paragraph, level)
     }
 
 }

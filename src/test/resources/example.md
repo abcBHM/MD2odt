@@ -26,6 +26,15 @@ Escaping: \\ \` \* \_ \{\} \[\] \(\) \# \+ \- \. \!
 
 Diacritics: Příliš žluťoučký kůň úpěl ďábelské ódy.
 
+## Headers
+
+### H3
+#### H4
+##### H5
+###### H6
+####### H7
+
+### H3 - *for*`matt`*ed*
 
 ## Links
 

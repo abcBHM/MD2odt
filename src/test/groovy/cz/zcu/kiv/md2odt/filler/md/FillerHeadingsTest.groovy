@@ -1,11 +1,12 @@
 package cz.zcu.kiv.md2odt.filler.md
 
 import cz.zcu.kiv.md2odt.document.Document
+import cz.zcu.kiv.md2odt.document.ParagraphContent
 import org.junit.Test
 
 /**
  *
- * @version 2017-03-21
+ * @version 2017-04-21
  * @author Patrik Harag
  */
 class FillerHeadingsTest {
@@ -29,8 +30,10 @@ class FillerHeadingsTest {
         filler.fill(code, documentMock)
 
         assert out.size() == 6
+
         (0..<6).each { i ->
-            assert out[i] == ["H${i + 1}", i + 1]
+            assert out[i][0] instanceof ParagraphContent
+            assert out[i][1] == i + 1
         }
     }
 
@@ -50,8 +53,12 @@ class FillerHeadingsTest {
         filler.fill(code, documentMock)
 
         assert out.size() == 2
-        assert out[0] == ["H1", 1]
-        assert out[1] == ["H2", 2]
+
+        assert out[0][0] instanceof ParagraphContent
+        assert out[0][1] == 1
+
+        assert out[1][0] instanceof ParagraphContent
+        assert out[1][1] == 2
     }
 
     @Test
@@ -65,9 +72,10 @@ class FillerHeadingsTest {
 
         filler.fill(code, documentMock)
 
-        // formatting in heading is not supported but it should print something...
         assert out.size() == 1
-        assert out[0] == ["one two", 1]
+
+        assert out[0][0] instanceof ParagraphContent
+        assert out[0][1] == 1
     }
 
 }

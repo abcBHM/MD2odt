@@ -7,10 +7,22 @@
 **WORK IN PROGRESS**
 
 
-MD2odt is a library for converting Markdown to OpenDocument (*.odt*).
+MD2odt is a easy to use library for converting Markdown to OpenDocument (*.odt*).
 
 * Web application: [MD2odt-web](https://github.com/abcBHM/MD2odt-web)
     * Online: https://md2odt.herokuapp.com/
+
+## Features
+* Supports templates
+
+* Supports various Markdown extensions
+    * Autolinks
+    * Emoji
+    * Strikethrough
+    * Subscript
+    * Superscript
+    * Tables
+    * Table of contents
 
 ## Example
 

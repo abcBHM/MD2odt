@@ -426,7 +426,7 @@ class OdfdomDocument implements DocumentAdapter{
                             appendImageFromStream(element, sc.getUrl(), sc.getStream())
                         }
                         catch (Exception e) {
-                            LOGGER.warn("Exception while inserting image from stream: " + e.toString())
+                            LOGGER.warn("Exception while inserting image from stream (url: '"+sc.url+"'): " + e.toString())
                             appendText(element, sc.getAlt())
                         }
                         finally{
@@ -438,7 +438,7 @@ class OdfdomDocument implements DocumentAdapter{
                             appendImage(element, sc.getUrl())
                         }
                         catch (Exception e) {
-                            LOGGER.warn("Exception while inserting image: " + e.toString())
+                            LOGGER.warn("Exception while inserting image (url: '"+sc.url+"'): " + e.toString())
                             appendText(element, sc.getAlt())
                         }
                     } else {

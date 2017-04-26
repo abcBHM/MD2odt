@@ -1,6 +1,8 @@
 package cz.zcu.kiv.md2odt
 
+import cz.zcu.kiv.md2odt.document.odfdom.OdfdomDocument
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.odftoolkit.odfdom.type.Color
 import org.odftoolkit.simple.TextDocument
@@ -77,5 +79,17 @@ class OdfdomTest {
         }
         //odt.save(path)
         assert nav.hasNext()
+    }
+
+    @Ignore
+    @Test
+    void removeParagraphsFromTemplate() throws Exception {
+        TextDocument odt = TextDocument.loadDocument("src/main/resources/default-template.odt")
+        def par = odt.getParagraphByIndex(0,false)
+        while (par != null) {
+            par.remove()
+            par = odt.getParagraphByIndex(0,false)
+        }
+        odt.save("src/main/resources/default-template-no_empty_paragraph.odt")
     }
 }

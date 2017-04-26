@@ -329,7 +329,7 @@ class OdfdomDocument implements DocumentAdapter{
 
                 case SpanType.IMAGE:
                     LOGGER.debug("IMAGE: START handling SpanType.IMAGE")
-                    if (sc instanceof SpanContentImageLocal) {
+                    if (sc instanceof SpanContentImageStream) {
                         try {
                             appendImageFromStream(element, sc.getUrl(), sc.getStream())
                         }

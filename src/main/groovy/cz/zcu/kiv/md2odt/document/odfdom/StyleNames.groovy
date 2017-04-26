@@ -1,6 +1,6 @@
 package cz.zcu.kiv.md2odt.document.odfdom
 /**
- * Created by pepe on 5. 4. 2017.
+ * Contains style names used in OdfdomDocument
  */
 enum StyleNames {
     BODY_TEXT("Text_20_body"),
@@ -21,10 +21,18 @@ enum StyleNames {
         this.vals = values
     }
 
+    /** Returns style name String value.
+     * @return Style name String value.
+     * */
     String getValue() {
         return vals[0]
     }
 
+    /** Returns style name String value of given level. If not found then the closest level is returned.
+     * 
+     * @param level Level of style name.
+     * @return Style name String value.
+     * */
     String getLevel(int level) {
         if(level >= vals.length)
             return vals[vals.length - 1]

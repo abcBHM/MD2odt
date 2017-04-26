@@ -32,7 +32,7 @@ import org.odftoolkit.simple.text.list.NumberDecorator
 import org.w3c.dom.Text
 
 /**
- * Created by pepe on 5. 4. 2017.
+ * Wrapper for a TextDocument. It provides functionality of Document interface.
  */
 class OdfdomDocument implements DocumentAdapter{
 
@@ -40,26 +40,45 @@ class OdfdomDocument implements DocumentAdapter{
     protected final TextDocument odt
     protected java.awt.Color codeBlockBackgroundColor
 
+    /** Wrapper for an empty TextDocument constructor.
+     * */
     OdfdomDocument() {
         this.odt = TextDocumentHandler.handler().newTextDocument()
         codeBlockBackgroundColor = TextDocumentHandler.getCodeBlockBackgroundColor(odt)
     }
 
+    /** Wrapper for a TextDocument from template constructor.
+     *
+     * @param file Template file (odt supported).
+     * */
     OdfdomDocument(File file) {
         this.odt = TextDocumentHandler.handler().newTextDocumentFromTemplate(file)
         codeBlockBackgroundColor = TextDocumentHandler.getCodeBlockBackgroundColor(odt)
     }
 
+    /** Wrapper for a TextDocument from template constructor.
+     *
+     * @param documentPath Template path (odt supported).
+     * */
     OdfdomDocument(String documentPath) {
         this.odt = TextDocumentHandler.handler().newTextDocumentFromTemplate(documentPath)
         codeBlockBackgroundColor = TextDocumentHandler.getCodeBlockBackgroundColor(odt)
     }
 
+    /** Wrapper for a TextDocument from template constructor.
+     *
+     * @param inputStream Template inputStream (odt supported).
+     * */
     OdfdomDocument(InputStream inputStream) {
         this.odt = TextDocumentHandler.handler().newTextDocumentFromTemplate(inputStream)
         codeBlockBackgroundColor = TextDocumentHandler.getCodeBlockBackgroundColor(odt)
     }
 
+    /** Appends text to an OdfElement.
+     *
+     * @param element OdfElement where text is appended.
+     * @param text Text to append.
+     * */
     protected void appendText(OdfElement element, String text) {
 
         String[] s = text.split("\n")
@@ -89,48 +108,89 @@ class OdfdomDocument implements DocumentAdapter{
         }
     }
 
+    /** Appends span to an OdfElement.
+     *
+     * @param element OdfElement where span is appended.
+     * @return Appended Span instance.
+     * */
     protected Span appendSpan(OdfElement element) {
         Span s = new Span(new TextSpanElement(odt.getContentDom()))
         element.appendChild(s.getOdfElement())
         return s
     }
 
+    /** Appends code span with font to an OdfElement.
+     *
+     * @param element OdfElement where span is appended.
+     * @return Appended Span instance.
+     * */
     protected Span appendCodeSpan(OdfElement element) {
         Span s = appendSpan(element)
         s.getStyleHandler().getTextPropertiesForWrite().setFontName("Courier New")
         return s
     }
 
+    /** Appends span with bold style to an OdfElement.
+     *
+     * @param element OdfElement where span is appended.
+     * @return Appended Span instance.
+     * */
     protected Span appendBoldSpan(OdfElement element) {
         Span s = appendSpan(element)
         s.getStyleHandler().getTextPropertiesForWrite().setFontStyle(StyleTypeDefinitions.FontStyle.BOLD)
         return s
     }
 
+    /** Appends span with italic style to an OdfElement.
+     *
+     * @param element OdfElement where span is appended.
+     * @return Appended Span instance.
+     * */
     protected Span appendItalicSpan(OdfElement element) {
         Span s = appendSpan(element)
         s.getStyleHandler().getTextPropertiesForWrite().setFontStyle(StyleTypeDefinitions.FontStyle.ITALIC)
         return s
     }
 
+    /** Appends span with strike style to an OdfElement.
+     *
+     * @param element OdfElement where span is appended.
+     * @return Appended Span instance.
+     * */
     protected Span appendStrikeSpan(OdfElement element) {
         Span s = appendSpan(element)
         setTextStyleNameAttr(s.odfElement, StyleNames.STRIKE.getValue())
         return s
     }
 
+    /** Appends span with sub-script style to an OdfElement.
+     *
+     * @param element OdfElement where span is appended.
+     * @return Appended Span instance.
+     * */
     protected Span appendSubScriptSpan(OdfElement element) {
         Span s = appendSpan(element)
         setTextStyleNameAttr(s.odfElement, StyleNames.SUB_SCRIPT.getValue())
         return s
     }
 
+    /** Appends span with super-script style to an OdfElement.
+     *
+     * @param element OdfElement where span is appended.
+     * @return Appended Span instance.
+     * */
     protected Span appendSuperScriptSpan(OdfElement element) {
         Span s = appendSpan(element)
         setTextStyleNameAttr(s.odfElement, StyleNames.SUPER_SCRIPT.getValue())
         return s
     }
 
+    /** Appends link to an OdfElement.
+     *
+     * @param element OdfElement where link is appended.
+     * @param content ParagraphContent which is inside a link. (List of SpanContents)
+     * @param url Referring url.
+     * */
     protected void appendLink(OdfElement element, ParagraphContent content, String url) {
         TextAElement aElement = (TextAElement) odt.getContentDom().newOdfElement(TextAElement.class)
         aElement.setXlinkTypeAttribute("simple")
@@ -139,6 +199,11 @@ class OdfdomDocument implements DocumentAdapter{
         element.appendChild(aElement)
     }
 
+    /** Converts svg to png image.
+     *
+     * @param input SVG stream input.
+     * @param output PNG stream output.
+     * */
     protected void convertSvgToPng(InputStream input, OutputStream output) {
         LOGGER.debug("IMAGE converting SVG to PNG START")
         TranscoderInput input_svg_image = new TranscoderInput(input)
@@ -156,6 +221,12 @@ class OdfdomDocument implements DocumentAdapter{
         LOGGER.debug("IMAGE converting SVG to PNG DONE")
     }
 
+    /** Handling SVG image.
+     *
+     * @param packagePath path of SVG image.
+     * @param mOdfSchemaDoc1 OdfSchemaDocument to work with.
+     * @return packagePath of a PNG image
+     * */
     protected String appendImageHandleSvg(String packagePath, OdfSchemaDocument mOdfSchemaDoc1) {
         LOGGER.debug("IMAGE handling SVG START")
 
@@ -171,6 +242,11 @@ class OdfdomDocument implements DocumentAdapter{
         return packagePath
     }
 
+    /** Appends image from an URL. !!! Not handling it's size. !!!
+     *
+     * @param element OdfElement where image is appended.
+     * @param url Adress of an image.
+     * */
     protected void appendImage(OdfElement element, String url) {
         LOGGER.info("IMAGE START apending from URL")
         LOGGER.debug("URL: " + url)
@@ -198,6 +274,12 @@ class OdfdomDocument implements DocumentAdapter{
         LOGGER.info("IMAGE DONE apending from URL")
     }
 
+    /** Appends image from stream. !!! Not handling it's size. !!!
+     *
+     * @param element OdfElement where image is appended.
+     * @param url Adress of an image.
+     * @param inputStream Stream of an image.
+     * */
     protected void appendImageFromStream(OdfElement element, String url, InputStream inputStream) {
         LOGGER.info("IMAGE START apending from STREAM")
         LOGGER.debug("URL: " + url)
@@ -224,6 +306,11 @@ class OdfdomDocument implements DocumentAdapter{
         LOGGER.info("IMAGE DONE apending from STREAM")
     }
 
+    /** To retrieve a path of an image in a given OdfSchemaDocument.
+     *
+     * @param mOdfSchemaDoc OdfSchemaDocument of a TextDocument.
+     * @param imageRef Adress of an image.
+     * */
     protected String getImagePath(OdfSchemaDocument mOdfSchemaDoc, String imageRef) {
         def fullPath
 
@@ -261,6 +348,11 @@ class OdfdomDocument implements DocumentAdapter{
         return packagePath
     }
 
+    /** Fills an element with a ParagraphContent.
+     *
+     * @param element OdfElement to fill with ParagraphContent.
+     * @param paragraphContent ParagraphContent containing list of SpanContents.
+     * */
     protected void fillWithParagraphContent(OdfElement element, ParagraphContent paragraphContent) {
         if (paragraphContent == null) {
             LOGGER.debug("ParagraphContent is null in fillWithParagraphContent() method.")
@@ -360,16 +452,32 @@ class OdfdomDocument implements DocumentAdapter{
         }
     }
 
+    /** Sets TextStyleNameAttribute of element.
+     *
+     * @param element OdfElement to set TextStyleNameAttribute.
+     * @param styleName Style name to set.
+     * */
     protected void setTextStyleNameAttr(OdfElement element, String styleName) {
         TextStyleNameAttribute attr = new TextStyleNameAttribute(odt.getContentDom())
         element.setOdfAttribute(attr)
         attr.setValue(styleName)
     }
 
+    /** Adds an empty paragraph to a document.
+     *
+     * @param styleName Style name to set to a paragraph.
+     * @return Instance of added paragraph.
+     * */
     protected Paragraph addParagraph(String styleName) {
         return addParagraph("", styleName)
     }
 
+    /** Adds a paragraph to a document.
+     *
+     * @param text Paragraph will contain this text.
+     * @param styleName Style name to set to a paragraph.
+     * @return Instance of added paragraph.
+     * */
     protected Paragraph addParagraph(String text, String styleName) {
         Paragraph paragraph = odt.addParagraph(text)
         setTextStyleNameAttr(paragraph.getOdfElement(), styleName)
@@ -400,7 +508,13 @@ class OdfdomDocument implements DocumentAdapter{
         addParagraph(code, StyleNames.CODE.getValue())
     }
 
-    private void appendColorSpan(OdfElement element, String text, java.awt.Color color) {
+    /** Appends span with given font color to an OdfElement.
+     *
+     * @param element OdfElement where span is appended.
+     * @param text Text contained by a span.
+     * @param color Font color to set.
+     * */
+    protected void appendColorSpan(OdfElement element, String text, java.awt.Color color) {
         Span s = new Span(new TextSpanElement(odt.getContentDom()))
         appendText(s.odfElement, text)
         s.getStyleHandler().getTextPropertiesForWrite().setFontColor(new Color(color))
@@ -442,7 +556,12 @@ class OdfdomDocument implements DocumentAdapter{
         addParagraph(StyleNames.HORIZONTAL_RULE.getValue())
     }
 
-    private ListDecorator switchDecorator(ListType e) {
+    /** Returns a list decorator corresponding to given ListType.
+     *
+     * @param e ListType that should be used.
+     * @return List decorator corresponding to given ListType.
+     * */
+    protected ListDecorator switchDecorator(ListType e) {
         ListDecorator decorator = null
         switch (e) {
             case ListType.BULLET:
@@ -451,6 +570,9 @@ class OdfdomDocument implements DocumentAdapter{
             case ListType.ORDERED:
                 decorator = new NumberDecorator(odt)
                 break
+            default:
+                decorator = new BulletDecorator(odt)
+                LOGGER.warn("ListType not implemented: " + e)
         }
         return decorator
     }
@@ -461,13 +583,23 @@ class OdfdomDocument implements DocumentAdapter{
         fillList(content, list)
     }
 
+    /** Fills a list with ListContent.
+     *
+     * @param content List content.
+     * @param list List to fill.
+     * */
     protected void fillList(ListContent content, OdfList list) {
         list.setDecorator(switchDecorator(content.getType()))
         //newList.setHeader(listHeading)
         addListRec(content, list)
     }
 
-    private void addListRec(ListContent content, OdfList list) {
+    /** Recursively filling a list.
+     *
+     * @param content List content.
+     * @param list List to fill.
+     * */
+    protected void addListRec(ListContent content, OdfList list) {
         List<List<BlockContent>> listListBlockContent = content.getListItems()
 
         for (List<BlockContent> listBlock : listListBlockContent) {
@@ -486,15 +618,29 @@ class OdfdomDocument implements DocumentAdapter{
                     OdfList newList = addSubList(list, blockContent.getType())
                     addListRec(blockContent, newList)
                 }
+                else {
+                    LOGGER.warn("BlockContent not implemented in addListRec(): " + blockContent.class)
+                }
             }
         }
     }
 
-    OdfList addSubList(OdfList parentList, ListType e) {
+    /** Adds a sub-list to list.
+     *
+     * @param parentList List where a sub-list is created.
+     * @param e ListType that should be used.
+     * @return Added sub-list instance.
+     * */
+    protected OdfList addSubList(OdfList parentList, ListType e) {
         ListDecorator decorator = switchDecorator(e)
         return parentList.getItem(parentList.size() - 1).addList(decorator)
     }
 
+    /** Sets TableStyleNameAttribute of element.
+     *
+     * @param element OdfElement to set TableStyleNameAttribute.
+     * @param styleName Style name to set.
+     * */
     protected void setTableStyleNameAttr(OdfElement element, String styleName) {
         TableStyleNameAttribute attr = new TableStyleNameAttribute(odt.getContentDom())
         element.setOdfAttribute(attr)

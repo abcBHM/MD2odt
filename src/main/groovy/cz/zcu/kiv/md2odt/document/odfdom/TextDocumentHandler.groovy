@@ -13,11 +13,16 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 
 /**
- * Created by pepe on 20. 4. 2017.
+ * Handling the creation of a TextDocument and retrieving informations from TextDocument.
  */
 class TextDocumentHandler {
     private static final Logger LOGGER = Logger.getLogger(TextDocumentHandler)
 
+    /** Returns a background color of a style name used for code block or WHITE if not found.
+     *
+     * @param document TextDocument where the color is searched.
+     * @return Value of fo:background-color in StyleNames.CODE.getValue() style name as java.awt.Color
+     * */
     static java.awt.Color getCodeBlockBackgroundColor(TextDocument document) {
         try {
             NodeList nl = document.stylesDom.officeStyles.getElementsByTagName("style:style")
@@ -47,6 +52,10 @@ class TextDocumentHandler {
         }
     }
 
+    /** Returns a TextDocumentHandler to handle creation of a new TextDocument.
+     *
+     * @return TextDocumentHandler to handle creation of a new TextDocument.
+     * */
     static TextDocumentHandler handler() {
         return new TextDocumentHandler();
     }
@@ -56,6 +65,10 @@ class TextDocumentHandler {
     private TextDocumentHandler() {
     }
 
+    /** Returns an empty TextDocument, which has support for styles.
+     *
+     * @return Returns an empty TextDocument.
+     * */
     TextDocument newTextDocument() {
         odt = TextDocument.newTextDocument()
         odt.getParagraphByIndex(0,false) .remove()     //removes an empty paragraph
@@ -63,6 +76,11 @@ class TextDocumentHandler {
         return odt
     }
 
+    /** Returns a TextDocument, which is filled with template styles and has support for other non-set styles.
+     *
+     * @param file Template file.
+     * @return Returns a TextDocument from template.
+     * */
     TextDocument newTextDocumentFromTemplate(File file) {
         odt = TextDocument.loadDocument(file)
         fillDefaultStyles()
@@ -70,6 +88,11 @@ class TextDocumentHandler {
         return odt
     }
 
+    /** Returns a TextDocument, which is filled with template styles and has support for other non-set styles.
+     *
+     * @param documentPath Template path.
+     * @return Returns a TextDocument from template.
+     * */
     TextDocument newTextDocumentFromTemplate(String documentPath) {
         odt = TextDocument.loadDocument(documentPath)
         fillDefaultStyles()
@@ -77,6 +100,11 @@ class TextDocumentHandler {
         return odt
     }
 
+    /** Returns a TextDocument, which is filled with template styles and has support for other non-set styles.
+     *
+     * @param inputStream Template stream.
+     * @return Returns a TextDocument from template.
+     * */
     TextDocument newTextDocumentFromTemplate(InputStream inputStream) {
         odt = TextDocument.loadDocument(inputStream)
         fillDefaultStyles()

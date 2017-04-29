@@ -3,14 +3,18 @@ package cz.zcu.kiv.md2odt.filler
 import java.util.function.Predicate
 
 /**
+ * {@link ResourceManager} implementation.
  *
- * @version 2017-04-21
+ * @version 2017-04-29
  * @author Patrik Harag
  */
 class ResourceManagerImpl implements ResourceManager {
 
     public static final ResourceManager NO_RESOURCES = new ResourceManagerImpl(
-            LocalResourcesImpl.EMPTY, { url -> false }, Long.MAX_VALUE)
+            LocalResourcesImpl.EMPTY,
+            { url -> false },
+            Long.MAX_VALUE
+    )
 
     private final LocalResources localResources
     private final Predicate<URL> filter
@@ -18,6 +22,14 @@ class ResourceManagerImpl implements ResourceManager {
 
     private long totalSize = 0
 
+    /**
+     * Creates a new instance.
+     *
+     * @param local local resources
+     * @param filter url filter applied on non-local resources
+     * @param totalSizeLimit max size (local + other) of resources loaded through
+     *      {@link #getResourceAsStream(java.lang.String)} in bytes
+     */
     ResourceManagerImpl(LocalResources local, Predicate<URL> filter, long totalSizeLimit) {
         this.totalSizeLimit = totalSizeLimit
         this.filter = filter
@@ -32,9 +44,12 @@ class ResourceManagerImpl implements ResourceManager {
         def resource = loadLocal(uri)
 
         if (!resource)
-            return loadFromURL(uri)
+            resource = loadFromURL(uri)
 
-        return resource
+        if (resource)
+            return resource
+        else
+            throw new IOException("Resource not found: '$uri'")
     }
 
     private void checkLimit() {
@@ -44,15 +59,14 @@ class ResourceManagerImpl implements ResourceManager {
 
     private InputStream loadLocal(String uri) {
         if (localResources) {
-            def stream = localResources.get(uri)
-            def size = localResources.getSize(uri)
+            def resource = localResources.get(uri)
 
-            if (stream) {
-                totalSize += size
+            if (resource) {
+                totalSize += resource.size
                 checkLimit()
             }
 
-            return stream
+            return resource?.inputStream
         }
     }
 
@@ -75,7 +89,7 @@ class ResourceManagerImpl implements ResourceManager {
             return new ByteArrayInputStream(buffer.toByteArray())
 
         } else {
-            throw new SecurityException("Cannot access resource")
+            throw new SecurityException("Cannot access resource: '$uri'")
         }
     }
 

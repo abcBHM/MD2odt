@@ -31,6 +31,7 @@ import org.apache.log4j.Logger
 import org.jsoup.Jsoup
 
 /**
+ * Converts AST node into {@link ParagraphContent}.
  *
  * @version 2017-04-21
  * @author Patrik Harag
@@ -45,10 +46,23 @@ class ParagraphCollector {
         this.context = context
     }
 
+    /**
+     * Converts content of given node into {@link ParagraphContent}.
+     *
+     * @param node AST node
+     * @return paragraph content
+     */
     ParagraphContent processParagraph(AstNode node) {
         processParagraph(node, null)
     }
 
+    /**
+     * Converts content of given node into {@link ParagraphContent}.
+     *
+     * @param node AST node
+     * @param styles active styles
+     * @return paragraph content
+     */
     ParagraphContent processParagraph(AstNode node, Set<TextStyle> styles) {
         def builder = Builder.builder()
 

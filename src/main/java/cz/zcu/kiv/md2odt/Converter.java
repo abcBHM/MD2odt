@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -36,6 +37,8 @@ public class Converter {
     private static final String DEFAULT_TEMPLATE = "/default-template.odt";
     private static final Predicate<URL> DEFAULT_RESOURCE_POLICY = (url) -> true;
     private static final long DEFAULT_RESOURCES_LIMIT = Long.MAX_VALUE;
+
+    public static final Pattern SOURCE_FILE_PATTERN = Pattern.compile(".*\\.md");
 
     private Source input;
     private InputStream template;
@@ -64,7 +67,7 @@ public class Converter {
     }
 
     public Converter setInputStream(InputStream in, Charset charset) {
-        this.input = new SourceCharacterStream(in, charset);
+        this.input = new SourceCharStream(in, charset);
         return this;
     }
 
@@ -73,7 +76,7 @@ public class Converter {
     }
 
     public Converter setInputZip(InputStream in, Charset charset) {
-        this.input = new SourceZip(in, charset);
+        this.input = new SourceZip(in, charset, SOURCE_FILE_PATTERN);
         return this;
     }
 

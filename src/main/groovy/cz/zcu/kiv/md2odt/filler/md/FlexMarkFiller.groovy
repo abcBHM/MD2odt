@@ -13,6 +13,7 @@ import cz.zcu.kiv.md2odt.filler.ResourceManagerImpl
 import org.apache.log4j.Logger
 
 /**
+ * Markdown filler implementation.
  *
  * @version 2017-04-20
  * @author Patrik Harag
@@ -38,10 +39,18 @@ class FlexMarkFiller implements Filler {
 
     private final Parser parser
 
+    /**
+     * Creates a new instance with default parser.
+     */
     FlexMarkFiller() {
         this(Parser.builder().build())
     }
 
+    /**
+     * Creates a new instance.
+     *
+     * @param parser Flex mark parser
+     */
     FlexMarkFiller(Parser parser) {
         this.parser = parser
     }

@@ -5,17 +5,17 @@ import java.nio.charset.Charset
 /**
  * Wrapper for stream input.
  *
- * @version 2017-04-08
+ * @version 2017-04-29
  * @author Patrik Harag
  */
-class SourceCharacterStream implements Source {
+class SourceCharStream implements Source {
 
-    final InputStream inputStream
-    final Charset charset
+    private final InputStream inputStream
+    private final Charset charset
 
     private String cache
 
-    SourceCharacterStream(InputStream inputStream, Charset charset) {
+    SourceCharStream(InputStream inputStream, Charset charset) {
         this.inputStream = inputStream
         this.charset = charset
     }

@@ -28,6 +28,13 @@ class Context {
         references.getOrDefault(name, null)
     }
 
+    /**
+     * Returns resource as an input stream.
+     *
+     * @param uri resource uri
+     * @return input stream
+     * @throws IOException
+     */
     InputStream getResourceAsStream(String uri) throws IOException {
         resourceManager.getResourceAsStream(uri)
     }

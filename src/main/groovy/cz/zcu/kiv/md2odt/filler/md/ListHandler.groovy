@@ -22,8 +22,8 @@ class ListHandler implements AstNodeHandler {
     void handle(AstNode node, Context context, Document document) {
         assert node instanceof AstList
 
-        def collector = new ListCollector()
-        def listContent = collector.processList(node as ListBlock, context)
+        def collector = new ListCollector(context)
+        def listContent = collector.processList(node as ListBlock)
 
         document.addList(listContent)
     }

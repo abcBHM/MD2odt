@@ -13,6 +13,7 @@ import cz.zcu.kiv.md2odt.document.TableContentBuilder as Builder
 import org.apache.log4j.Logger
 
 /**
+ * Converts AST node into {@link TableContent}.
  *
  * @version 2017-04-13
  * @author Patrik Harag

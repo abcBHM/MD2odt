@@ -8,23 +8,31 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
 /**
- * Wrapper for zip input.
+ * Wrapper for zip input. Zip should contain exactly one source (determined
+ * by given pattern) and any number of resources.
  *
- * @version 2017-04-08
+ * @version 2017-04-29
  * @author Patrik Harag
  */
 class SourceZip implements Source {
 
-    public static final Pattern SOURCE_FILE_PATTERN = Pattern.compile('.*\\.md')
-
-    private InputStream stream
-    private Charset charset
+    private final InputStream stream
+    private final Charset charset
+    private final Pattern sourcePattern
 
     private boolean cached
     private String cachedSource
     private Map<String, byte[]> cachedResources = [:]
 
-    SourceZip(InputStream stream, Charset charset) {
+    /**
+     * Creates a new instance.
+     *
+     * @param stream input stream
+     * @param charset charset of source
+     * @param sourcePattern pattern of source
+     */
+    SourceZip(InputStream stream, Charset charset, Pattern sourcePattern) {
+        this.sourcePattern = sourcePattern
         this.charset = charset
         this.stream = stream
     }
@@ -43,7 +51,7 @@ class SourceZip implements Source {
                     // file
                     byte[] array = asArray(zis, entry.size)
 
-                    if (entry.name.matches(SOURCE_FILE_PATTERN)) {
+                    if (entry.name.matches(sourcePattern)) {
                         // source file
                         if (cachedSource)
                             throw new RuntimeException('More source files found!')

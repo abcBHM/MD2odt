@@ -1,17 +1,6 @@
 package cz.zcu.kiv.md2odt;
 
-import com.vladsch.flexmark.Extension;
-import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
-import com.vladsch.flexmark.ext.emoji.EmojiExtension;
-import com.vladsch.flexmark.ext.escaped.character.EscapedCharacterExtension;
-import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
-import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughSubscriptExtension;
-import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension;
-import com.vladsch.flexmark.ext.tables.TablesExtension;
-import com.vladsch.flexmark.ext.toc.SimTocExtension;
-import com.vladsch.flexmark.ext.toc.TocExtension;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.superscript.SuperscriptExtension;
 import cz.zcu.kiv.md2odt.document.Document;
 import cz.zcu.kiv.md2odt.document.odfdom.OdfdomDocument;
 import cz.zcu.kiv.md2odt.filler.*;
@@ -20,87 +9,204 @@ import cz.zcu.kiv.md2odt.filler.md.FlexMarkFiller;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
+ * Converts Markdown into OpenDocument.
  *
  * @author Patrik Harag
- * @version 2017-04-21
+ * @version 2017-04-29
  */
 public class Converter {
 
-    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final String DEFAULT_TEMPLATE = "/default-template.odt";
     private static final Predicate<URL> DEFAULT_RESOURCE_POLICY = (url) -> true;
     private static final long DEFAULT_RESOURCES_LIMIT = Long.MAX_VALUE;
 
-    public static final Pattern SOURCE_FILE_PATTERN = Pattern.compile(".*\\.md");
+    private static final Pattern SOURCE_FILE_PATTERN = Pattern.compile(".*\\.md");
 
     private Source input;
     private InputStream template;
     private OutputStream output;
 
+    private FlexMarkExtensions extensions = new FlexMarkExtensions();
+
     private long resourcesLimit = DEFAULT_RESOURCES_LIMIT;
     private Predicate<URL> resourcesPolicy;
 
-    private boolean enableAutolinks;
-    private boolean enableEmoji;
-    private boolean enableStrikethrough;
-    private boolean enableSubscript;
-    private boolean enableSuperscript;
-    private boolean enableTables;
-    private boolean enableTableOfContents;
-
     // source
 
-    public Converter setInputString(String md) {
+    /**
+     * Sets Markdown source.
+     *
+     * @param md source
+     * @return this
+     */
+    public Converter setInput(String md) {
         this.input = new SourceString(md);
         return this;
     }
 
-    public Converter setInputStream(InputStream in) {
-        return setInputStream(in, DEFAULT_CHARSET);
-    }
-
-    public Converter setInputStream(InputStream in, Charset charset) {
+    /**
+     * Sets Markdown source.
+     *
+     * @param in source
+     * @param charset charset
+     * @return this
+     */
+    public Converter setInput(InputStream in, Charset charset) throws IOException {
         this.input = new SourceCharStream(in, charset);
         return this;
     }
 
-    public Converter setInputZip(InputStream in) {
-        return setInputZip(in, DEFAULT_CHARSET);
+    /**
+     * Sets Markdown source.
+     *
+     * @param file source
+     * @param charset charset
+     * @return this
+     */
+    public Converter setInput(File file, Charset charset) throws IOException {
+        return setInput(new FileInputStream(file), charset);
     }
 
-    public Converter setInputZip(InputStream in, Charset charset) {
+    /**
+     * Sets Markdown source.
+     *
+     * @param file source
+     * @param charset charset
+     * @return this
+     */
+    public Converter setInput(Path file, Charset charset) throws IOException {
+        return setInput(file.toFile(), charset);
+    }
+
+    /**
+     * Sets input as a zip. The zip must contain exactly one Markdown source and
+     * any number of resources (images).
+     *
+     * @param in zip
+     * @param charset charset of the Markdown source
+     * @return this
+     */
+    public Converter setInputZip(InputStream in, Charset charset) throws IOException {
         this.input = new SourceZip(in, charset, SOURCE_FILE_PATTERN);
         return this;
     }
 
+    /**
+     * See {@link #setInput(InputStream, Charset)}.
+     *
+     * @param file zip
+     * @param charset charset
+     * @return this
+     */
+    public Converter setInputZip(File file, Charset charset) throws IOException {
+        return setInputZip(new FileInputStream(file), charset);
+    }
+
+    /**
+     * See {@link #setInput(InputStream, Charset)}.
+     *
+     * @param file zip
+     * @param charset charset
+     * @return this
+     */
+    public Converter setInputZip(Path file, Charset charset) throws IOException {
+        return setInputZip(file.toFile(), charset);
+    }
+
     // template
 
-    public Converter setTemplate(InputStream template) {
+    /**
+     * Sets ODT or OTT template.
+     * If not set, default template will be used.
+     *
+     * @param template template
+     * @return this
+     */
+    public Converter setTemplate(InputStream template) throws IOException {
         this.template = template;
         return this;
     }
 
+    /**
+     * See {@link #setTemplate(InputStream)}.
+     *
+     * @param file template
+     * @return this
+     */
+    public Converter setTemplate(File file) throws IOException {
+        return setTemplate(new FileInputStream(file));
+    }
+
+    /**
+     * See {@link #setTemplate(InputStream)}.
+     *
+     * @param file template
+     * @return this
+     */
+    public Converter setTemplate(Path file) throws IOException {
+        return setTemplate(file.toFile());
+    }
+
     // output
 
-    public Converter setOutput(OutputStream out) {
+    /**
+     * Sets ODT output.
+     *
+     * @param out output stream
+     * @return this
+     */
+    public Converter setOutput(OutputStream out) throws IOException {
         this.output = out;
         return this;
     }
 
+    /**
+     * Sets ODT output.
+     *
+     * @param file output stream
+     * @return this
+     */
+    public Converter setOutput(File file) throws IOException {
+        return setOutput(new FileOutputStream(file, false));
+    }
+
+    /**
+     * Sets ODT output.
+     *
+     * @param file output stream
+     * @return this
+     */
+    public Converter setOutput(Path file) throws IOException {
+        return setOutput(file.toFile());
+    }
+
     // resources
 
+    /**
+     * Sets total max size of resources in bytes.
+     *
+     * @param resourcesLimit max size in bytes
+     * @return this
+     */
     public Converter setResourcesLimit(long resourcesLimit) {
         this.resourcesLimit = resourcesLimit;
         return this;
     }
 
+    /**
+     * Sets resource filter.
+     * For example it is possible to filter remote resources.
+     *
+     * @param predicate filter
+     * @return this
+     */
     public Converter setResourcesPolicy(Predicate<URL> predicate) {
         this.resourcesPolicy = predicate;
         return this;
@@ -108,54 +214,54 @@ public class Converter {
 
     // extensions
 
-    public Converter enableAutolinks() {
-        this.enableAutolinks = true;
+    /**
+     * Enables given extension.
+     *
+     * @param extension extension
+     * @return this
+     */
+    public Converter enableExtension(String extension) {
+        extensions.add(extension);
         return this;
     }
 
-    public Converter enableEmoji() {
-        this.enableEmoji = true;
+    /**
+     * Enables given extensions.
+     *
+     * @param collection collection of extensions
+     * @return this
+     */
+    public Converter enableExtensions(Collection<String> collection) {
+        collection.forEach(this::enableExtension);
         return this;
     }
 
-    public Converter enableStrikethrough() {
-        this.enableStrikethrough = true;
-        return this;
+    /**
+     * Enables given extensions.
+     *
+     * @param array array of extensions
+     * @return this
+     */
+    public Converter enableExtensions(String... array) {
+        return enableExtensions(Arrays.asList(array));
     }
 
-    public Converter enableSubscript() {
-        this.enableSubscript = true;
-        return this;
-    }
-
-    public Converter enableSuperscript() {
-        this.enableSuperscript = true;
-        return this;
-    }
-
-    public Converter enableTables() {
-        this.enableTables = true;
-        return this;
-    }
-
-    public Converter enableTableOfContents() {
-        this.enableTableOfContents = true;
-        return this;
-    }
-
+    /**
+     * Enables all extensions.
+     *
+     * @return this
+     */
     public Converter enableAllExtensions() {
-        enableAutolinks();
-        enableEmoji();
-        enableStrikethrough();
-        enableSubscript();
-        enableSuperscript();
-        enableTables();
-        enableTableOfContents();
-        return this;
+        return enableExtensions(Extensions.LIST);
     }
 
-    // ---
+    // convert
 
+    /**
+     * Converts Markdown source into OpenDocument.
+     *
+     * @throws IOException
+     */
     public void convert() throws IOException {
         if (input == null)
             throw new IllegalArgumentException("Input not set");
@@ -165,7 +271,7 @@ public class Converter {
 
         Document document = new OdfdomDocument(getTemplate());
 
-        Parser parser = Parser.builder().extensions(getExtensions()).build();
+        Parser parser = Parser.builder().extensions(extensions.getExtensions()).build();
         Filler filler = new FlexMarkFiller(parser);
         filler.fill(input.getSource(), getResourceManager(), document);
         document.save(output);
@@ -188,31 +294,6 @@ public class Converter {
             return template;
         else
             return System.class.getResourceAsStream(DEFAULT_TEMPLATE);
-    }
-
-    private List<Extension> getExtensions() {
-        List<Extension> extensions = new ArrayList<>();
-
-        extensions.add(EscapedCharacterExtension.create());
-
-        if (enableAutolinks) extensions.add(AutolinkExtension.create());
-        if (enableEmoji) extensions.add(EmojiExtension.create());
-        if (enableSuperscript) extensions.add(SuperscriptExtension.create());
-        if (enableTables) extensions.add(TablesExtension.create());
-
-        if (enableStrikethrough && enableSubscript)
-            extensions.add(StrikethroughSubscriptExtension.create());
-        else if (enableStrikethrough)
-            extensions.add(StrikethroughExtension.create());
-        else if (enableSubscript)
-            extensions.add(SubscriptExtension.create());
-
-        if (enableTableOfContents) {
-            extensions.add(TocExtension.create());
-            extensions.add(SimTocExtension.create());
-        }
-
-        return extensions;
     }
 
 }

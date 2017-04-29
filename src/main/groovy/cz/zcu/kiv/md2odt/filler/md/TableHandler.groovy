@@ -3,6 +3,7 @@ package cz.zcu.kiv.md2odt.filler.md
 import com.vladsch.flexmark.ast.Node as AstNode
 import com.vladsch.flexmark.ext.tables.TableBlock as AstTable
 import cz.zcu.kiv.md2odt.document.Document
+import groovy.transform.PackageScope
 
 /**
  * Handles {@link com.vladsch.flexmark.ext.tables.TableBlock} AST node.
@@ -10,6 +11,7 @@ import cz.zcu.kiv.md2odt.document.Document
  * @version 2017-04-13
  * @author Patrik Harag
  */
+@PackageScope
 class TableHandler implements AstNodeHandler {
 
     @Override

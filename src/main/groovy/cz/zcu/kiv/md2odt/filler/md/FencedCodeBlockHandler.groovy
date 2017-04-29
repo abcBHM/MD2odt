@@ -3,6 +3,7 @@ package cz.zcu.kiv.md2odt.filler.md
 import com.vladsch.flexmark.ast.Node as AstNode
 import com.vladsch.flexmark.ast.FencedCodeBlock as AstFencedCodeBlock
 import cz.zcu.kiv.md2odt.document.Document
+import groovy.transform.PackageScope
 import org.apache.log4j.Logger
 
 /**
@@ -11,6 +12,7 @@ import org.apache.log4j.Logger
  * @version 2017-04-04
  * @author Patrik Harag
  */
+@PackageScope
 class FencedCodeBlockHandler implements AstNodeHandler {
 
     private static final Logger LOGGER = Logger.getLogger(FencedCodeBlockHandler)

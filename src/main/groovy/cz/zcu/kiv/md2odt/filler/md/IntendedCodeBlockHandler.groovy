@@ -3,6 +3,7 @@ package cz.zcu.kiv.md2odt.filler.md
 import com.vladsch.flexmark.ast.IndentedCodeBlock as AstIndentedCodeBlock
 import com.vladsch.flexmark.ast.Node as AstNode
 import cz.zcu.kiv.md2odt.document.Document
+import groovy.transform.PackageScope
 
 /**
  * Handles {@link com.vladsch.flexmark.ast.IndentedCodeBlock} AST node.
@@ -10,6 +11,7 @@ import cz.zcu.kiv.md2odt.document.Document
  * @version 2017-03-17
  * @author Patrik Harag
  */
+@PackageScope
 class IntendedCodeBlockHandler implements AstNodeHandler {
 
     // TODO: tabs?

@@ -5,6 +5,7 @@ import com.vladsch.flexmark.ast.Reference as AstReference
 import cz.zcu.kiv.md2odt.filler.ResourceManager
 import cz.zcu.kiv.md2odt.filler.ResourceManagerImpl
 import groovy.transform.Immutable
+import groovy.transform.PackageScope
 
 /**
  * Holds information about processed input.
@@ -13,6 +14,7 @@ import groovy.transform.Immutable
  * @author Patrik Harag
  */
 @Immutable
+@PackageScope
 class Context {
 
     private Map<String, AstReference> references

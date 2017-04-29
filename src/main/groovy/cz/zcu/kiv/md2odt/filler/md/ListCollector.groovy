@@ -10,6 +10,7 @@ import cz.zcu.kiv.md2odt.document.ListContent
 import cz.zcu.kiv.md2odt.document.ListContentBuilder
 import cz.zcu.kiv.md2odt.document.ListType
 import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder
+import groovy.transform.PackageScope
 import org.apache.log4j.Logger
 
 /**
@@ -18,6 +19,7 @@ import org.apache.log4j.Logger
  * @version 2017-04-29
  * @author Patrik Harag
  */
+@PackageScope
 class ListCollector {
 
     private static final Logger LOGGER = Logger.getLogger(ListCollector)

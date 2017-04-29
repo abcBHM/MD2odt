@@ -3,6 +3,7 @@ package cz.zcu.kiv.md2odt.filler.md
 import com.vladsch.flexmark.ast.Node as AstNode
 import cz.zcu.kiv.md2odt.document.Document
 import groovy.transform.Immutable
+import groovy.transform.PackageScope
 
 /**
  * Library class.
@@ -10,6 +11,7 @@ import groovy.transform.Immutable
  * @version 2017-04-02
  * @author Patrik Harag
  */
+@PackageScope
 class BasicHandlers {
 
     private BasicHandlers() {}

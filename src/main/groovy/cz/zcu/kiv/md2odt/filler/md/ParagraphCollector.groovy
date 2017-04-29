@@ -27,6 +27,7 @@ import com.vladsch.flexmark.superscript.Superscript as AstSup
 import cz.zcu.kiv.md2odt.document.ParagraphContent
 import cz.zcu.kiv.md2odt.document.ParagraphContentBuilder as Builder
 import cz.zcu.kiv.md2odt.document.TextStyle
+import groovy.transform.PackageScope
 import org.apache.log4j.Logger
 import org.jsoup.Jsoup
 
@@ -36,6 +37,7 @@ import org.jsoup.Jsoup
  * @version 2017-04-21
  * @author Patrik Harag
  */
+@PackageScope
 class ParagraphCollector {
 
     private static final Logger LOGGER = Logger.getLogger(ParagraphCollector)

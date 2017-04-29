@@ -10,6 +10,7 @@ import com.vladsch.flexmark.ext.tables.TableCell as AstTableCell
 import cz.zcu.kiv.md2odt.document.TableCellContent
 import cz.zcu.kiv.md2odt.document.TableContent
 import cz.zcu.kiv.md2odt.document.TableContentBuilder as Builder
+import groovy.transform.PackageScope
 import org.apache.log4j.Logger
 
 /**
@@ -18,6 +19,7 @@ import org.apache.log4j.Logger
  * @version 2017-04-13
  * @author Patrik Harag
  */
+@PackageScope
 class TableCollector {
 
     private static final Logger LOGGER = Logger.getLogger(TableCollector)

@@ -24,23 +24,49 @@ MD2odt is a easy to use library for converting Markdown to OpenDocument (*.odt*)
     * Tables
     * Table of contents
 
+* Syntax highlighting
+
 ## Example
+
+### Maven
+
+```
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+
+Dependency:
+```
+<dependency>
+    <groupId>com.github.abcBHM</groupId>
+    <artifactId>MD2odt</artifactId>
+    <version>master-SNAPSHOT</version>
+</dependency>
+```
+
+### Source code
 
 ```java
 import cz.zcu.kiv.md2odt.MD2odt;
-```
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 
-```java
-InputStream zip = ...  // zip with Markdown file and images
-InputStream template = ...  // .odt or .ott template, optional
-OutputStream out = ...
+public class Example {
 
-MD2odt.converter()
-        .setInputZip(zip)
-        .setTemplate(template)
-        .setOutput(out)
-        .enableAllExtensions()
-        .convert();
+    public static void main(String... args) throws IOException {
+        MD2odt.converter()
+                .setInput(Paths.get("example.md"), StandardCharsets.UTF_8)
+                .setTemplate(Paths.get("template.odt"))
+                .setOutput(Paths.get("result.odt"))
+                .enableAllExtensions()
+                .convert();
+    }
+}
 ```
 
 ## License

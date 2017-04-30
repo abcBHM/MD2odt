@@ -83,7 +83,7 @@ class CodeParser implements Parser {
                     if(name.equals(lowerLang)) {
                         codeLang = pickedLang
 
-                        LOGGER.info("usinge lexer for \"" + pickedLang.getLangNames()[0] + "\"")
+                        LOGGER.info("Using lexer for: \"" + pickedLang.getLangNames()[0] + "\"")
 
                         return codeLang
                     }
@@ -92,7 +92,7 @@ class CodeParser implements Parser {
 
             if (codeLang == null) {
                 codeLang = CodeLang.NONE
-                LOGGER.info("unknown code lang " + lang)
+                LOGGER.info("Unknown code lang: " + lang)
             }
         }
 
@@ -112,7 +112,7 @@ class CodeParser implements Parser {
 
         if(codeSectionType == null) {
             codeSectionType = CodeSectionType.NONE
-            LOGGER.info("unknown CodeSectionType " + type)
+            LOGGER.info("Unknown CodeSectionType: " + type)
         }
 
         return codeSectionType

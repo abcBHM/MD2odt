@@ -1,14 +1,18 @@
 package cz.zcu.kiv.md2odt.filler
 
+import org.apache.log4j.Logger
+
 import java.util.function.Predicate
 
 /**
  * {@link ResourceManager} implementation.
  *
- * @version 2017-04-29
+ * @version 2017-04-30
  * @author Patrik Harag
  */
 class ResourceManagerImpl implements ResourceManager {
+
+    private static final Logger LOGGER = Logger.getLogger(ResourceManagerImpl)
 
     public static final ResourceManager NO_RESOURCES = new ResourceManagerImpl(
             LocalResourcesImpl.EMPTY,
@@ -49,7 +53,7 @@ class ResourceManagerImpl implements ResourceManager {
         if (resource)
             return resource
         else
-            throw new IOException("Resource not found: '$uri'")
+            throw new IOException("Resource not found: '${ formatUri(uri) }'")
     }
 
     private void checkLimit() {
@@ -62,6 +66,7 @@ class ResourceManagerImpl implements ResourceManager {
             def resource = localResources.get(uri)
 
             if (resource) {
+                LOGGER.info("Loading local resource: '${ formatUri(uri) }'")
                 totalSize += resource.size
                 checkLimit()
             }
@@ -74,11 +79,12 @@ class ResourceManagerImpl implements ResourceManager {
         URL resourceUrl = new URL(uri)
 
         if (filter.test(resourceUrl)) {
-            // TODO: something faster
+            LOGGER.info("Loading external resource: '${ formatUri(uri) }'")
 
             def buffer = new ByteArrayOutputStream()
             def inputStream = resourceUrl.openStream()
 
+            // TODO: something faster
             int b
             while ((b = inputStream.read()) != -1) {
                 buffer.write(b)
@@ -89,8 +95,20 @@ class ResourceManagerImpl implements ResourceManager {
             return new ByteArrayInputStream(buffer.toByteArray())
 
         } else {
-            throw new SecurityException("Cannot access resource: '$uri'")
+            throw new SecurityException("Cannot access resource: '${ formatUri(uri) }'")
         }
+    }
+
+    private static String formatUri(String uri) {
+        final int MAX_SIZE = 32
+        final int MIN_ELLIPSIS_SIZE = 6
+
+        if (uri.size() > (MAX_SIZE + MIN_ELLIPSIS_SIZE)) {
+            String ellipsis = "...(+${ uri.size() - MAX_SIZE })"
+            return uri[0..<MAX_SIZE] + ellipsis
+        }
+
+        return uri
     }
 
 }

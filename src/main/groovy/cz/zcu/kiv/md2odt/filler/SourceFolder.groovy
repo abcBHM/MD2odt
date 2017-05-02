@@ -1,12 +1,9 @@
 package cz.zcu.kiv.md2odt.filler
 
-import cz.zcu.kiv.md2odt.filler.LocalResources
-import cz.zcu.kiv.md2odt.filler.LocalResourcesImpl
-import cz.zcu.kiv.md2odt.filler.Source
 import groovy.transform.CompileStatic
+import org.apache.commons.io.IOUtils
 
 import java.nio.charset.Charset
-import java.nio.file.Files
 import java.util.regex.Pattern
 
 /**
@@ -55,7 +52,7 @@ class SourceFolder implements Source {
                 }
             } else {
                 InputStream is = new FileInputStream(file)
-                byte[] array = asArray(is, file.size())
+                byte[] array = IOUtils.toByteArray(is)
                 is.close()
 
                 if(file.getName().matches(sourcePattern)) {
@@ -71,19 +68,6 @@ class SourceFolder implements Source {
 
         if(cachedSource == null)
             throw new RuntimeException('Source file not found!')
-    }
-
-    @CompileStatic
-    private static byte[] asArray(InputStream is, long size) {
-        byte[] array = new byte[size]
-        // read(byte b[]) is broken
-
-        int b
-        int index = 0
-        while ((b = is.read()) != -1)
-            array[index++] = (byte) b
-
-        return array
     }
 
     @Override

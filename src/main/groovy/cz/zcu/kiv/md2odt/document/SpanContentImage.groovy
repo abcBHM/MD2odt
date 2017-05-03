@@ -15,6 +15,12 @@ class SpanContentImage implements SpanContent {
 
     final SpanType type = SpanType.IMAGE
 
+    /** SpanContentImage constructor.
+     *
+     * @param text image text
+     * @param url image path
+     * @param alt alternative text
+     * */
     SpanContentImage(String text, String url, String alt) {
         this.text = text
         this.url = url

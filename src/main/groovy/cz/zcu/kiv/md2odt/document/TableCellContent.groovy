@@ -15,6 +15,12 @@ class TableCellContent {
     final Align align
     final boolean heading
 
+    /** TableCellContent constructor.
+     *
+     * @param content content of a table cell
+     * @param align alignment of a table cell
+     * @param heading if a table cell should be formatted as heading table cell
+     * */
     TableCellContent(ParagraphContent content, Align align, boolean heading) {
         this.content = content
         this.align = align

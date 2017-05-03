@@ -16,6 +16,12 @@ class ListContentBuilder {
         List<List<BlockContent>> listItems
     }
 
+    /**
+     * Creates an instance of ListContentBuilder to build a ListContent.
+     *
+     * @param type ListType of a list
+     * @return instance of ListContentBuilder to build a ListContent
+     */
     static ListContentBuilder builder(ListType type) {
         new ListContentBuilder(type)
     }
@@ -29,15 +35,32 @@ class ListContentBuilder {
         this.type = type
     }
 
+    /**
+     * Adds list item to builder.
+     *
+     * @param list list item contents
+     * @return builder
+     */
     ListContentBuilder addListItem(List<BlockContent> list) {
         buffer.add(new ArrayList<BlockContent>(list))  // add copy
         return this
     }
 
+    /**
+     * Adds list item to builder.
+     *
+     * @param list list item content
+     * @return builder
+     */
     ListContentBuilder addListItem(BlockContent blockContent) {
         addListItem([blockContent])
     }
 
+    /**
+     * Creates ListContent from builder.
+     *
+     * @return ListContent of a builded list
+     */
     ListContent build() {
         new ListContentImpl(type: this.type, listItems: this.buffer)
     }

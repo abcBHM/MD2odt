@@ -5,6 +5,7 @@ import cz.zcu.kiv.md2odt.document.Document;
 import cz.zcu.kiv.md2odt.document.odfdom.OdfdomDocument;
 import cz.zcu.kiv.md2odt.filler.*;
 import cz.zcu.kiv.md2odt.filler.md.FlexMarkFiller;
+import cz.zcu.kiv.md2odt.filler.SourceFolder;
 
 import java.io.*;
 import java.net.URL;
@@ -118,6 +119,18 @@ public class Converter {
      */
     public Converter setInputZip(Path file, Charset charset) throws IOException {
         return setInputZip(file.toFile(), charset);
+    }
+
+    /**
+     * See {@link #setInput(InputStream, Charset)}.
+     *
+     * @param file zip
+     * @param charset charset
+     * @return this
+     */
+    public Converter setInputFolder(File file, Charset charset) throws IOException {
+        this.input = new SourceFolder(file, charset, SOURCE_FILE_PATTERN);
+        return this;
     }
 
     // template

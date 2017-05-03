@@ -122,9 +122,10 @@ public class Converter {
     }
 
     /**
-     * See {@link #setInput(InputStream, Charset)}.
+     * Sets input as a folder. The folder must contain exactly one Markdown source and
+     * any number of resources (images).
      *
-     * @param file zip
+     * @param file folder
      * @param charset charset
      * @return this
      */

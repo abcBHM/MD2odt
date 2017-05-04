@@ -591,7 +591,7 @@ class OdfdomDocument implements DocumentAdapter{
      * @param container ListContainer where a list is added.
      * @param content ListContent that will be contained in list.
      * */
-    protected addList(ListContainer container, ListContent content) {
+    protected void addList(ListContainer container, ListContent content) {
         OdfList list = container.addList(switchDecorator(content.getType()))
         List<List<BlockContent>> listListBlockContent = content.getListItems()
 
@@ -720,8 +720,7 @@ class OdfdomDocument implements DocumentAdapter{
     @Override
     void addBlockContent(BlockContent content) {
         if (content instanceof ParagraphContent) {
-            Paragraph paragraph = addParagraph(StyleNames.BODY_TEXT.getValue())
-            fillWithParagraphContent(paragraph.getOdfElement(), content)
+            addParagraph(content)
         }
         else if (content instanceof ListContent) {
             addList(odt, content)

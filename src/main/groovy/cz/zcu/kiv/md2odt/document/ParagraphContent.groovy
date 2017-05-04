@@ -8,6 +8,11 @@ package cz.zcu.kiv.md2odt.document
  */
 interface ParagraphContent extends BlockContent {
 
+    /**
+     * Returns content of a paragraph created as SpanContents.
+     *
+     * @return content of a paragraph as a list of SpanContents
+     */
     List<SpanContent> getList()
 
 }

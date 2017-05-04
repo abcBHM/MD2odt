@@ -8,6 +8,9 @@ package cz.zcu.kiv.md2odt.document
  */
 interface TableContent extends BlockContent {
 
+    /** Returns rows of table.
+     * @return rows of table
+     * */
     List<List<TableCellContent>> getRows()
 
 }

@@ -9,6 +9,13 @@ class SpanContentImageStream extends SpanContentImage {
 
     final InputStream stream
 
+    /** SpanContentImageStream constructor.
+     *
+     * @param text image text
+     * @param url image path
+     * @param alt alternative text
+     * @param is InputStream of an image
+     * */
     SpanContentImageStream(String text, String url, String alt, InputStream is) {
         super(text, url, alt)
         this.stream = is

@@ -11,6 +11,11 @@ class SpanContentLink implements SpanContent {
     final String url
     final SpanType type = SpanType.LINK
 
+    /** SpanContentLink constructor.
+     *
+     * @param content content to show
+     * @param url url of a link
+     * */
     SpanContentLink(ParagraphContent content, String url) {
         this.content = content
         this.url = url

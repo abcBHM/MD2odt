@@ -14,6 +14,11 @@ class TableContentBuilder {
         List<List<TableCellContent>> rows
     }
 
+    /**
+     * Creates an instance of TableContentBuilder to build a TableContent.
+     *
+     * @return instance of TableContentBuilder to build a TableContent
+     */
     static TableContentBuilder builder() {
         new TableContentBuilder()
     }
@@ -24,11 +29,21 @@ class TableContentBuilder {
     private TableContentBuilder() {
     }
 
+    /** Adds a table row to a builder.
+     *
+     * @param row row content
+     * @return builder
+     * */
     TableContentBuilder addRow(List<TableCellContent> row) {
         this.rows.add(row)
         return this
     }
 
+    /**
+     * Creates TableContent from builder.
+     *
+     * @return TableContent of a builded table
+     */
     TableContent build() {
         return new TableContentImpl(rows)
     }

@@ -7,6 +7,11 @@ package cz.zcu.kiv.md2odt.document
  */
 class SpanContentText implements SpanContent {
 
+    /** SpanContentText constructor.
+     *
+     * @param text text content
+     * @param styles styles to set to a text
+     * */
     SpanContentText(String text, Collection<TextStyle> styles) {
         this.text = text
         this.styles = styles

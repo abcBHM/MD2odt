@@ -7,7 +7,17 @@ package cz.zcu.kiv.md2odt.document
  */
 interface SpanContent {
 
+    /**
+     * Returns text content of this span.
+     *
+     * @return text content
+     */
     String getText()
+    /**
+     * Returns type of this span.
+     *
+     * @return type
+     */
     SpanType getType()
 
 }

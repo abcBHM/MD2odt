@@ -13,7 +13,10 @@ import org.odftoolkit.odfdom.dom.attribute.table.TableStyleNameAttribute
 import org.odftoolkit.odfdom.dom.attribute.text.TextStyleNameAttribute
 import org.odftoolkit.odfdom.dom.element.draw.DrawFrameElement
 import org.odftoolkit.odfdom.dom.element.draw.DrawImageElement
-import org.odftoolkit.odfdom.dom.element.text.*
+import org.odftoolkit.odfdom.dom.element.text.TextAElement
+import org.odftoolkit.odfdom.dom.element.text.TextLineBreakElement
+import org.odftoolkit.odfdom.dom.element.text.TextPElement
+import org.odftoolkit.odfdom.dom.element.text.TextSpanElement
 import org.odftoolkit.odfdom.pkg.OdfElement
 import org.odftoolkit.odfdom.pkg.OdfPackage
 import org.odftoolkit.odfdom.pkg.manifest.OdfFileEntry
@@ -23,13 +26,14 @@ import org.odftoolkit.simple.draw.Image
 import org.odftoolkit.simple.style.StyleTypeDefinitions
 import org.odftoolkit.simple.table.Cell
 import org.odftoolkit.simple.table.Table
+import org.odftoolkit.simple.table.TableContainer
 import org.odftoolkit.simple.text.Paragraph
 import org.odftoolkit.simple.text.Span
-import org.odftoolkit.simple.text.list.BulletDecorator
+import org.odftoolkit.simple.text.list.*
 import org.odftoolkit.simple.text.list.List as OdfList
-import org.odftoolkit.simple.text.list.ListDecorator
-import org.odftoolkit.simple.text.list.NumberDecorator
 import org.w3c.dom.Text
+
+import java.util.List
 
 /**
  * Wrapper for a TextDocument. It provides functionality of Document interface.
@@ -579,61 +583,39 @@ class OdfdomDocument implements DocumentAdapter{
 
     @Override
     void addList(ListContent content) {
-        OdfList list = odt.addList()
-        fillList(content, list)
+        addList(odt, content)
     }
 
-    /** Fills a list with ListContent.
+    /** Appends list to container.
      *
-     * @param content List content.
-     * @param list List to fill.
+     * @param container ListContainer where a list is added.
+     * @param content ListContent that will be contained in list.
      * */
-    protected void fillList(ListContent content, OdfList list) {
-        list.setDecorator(switchDecorator(content.getType()))
-        //newList.setHeader(listHeading)
-        addListRec(content, list)
-    }
-
-    /** Recursively filling a list.
-     *
-     * @param content List content.
-     * @param list List to fill.
-     * */
-    protected void addListRec(ListContent content, OdfList list) {
+    protected addList(ListContainer container, ListContent content) {
+        OdfList list = container.addList(switchDecorator(content.getType()))
         List<List<BlockContent>> listListBlockContent = content.getListItems()
 
         for (List<BlockContent> listBlock : listListBlockContent) {
-            TextListItemElement textItem = null
+            ListItem listItem = new ListItem(list.getOdfElement().newTextListItemElement())
 
             for (BlockContent blockContent : listBlock) {
                 if(blockContent instanceof ParagraphContent) {
-                    if(textItem == null) {
-                        textItem = list.getOdfElement().newTextListItemElement()
-                    }
-                    TextPElement par = textItem.newTextPElement()
+                    TextPElement par = listItem.odfElement.newTextPElement()
                     setTextStyleNameAttr(par, StyleNames.LIST.getValue())
                     fillWithParagraphContent(par, blockContent)
                 }
                 else if(blockContent instanceof ListContent) {
-                    OdfList newList = addSubList(list, blockContent.getType())
-                    addListRec(blockContent, newList)
+                    addList(listItem, blockContent)
+                }
+                else if(blockContent instanceof TableContent) {
+                    LOGGER.warn("Table in list is not supported. Table is placed after the list.")
+                    addTable(blockContent)
                 }
                 else {
-                    LOGGER.warn("BlockContent not implemented in addListRec(): " + blockContent.class)
+                    LOGGER.warn("BlockContent not implemented in addList(): " + blockContent.class)
                 }
             }
         }
-    }
-
-    /** Adds a sub-list to list.
-     *
-     * @param parentList List where a sub-list is created.
-     * @param e ListType that should be used.
-     * @return Added sub-list instance.
-     * */
-    protected OdfList addSubList(OdfList parentList, ListType e) {
-        ListDecorator decorator = switchDecorator(e)
-        return parentList.getItem(parentList.size() - 1).addList(decorator)
     }
 
     /** Sets TableStyleNameAttribute of element.
@@ -649,6 +631,17 @@ class OdfdomDocument implements DocumentAdapter{
 
     @Override
     void addTable(TableContent content) {
+        addTable(odt, content)
+    }
+
+    /** Appends table to container.
+     *
+     * @param container TableContainer where a table is added.
+     * @param content TableContent that will be contained in table.
+     * @return added table
+     * */
+    protected Table addTable(TableContainer container, TableContent content) {
+
         List<List<TableCellContent>> rows = content.getRows()
         int rowCount = rows.size()
         int colCount = 0
@@ -658,7 +651,7 @@ class OdfdomDocument implements DocumentAdapter{
             }
         }
 
-        Table table=Table.newTable(odt, rowCount, colCount)
+        Table table = container.addTable(rowCount, colCount)
         table.setVerticalMargin(0.1, 0.1)
 
         int r = 0
@@ -666,8 +659,7 @@ class OdfdomDocument implements DocumentAdapter{
             int c = 0
             for (TableCellContent tableCellContent : row) {
                 Cell cell = table.getCellByPosition(c, r)
-                def par = cell.addParagraph("")
-                fillWithParagraphContent(par.odfElement, tableCellContent.content)
+
                 if (tableCellContent.heading) {
                     setTableStyleNameAttr(cell.odfElement, StyleNames.TABLE_HEADING.getValue())
                 }
@@ -675,20 +667,70 @@ class OdfdomDocument implements DocumentAdapter{
                     setTableStyleNameAttr(cell.odfElement, StyleNames.TABLE_CONTENTS.getValue())
                 }
 
-                switch (tableCellContent.align) {
-                    case TableCellContent.Align.LEFT:
-                        par.setHorizontalAlignment(StyleTypeDefinitions.HorizontalAlignmentType.LEFT)
-                        break
-                    case TableCellContent.Align.CENTER:
-                        par.setHorizontalAlignment(StyleTypeDefinitions.HorizontalAlignmentType.CENTER)
-                        break
-                    case TableCellContent.Align.RIGHT:
-                        par.setHorizontalAlignment(StyleTypeDefinitions.HorizontalAlignmentType.RIGHT)
-                        break
+                Paragraph par = null
+                BlockContent tccc = tableCellContent.content
+                if (tccc instanceof ParagraphContent) {
+                    par = cell.addParagraph("")
+                    fillWithParagraphContent(par.odfElement, tableCellContent.content)
+
+                    switch (tableCellContent.align) {
+                        case TableCellContent.Align.LEFT:
+                            par.setHorizontalAlignment(StyleTypeDefinitions.HorizontalAlignmentType.LEFT)
+                            break
+                        case TableCellContent.Align.CENTER:
+                            par.setHorizontalAlignment(StyleTypeDefinitions.HorizontalAlignmentType.CENTER)
+                            break
+                        case TableCellContent.Align.RIGHT:
+                            par.setHorizontalAlignment(StyleTypeDefinitions.HorizontalAlignmentType.RIGHT)
+                            break
+                    }
                 }
+                else if (tccc instanceof ListContent) {
+                    addList(cell, tccc)
+                }
+                else if (tccc instanceof TableContent) {
+                    addTable(cell, tccc)
+                }
+                else {
+                    LOGGER.warn("BlockContent not implemented in addTable(): " + tccc.class)
+                }
+
+                if(par == null) {
+                    cell.addParagraph("")
+                }
+
                 c++
             }
             r++
+        }
+        return table
+    }
+
+    /** Appends table to cell.
+     *
+     * @param container TableContainer where a table is added.
+     * @param content TableContent that will be contained in table.
+     * */
+    protected addTable(Cell cell, TableContent content) {
+        Table table = addTable(odt, content)
+        table.remove()
+        cell.odfElement.appendChild(table.odfElement)
+    }
+
+    @Override
+    void addBlockContent(BlockContent content) {
+        if (content instanceof ParagraphContent) {
+            Paragraph paragraph = addParagraph(StyleNames.BODY_TEXT.getValue())
+            fillWithParagraphContent(paragraph.getOdfElement(), content)
+        }
+        else if (content instanceof ListContent) {
+            addList(odt, content)
+        }
+        else if (content instanceof TableContent) {
+            addTable(odt, content)
+        }
+        else {
+            LOGGER.warn("BlockContent not known in addBlockContent: " + content.class)
         }
     }
 

@@ -56,6 +56,11 @@ trait DocumentAdapter implements Document {
     }
 
     @Override
+    void addBlockContent(BlockContent content) {
+        LOGGER.error("Unsupported operation: addBlockContent")
+    }
+
+    @Override
     void save(String documentPath){
         throw new UnsupportedOperationException()
     }

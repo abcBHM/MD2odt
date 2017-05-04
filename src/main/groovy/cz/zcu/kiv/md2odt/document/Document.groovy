@@ -66,6 +66,12 @@ interface Document {
      * */
     void addTableOfContents()
 
+    /** Appends BlockContent to a document.
+     *
+     * @param content BlockContent that will be added.
+     * */
+    void addBlockContent(BlockContent content)
+
     /** Saves a document into given path.
      *
      * @param documentPath Path where a document should be saved into.

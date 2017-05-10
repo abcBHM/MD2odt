@@ -618,17 +618,6 @@ class OdfdomDocument implements DocumentAdapter{
         }
     }
 
-    /** Sets TableStyleNameAttribute of element.
-     *
-     * @param element OdfElement to set TableStyleNameAttribute.
-     * @param styleName Style name to set.
-     * */
-    protected void setTableStyleNameAttr(OdfElement element, String styleName) {
-        TableStyleNameAttribute attr = new TableStyleNameAttribute(odt.getContentDom())
-        element.setOdfAttribute(attr)
-        attr.setValue(styleName)
-    }
-
     @Override
     void addTable(TableContent content) {
         addTable(odt, content)
@@ -660,17 +649,9 @@ class OdfdomDocument implements DocumentAdapter{
             for (TableCellContent tableCellContent : row) {
                 Cell cell = table.getCellByPosition(c, r)
 
-                if (tableCellContent.heading) {
-                    setTableStyleNameAttr(cell.odfElement, StyleNames.TABLE_HEADING.getValue())
-                }
-                else {
-                    setTableStyleNameAttr(cell.odfElement, StyleNames.TABLE_CONTENTS.getValue())
-                }
-
-                Paragraph par = null
                 BlockContent tccc = tableCellContent.content
                 if (tccc instanceof ParagraphContent) {
-                    par = cell.addParagraph("")
+                    Paragraph par = cell.addParagraph("")
                     fillWithParagraphContent(par.odfElement, tableCellContent.content)
 
                     switch (tableCellContent.align) {
@@ -684,6 +665,13 @@ class OdfdomDocument implements DocumentAdapter{
                             par.setHorizontalAlignment(StyleTypeDefinitions.HorizontalAlignmentType.RIGHT)
                             break
                     }
+
+                    if (tableCellContent.heading) {
+                        par.styleHandler.styleElementForWrite.setStyleParentStyleNameAttribute(StyleNames.TABLE_HEADING.getValue())
+                    }
+                    else {
+                        par.styleHandler.styleElementForWrite.setStyleParentStyleNameAttribute(StyleNames.TABLE_CONTENTS.getValue())
+                    }
                 }
                 else if (tccc instanceof ListContent) {
                     addList(cell, tccc)
@@ -693,10 +681,6 @@ class OdfdomDocument implements DocumentAdapter{
                 }
                 else {
                     LOGGER.warn("BlockContent not implemented in addTable(): " + tccc.class)
-                }
-
-                if(par == null) {
-                    cell.addParagraph("")
                 }
 
                 c++

@@ -12,6 +12,8 @@ MD2odt is a easy to use library for converting Markdown to OpenDocument (*.odt*)
 * Web application: [MD2odt-web](https://github.com/abcBHM/MD2odt-web)
     * Online: https://md2odt.herokuapp.com/
 
+* Command line interface: [MD2odt-cli](https://github.com/abcBHM/MD2odt-cli)
+
 ## Features
 * Supports templates
 
@@ -30,7 +32,7 @@ MD2odt is a easy to use library for converting Markdown to OpenDocument (*.odt*)
 
 ### Maven
 
-```
+```xml
 <repositories>
     <repository>
         <id>jitpack.io</id>
@@ -40,7 +42,7 @@ MD2odt is a easy to use library for converting Markdown to OpenDocument (*.odt*)
 ```
 
 Dependency:
-```
+```xml
 <dependency>
     <groupId>com.github.abcBHM</groupId>
     <artifactId>MD2odt</artifactId>

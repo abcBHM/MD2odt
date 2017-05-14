@@ -3,7 +3,10 @@ package cz.zcu.kiv.md2odt.highlight
 import cz.zcu.kiv.md2odt.highlight.content.CodeSection
 
 /**
- * Created by vita on 08.04.2017.
+ * Highlighter interface
+ *
+ * @version 2017-04-06
+ * @author Vít Mazín
  */
 interface Parser {
 

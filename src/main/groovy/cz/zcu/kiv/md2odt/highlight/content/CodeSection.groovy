@@ -1,7 +1,10 @@
 package cz.zcu.kiv.md2odt.highlight.content
 
 /**
- * Created by pepe on 6. 4. 2017.
+ * Enumerator of supported langs
+ *
+ * @version 2017-04-06
+ * @author Josef Baloun
  */
 interface CodeSection {
 

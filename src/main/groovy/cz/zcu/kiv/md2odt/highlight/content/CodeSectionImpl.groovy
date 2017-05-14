@@ -2,18 +2,32 @@ package cz.zcu.kiv.md2odt.highlight.content
 
 
 /**
- * Created by vita on 06.04.2017.
+ * Code section implementation
+ *
+ * @version 2017-04-06
+ * @author Vít Mazín
  */
 class CodeSectionImpl implements CodeSection {
 
     String text
     CodeSectionType type
 
+    /**
+     * Class constructor
+     *
+     * @param text of part of code snippet
+     * @param CodeSectionType object
+     */
     CodeSectionImpl(String text, CodeSectionType type) {
         this.text = text
         this.type = type
     }
 
+    /**
+     * Class constructor
+     *
+     * @param text of part of code snippet
+     */
     CodeSectionImpl(String text) {
         this(text, CodeSectionType.TEXT)
     }

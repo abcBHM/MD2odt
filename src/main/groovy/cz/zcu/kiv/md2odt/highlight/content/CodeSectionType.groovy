@@ -4,7 +4,10 @@ import java.awt.Color
 
 
 /**
- * Created by vita on 06.04.2017.
+ * Types of code section
+ *
+ * @version 2017-04-06
+ * @author Vít Mazín
  */
 enum CodeSectionType {
     NONE("None", Color.BLACK),
@@ -23,15 +26,31 @@ enum CodeSectionType {
     private Color color
     private String name
 
+    /**
+     * Enum constructor
+     *
+     * @param name of token
+     * @param AWT Color
+     */
     CodeSectionType(String name, Color color) {
         this.name = name
         this.color = color
     }
 
+    /**
+     * Returns token name
+     *
+     * @return token name
+     */
     String getName() {
         return name
     }
 
+    /**
+     * Returns color
+     *
+     * @return AWT Color
+     */
     Color getColor() {
         return color
     }

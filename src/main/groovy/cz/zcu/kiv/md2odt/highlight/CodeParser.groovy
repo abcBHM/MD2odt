@@ -11,20 +11,23 @@ import org.python.core.PyTupleDerived
 import org.python.util.PythonInterpreter
 
 /**
- * Created by pepe on 6. 4. 2017.
+ * Highlighter implementation
+ *
+ * @version 2017-04-06
+ * @author Vít Mazín
  */
 class CodeParser implements Parser {
     private static final Logger LOGGER = Logger.getLogger(CodeParser)
     private CodeLang langForHighlight = null
     private String lastLang = null
 
-    @Override
     /** Returns a list of CodeSection, where is specified how to style a text segment.
      *
      * @param code  Code to parse.
      * @param lang  Language used.
      * @return list of CodeSection
      */
+    @Override
     List<CodeSection> parse(String code, String lang) {
         List<CodeSection> list = new ArrayList<>()
 
@@ -68,6 +71,11 @@ class CodeParser implements Parser {
         return list
     }
 
+    /** Returns code snippet language.
+     *
+     * @param lang  name of lang
+     * @return instance of CodeLang
+     */
     private static CodeLang switchLang(String lang) {
         CodeLang codeLang = null
 
@@ -83,7 +91,7 @@ class CodeParser implements Parser {
                     if(name.equals(lowerLang)) {
                         codeLang = pickedLang
 
-                        LOGGER.info("Using lexer for: \"" + pickedLang.getLangNames()[0] + "\"")
+                        LOGGER.info("usinge lexer for \"" + pickedLang.getLangNames()[0] + "\"")
 
                         return codeLang
                     }
@@ -92,13 +100,18 @@ class CodeParser implements Parser {
 
             if (codeLang == null) {
                 codeLang = CodeLang.NONE
-                LOGGER.info("Unknown code lang: " + lang)
+                LOGGER.info("unknown code lang " + lang)
             }
         }
 
         return codeLang
     }
 
+    /** Returns code section type based on token name.
+     *
+     * @param type  token name
+     * @return CodeSectionType
+     */
     static CodeSectionType switchType(String type) {
         CodeSectionType codeSectionType = null
 
@@ -112,12 +125,17 @@ class CodeParser implements Parser {
 
         if(codeSectionType == null) {
             codeSectionType = CodeSectionType.NONE
-            LOGGER.info("Unknown CodeSectionType: " + type)
+            LOGGER.info("unknown CodeSectionType " + type)
         }
 
         return codeSectionType
     }
 
+    /** Determines if given lang is supported.
+     *
+     * @param lang  code snippet lang
+     * @return true if lang is known or false
+     */
     boolean isKnownLanguage(String lang) {
         langForHighlight = switchLang(lang)
 

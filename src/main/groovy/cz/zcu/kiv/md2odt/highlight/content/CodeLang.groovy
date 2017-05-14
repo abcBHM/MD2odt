@@ -1,7 +1,10 @@
 package cz.zcu.kiv.md2odt.highlight.content
 
 /**
- * Created by pepe on 6. 4. 2017.
+ * Enumerator of supported langs
+ *
+ * @version 2017-04-06
+ * @author Vít Mazín
  */
 enum CodeLang {
     NONE("TextLexer", "withoutname"),   //could use default if it is possible
@@ -139,15 +142,31 @@ enum CodeLang {
     private String[] names
     private String lexer
 
+    /**
+     * Enum constructor
+     *
+     * @param lexer name of lexer
+     * @param names posible names of lang
+     */
     CodeLang(String lexer, String... names) {
         this.names = names
         this.lexer = lexer
     }
 
+    /**
+     * Returns array of names
+     *
+     * @return array of names
+     */
     String[] getLangNames() {
         return names
     }
 
+    /**
+     * Returns lexer name
+     *
+     * @return lexer name
+     */
     String getLexer() {
         return lexer
     }

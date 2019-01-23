@@ -6,9 +6,7 @@
 
 MD2odt is a easy to use library for converting Markdown to OpenDocument (*.odt*).
 
-* Web application: [MD2odt-web](https://github.com/abcBHM/MD2odt-web)
-    * Online: https://md2odt.herokuapp.com/
-
+* Web application: [MD2odt-web](https://github.com/abcBHM/MD2odt-web) (Online: https://md2odt.herokuapp.com/)
 * Command line interface: [MD2odt-cli](https://github.com/abcBHM/MD2odt-cli)
 
 ## Features
@@ -24,7 +22,7 @@ MD2odt is a easy to use library for converting Markdown to OpenDocument (*.odt*)
     * Table of contents
 * Syntax highlighting (all common languages)
 * Support for both local and remote images (PNG, JPG, GIF, BMP, SVG)
-* Support for templates – template is a regular ODF file with custom styles, front page, header, footer etc.
+* Support for templates – template is a regular ODF file with custom styles, front page, header, footer, etc.
 
 ## Example
 
@@ -71,7 +69,7 @@ public class Example {
 
 ### Example files
 * [Plain MD file](src/test/resources/example.md)
-* [ZIP with MF and resources](src/test/resources/example.zip)
+* [ZIP with MD and resources](src/test/resources/example.zip)
 * [Template](src/test/resources/template.odt)
 
 ## License
